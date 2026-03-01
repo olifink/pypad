@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   ElementRef,
   ViewEncapsulation,
+  effect,
   input,
   output,
   afterNextRender,
@@ -10,7 +11,10 @@ import {
   viewChild,
 } from '@angular/core';
 import { EditorView, basicSetup } from 'codemirror';
+import { Compartment } from '@codemirror/state';
 import { python } from '@codemirror/lang-python';
+import { materialDark } from '@fsegurai/codemirror-theme-material-dark';
+import { materialLight } from '@fsegurai/codemirror-theme-material-light';
 
 @Component({
   selector: 'app-editor',
@@ -22,9 +26,11 @@ import { python } from '@codemirror/lang-python';
 })
 export class EditorComponent implements OnDestroy {
   readonly initialCode = input('');
+  readonly isDark = input(false);
   readonly codeChange = output<string>();
 
   private readonly container = viewChild.required<ElementRef<HTMLElement>>('container');
+  private readonly themeCompartment = new Compartment();
   private editorView?: EditorView;
 
   constructor() {
@@ -34,6 +40,7 @@ export class EditorComponent implements OnDestroy {
         extensions: [
           basicSetup,
           python(),
+          this.themeCompartment.of(this.isDark() ? materialDark : materialLight),
           EditorView.updateListener.of((update) => {
             if (update.docChanged) {
               this.codeChange.emit(update.state.doc.toString());
@@ -42,6 +49,11 @@ export class EditorComponent implements OnDestroy {
         ],
         parent: this.container().nativeElement,
       });
+    });
+
+    effect(() => {
+      const theme = this.isDark() ? materialDark : materialLight;
+      this.editorView?.dispatch({ effects: this.themeCompartment.reconfigure(theme) });
     });
   }
 

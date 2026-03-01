@@ -1,4 +1,4 @@
-import { Injectable, signal, DOCUMENT, inject } from '@angular/core';
+import { Injectable, signal, computed, DOCUMENT, inject } from '@angular/core';
 
 export type ThemeMode = 'light' | 'dark' | 'system';
 const STORAGE_KEY = 'pypad_theme';
@@ -7,11 +7,24 @@ const CYCLE: ThemeMode[] = ['light', 'dark', 'system'];
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
   private readonly doc = inject(DOCUMENT);
+  private readonly systemIsDark = signal(
+    this.doc.defaultView?.matchMedia('(prefers-color-scheme: dark)').matches ?? false,
+  );
 
   readonly mode = signal<ThemeMode>(this.loadPreference());
 
+  /** Resolves the effective dark state, including when mode is 'system'. */
+  readonly effectiveIsDark = computed(
+    () => this.mode() === 'dark' || (this.mode() === 'system' && this.systemIsDark()),
+  );
+
   constructor() {
     this.apply(this.mode());
+
+    // Keep systemIsDark in sync when the OS preference changes.
+    this.doc.defaultView
+      ?.matchMedia('(prefers-color-scheme: dark)')
+      .addEventListener('change', (e) => this.systemIsDark.set(e.matches));
   }
 
   toggle(): void {

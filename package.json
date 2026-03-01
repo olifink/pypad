@@ -20,6 +20,8 @@
     "@angular/platform-browser": "^21.2.0",
     "@angular/router": "^21.2.0",
     "@codemirror/lang-python": "^6.2.1",
+    "@fsegurai/codemirror-theme-material-dark": "^6.2.3",
+    "@fsegurai/codemirror-theme-material-light": "^6.2.3",
     "codemirror": "^6.0.2",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"

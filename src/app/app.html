@@ -15,7 +15,11 @@
 
 <main class="app-workspace" #workspace>
   <section class="editor-pane" [style.flex]="splitRatio()" aria-label="Code editor">
-    <app-editor [initialCode]="initialCode" (codeChange)="onCodeChange($event)" />
+    <app-editor
+      [initialCode]="initialCode"
+      [isDark]="theme.effectiveIsDark()"
+      (codeChange)="onCodeChange($event)"
+    />
   </section>
 
   <div
