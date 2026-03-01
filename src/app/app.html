@@ -41,7 +41,7 @@
   class="run-fab"
   (click)="runCode()"
   [disabled]="!runner.isReady()"
-  [matTooltip]="runner.isReady() ? 'Run (Ctrl+Enter)' : 'Loading MicroPython…'"
+  [matTooltip]="runner.isReady() ? 'Run (Ctrl+R)' : 'Loading MicroPython…'"
   aria-label="Run Python code"
 >
   <mat-icon aria-hidden="true">{{ runner.isReady() ? 'play_arrow' : 'hourglass_empty' }}</mat-icon>

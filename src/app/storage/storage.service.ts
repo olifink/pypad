@@ -9,17 +9,12 @@ const DEBOUNCE_MS = 500;
 export class StorageService {
   private readonly destroyRef = inject(DestroyRef);
   private readonly saveQueue = new Subject<string>();
+  private lastCode: string | null = null;
 
   constructor() {
     this.saveQueue
       .pipe(debounceTime(DEBOUNCE_MS), takeUntilDestroyed(this.destroyRef))
-      .subscribe((code) => {
-        try {
-          localStorage.setItem(STORAGE_KEY, code);
-        } catch {
-          // localStorage may be unavailable (private browsing quota exceeded, etc.)
-        }
-      });
+      .subscribe((code) => this.persist(code));
   }
 
   load(): string | null {
@@ -30,7 +25,24 @@ export class StorageService {
     }
   }
 
+  /** Debounced save — called on every keystroke. */
   save(code: string): void {
+    this.lastCode = code;
     this.saveQueue.next(code);
+  }
+
+  /** Immediate save — called by Ctrl+S, bypasses the debounce. */
+  flush(): void {
+    if (this.lastCode !== null) {
+      this.persist(this.lastCode);
+    }
+  }
+
+  private persist(code: string): void {
+    try {
+      localStorage.setItem(STORAGE_KEY, code);
+    } catch {
+      // localStorage may be unavailable (private browsing quota exceeded, etc.)
+    }
   }
 }

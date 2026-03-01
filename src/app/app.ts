@@ -37,6 +37,9 @@ const MAX_RATIO = 0.85;
   ],
   templateUrl: './app.html',
   styleUrl: './app.css',
+  host: {
+    '(document:keydown)': 'onKeyDown($event)',
+  },
 })
 export class App {
   private readonly storage = inject(StorageService);
@@ -70,8 +73,22 @@ export class App {
   }
 
   protected runCode(): void {
+    this.storage.flush();
     const lines = this.runner.run(this.currentCode());
     this.outputLines.set(lines);
+  }
+
+  protected onKeyDown(e: KeyboardEvent): void {
+    const ctrl = e.ctrlKey || e.metaKey;
+    if (!ctrl) return;
+
+    if (e.key === 's') {
+      e.preventDefault();
+      this.storage.flush();
+    } else if (e.key === 'r') {
+      e.preventDefault();
+      if (this.runner.isReady()) this.runCode();
+    }
   }
 
   protected onDividerPointerDown(e: PointerEvent): void {
