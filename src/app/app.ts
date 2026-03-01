@@ -1,4 +1,11 @@
-import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  ElementRef,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -11,6 +18,9 @@ import { RunnerService } from './runner/runner.service';
 const DEFAULT_CODE = `# Welcome to PyPad!
 print("Hello, PyPad!")
 `;
+
+const MIN_RATIO = 0.15;
+const MAX_RATIO = 0.85;
 
 @Component({
   selector: 'app-root',
@@ -30,8 +40,11 @@ export class App {
   private readonly storage = inject(StorageService);
   protected readonly runner = inject(RunnerService);
 
+  private readonly workspaceRef = viewChild.required<ElementRef<HTMLElement>>('workspace');
+
   protected readonly initialCode = this.storage.load() ?? DEFAULT_CODE;
   protected readonly outputLines = signal<string[]>([]);
+  protected readonly splitRatio = signal(0.65);
   private readonly currentCode = signal(this.initialCode);
 
   protected onCodeChange(code: string): void {
@@ -42,5 +55,24 @@ export class App {
   protected runCode(): void {
     const lines = this.runner.run(this.currentCode());
     this.outputLines.set(lines);
+  }
+
+  protected onDividerPointerDown(e: PointerEvent): void {
+    e.preventDefault();
+    const workspace = this.workspaceRef().nativeElement;
+
+    const onMove = (ev: PointerEvent): void => {
+      const rect = workspace.getBoundingClientRect();
+      const ratio = (ev.clientY - rect.top) / rect.height;
+      this.splitRatio.set(Math.min(Math.max(ratio, MIN_RATIO), MAX_RATIO));
+    };
+
+    const onUp = (): void => {
+      document.removeEventListener('pointermove', onMove);
+      document.removeEventListener('pointerup', onUp);
+    };
+
+    document.addEventListener('pointermove', onMove);
+    document.addEventListener('pointerup', onUp);
   }
 }

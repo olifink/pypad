@@ -4,14 +4,20 @@
   </mat-toolbar>
 </header>
 
-<main class="app-workspace">
-  <section class="editor-pane" aria-label="Code editor">
+<main class="app-workspace" #workspace>
+  <section class="editor-pane" [style.flex]="splitRatio()" aria-label="Code editor">
     <app-editor [initialCode]="initialCode" (codeChange)="onCodeChange($event)" />
   </section>
 
-  <div class="pane-divider" role="separator" aria-orientation="horizontal"></div>
+  <div
+    class="pane-divider"
+    role="separator"
+    aria-orientation="horizontal"
+    aria-label="Resize panels"
+    (pointerdown)="onDividerPointerDown($event)"
+  ></div>
 
-  <section class="console-pane" aria-label="Console output">
+  <section class="console-pane" [style.flex]="1 - splitRatio()" aria-label="Console output">
     <div class="pane-header" aria-hidden="true">Console</div>
     <app-console [lines]="outputLines()" />
   </section>
