@@ -17,6 +17,13 @@
   </section>
 </main>
 
-<button mat-fab class="run-fab" (click)="runCode()" aria-label="Run Python code">
-  <mat-icon aria-hidden="true">play_arrow</mat-icon>
+<button
+  mat-fab
+  class="run-fab"
+  (click)="runCode()"
+  [disabled]="!runner.isReady()"
+  [matTooltip]="runner.isReady() ? 'Run (Ctrl+Enter)' : 'Loading MicroPython…'"
+  aria-label="Run Python code"
+>
+  <mat-icon aria-hidden="true">{{ runner.isReady() ? 'play_arrow' : 'hourglass_empty' }}</mat-icon>
 </button>

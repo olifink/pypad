@@ -13,6 +13,27 @@
       rel="stylesheet"
     />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <script type="module" src="https://pyscript.net/releases/2026.2.1/core.js"></script>
+    <script type="mpy">
+import js
+
+def _pypad_run(code):
+    output = []
+
+    def _print(*args, **kwargs):
+        sep = kwargs.get('sep', ' ')
+        end = kwargs.get('end', '\n')
+        output.append(sep.join(str(a) for a in args) + end)
+
+    try:
+        exec(code, {'__name__': '__main__', 'print': _print})
+    except Exception as e:
+        output.append(type(e).__name__ + ': ' + str(e) + '\n')
+
+    return ''.join(output)
+
+js.globalThis.pypad_run = _pypad_run
+    </script>
   </head>
   <body>
     <app-root></app-root>
