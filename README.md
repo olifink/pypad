@@ -10,29 +10,30 @@ To provide a zero-install, offline-capable Python editor that feels like a nativ
 
 ## 🏗️ Architecture
 
-* **Framework:** Angular 21+ (Signals-based reactivity).
-* **UI System:** Angular Material 3 (M3) with dynamic theming.
-* **Editor:** CodeMirror 6 (Optimized for mobile touch/virtual keyboards).
-* **Engine:** PyScript (configured with the **MicroPython** WASM runtime).
-* **Persistence:** LocalStorage (MVP) $\rightarrow$ File System Access API (Post-MVP).
+* **Framework:** Angular 21 (Signals-based reactivity, standalone components).
+* **UI System:** Angular Material 3 (M3) with dynamic theming (`material-theme.scss`).
+* **Editor:** CodeMirror 6 with `@fsegurai/codemirror-theme-material-dark/light` themes.
+* **Engine:** PyScript `mpy` (MicroPython WASM) loaded via CDN in `index.html`.
+* **Persistence:** LocalStorage (MVP) → File System Access API (Post-MVP).
+* **Deployment:** GitHub Actions → GitHub Pages (`.github/workflows/deploy.yml`).
 
 ---
 
 ## 🛠️ Roadmap & Phases
 
-### Phase 1: MVP (Current Focus)
+### Phase 1: MVP ✅
 
-* [ ] **App Scaffold:** Responsive M3 Shell (Top-bar, Editor area, Output Console).
-* [ ] **CodeMirror Integration:** Python syntax highlighting and auto-indent.
-* [ ] **MicroPython Bridge:** Integration of PyScript `mpy` runtime to execute code strings.
-* [ ] **Reactive Output:** Intercepting Python `stdout` to display in the UI console.
-* [ ] **Auto-Save:** Simple persistence of the current session to `localStorage`.
+* [x] **App Scaffold:** Responsive M3 Shell (Top-bar, Editor area, Output Console).
+* [x] **CodeMirror Integration:** Python syntax highlighting and auto-indent.
+* [x] **MicroPython Bridge:** Integration of PyScript `mpy` runtime to execute code strings.
+* [x] **Reactive Output:** Intercepting Python `stdout` to display in the UI console.
+* [x] **Auto-Save:** Debounced persistence of the current session to `localStorage`.
 
 ### Phase 2: UX
 
-* [ ] **Shortcuts** Implement Ctrl+S for Save and Ctrl+R for Run (and Save before run) 
+* [x] **Shortcuts:** `Ctrl+S` saves immediately; `Ctrl+R` saves and runs.
 * [ ] **Multi-file Support:** Tabbed interface for managing multiple `.py` snippets/files.
-* [ ] **Theming:** Dark/Light mode toggle following M3 system tokens.
+* [x] **Theming:** Dark/Light/System mode toggle following M3 system tokens.
 
 ### Phase 3: PWA & Sharing
 
@@ -65,22 +66,22 @@ To provide a zero-install, offline-capable Python editor that feels like a nativ
 
 ---
 
-## 💻 Technical Specifications (Phase 1)
+## 💻 Technical Specifications
 
-### Core Components
+### Core Components & Services
 
-| Component | Responsibility |
-| --- | --- |
-| `EditorComponent` | Manages the CodeMirror 6 instance and provides code signals. |
-| `ConsoleComponent` | Displays execution results and error logs in a scrollable panel. |
-| `RunnerService` | Singleton that initializes the PyScript runtime and triggers `exec()`. |
-| `StorageService` | Debounced persistence of the editor state. |
+| Symbol | Path | Responsibility |
+| --- | --- | --- |
+| `EditorComponent` | `src/app/editor/` | CodeMirror 6 instance; `isDark` input swaps Material theme via `Compartment`; emits `codeChange`. |
+| `ConsoleComponent` | `src/app/console/` | Scrollable monospace output panel; accepts `lines: string[]` input. |
+| `RunnerService` | `src/app/runner/` | Polls for `window.pypad_run`; exposes `isReady` signal and `run(code)`. |
+| `StorageService` | `src/app/storage/` | Debounced `save()` + immediate `flush()` to `localStorage` key `pypad_code`. |
+| `ThemeService` | `src/app/theme/` | Three-way `light`/`dark`/`system` toggle; `effectiveIsDark` computed signal; persists to `localStorage`. |
 
 ### PyScript Configuration
 
-We utilize the `mpy` (MicroPython) engine for sub-second startup times on mobile devices:
+The MicroPython runtime is loaded via CDN. An inline `<script type="mpy">` defines `_pypad_run(code)` which captures `print()` output by injecting a custom `print` into `exec` globals, then exposes it as `window.pypad_run`:
 
 ```html
 <script type="module" src="https://pyscript.net/releases/2026.2.1/core.js"></script>
-
 ```
