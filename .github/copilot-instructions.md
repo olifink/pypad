@@ -1,3 +1,52 @@
+# PyPad — Copilot Instructions
+
+## Project Overview
+
+PyPad is a mobile-first, browser-based Python IDE targeting Android tablets and Chromebooks. It provides a DartPad-like experience using:
+- **Angular 21** (signals-based reactivity, standalone components)
+- **Angular Material 3** with dynamic M3 theming (`src/material-theme.scss`, loaded globally via `angular.json`)
+- **CodeMirror 6** (`@codemirror/lang-python`) for the editor
+- **PyScript `mpy` (MicroPython WASM)** runtime for in-browser Python execution (loaded via CDN in `index.html`)
+- **LocalStorage** for MVP persistence (File System Access API planned post-MVP)
+
+### Planned Core Components (from README)
+
+| Symbol | Role |
+|---|---|
+| `EditorComponent` | Owns the CodeMirror 6 instance; exposes code as a signal |
+| `ConsoleComponent` | Displays stdout/stderr from Python execution |
+| `RunnerService` | Singleton; initializes PyScript runtime and calls `exec()` |
+| `StorageService` | Debounced LocalStorage persistence of editor state |
+
+## Commands
+
+```bash
+npm start          # dev server (ng serve)
+npm run build      # production build
+npm test           # run all tests (Vitest)
+```
+
+Run a single test file:
+```bash
+npx ng test --include="**/app.spec.ts"
+```
+
+Format code (Prettier, printWidth=100, singleQuote):
+```bash
+npx prettier --write .
+```
+
+> There is no `lint` script. ESLint is not currently configured.
+
+## Key Conventions
+
+- **Angular version: 21** — Do NOT set `standalone: true` in decorators (it is the default).
+- **Tests use Vitest**, not Jasmine/Karma. The `tsconfig.spec.json` types include `vitest/globals`.
+- **Prettier** is configured: 100-char print width, single quotes, `angular` HTML parser.
+- **PyScript integration**: loaded as a `<script type="module">` CDN tag in `index.html`. Python code is passed as strings to the MicroPython runtime.
+- **Mobile-first UX**: design for touch/virtual keyboards; avoid hover-only interactions.
+
+---
 
 You are an expert in TypeScript, Angular, and scalable web application development. You write functional, maintainable, performant, and accessible code following Angular and TypeScript best practices.
 

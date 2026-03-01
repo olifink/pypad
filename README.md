@@ -10,7 +10,7 @@ To provide a zero-install, offline-capable Python editor that feels like a nativ
 
 ## 🏗️ Architecture
 
-* **Framework:** Angular 19+ (Signals-based reactivity).
+* **Framework:** Angular 21+ (Signals-based reactivity).
 * **UI System:** Angular Material 3 (M3) with dynamic theming.
 * **Editor:** CodeMirror 6 (Optimized for mobile touch/virtual keyboards).
 * **Engine:** PyScript (configured with the **MicroPython** WASM runtime).
