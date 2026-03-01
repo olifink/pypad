@@ -28,10 +28,10 @@ To provide a zero-install, offline-capable Python editor that feels like a nativ
 * [ ] **Reactive Output:** Intercepting Python `stdout` to display in the UI console.
 * [ ] **Auto-Save:** Simple persistence of the current session to `localStorage`.
 
-### Phase 2: Intelligence & UX
+### Phase 2: UX
 
-* [ ] **Live Autocomplete:** Bridge between CodeMirror and MicroPython's `dir()` for real-time object inspection.
-* [ ] **Multi-file Support:** Tabbed interface for managing multiple `.py` snippets.
+* [ ] **Shortcuts** Implement Ctrl+S for Save and Ctrl+R for Run (and Save before run) 
+* [ ] **Multi-file Support:** Tabbed interface for managing multiple `.py` snippets/files.
 * [ ] **Theming:** Dark/Light mode toggle following M3 system tokens.
 
 ### Phase 3: PWA & Sharing
@@ -40,9 +40,28 @@ To provide a zero-install, offline-capable Python editor that feels like a nativ
 * [ ] **URL Packaging:** Share snippets via LZ-compressed Base64 strings in the URL.
 * [ ] **Installation:** "Add to Home Screen" support for Android and Chromebooks.
 
-### Phase 4: Host Interaction
+### Phase 4: Packages, REPL, and Debugging
+
+* [ ] **Integrated REPL Overlay:** REPL tab using **Xterm.js** terminal 
+* [ ] **Dependency Management (`mip`):** Packages tab find and use libraries from the `micropython-lib`
+* [ ] **Package Bundling:** Update the "Share" logic to include a list of required packages in the URL so shared snippets automatically "install" their dependencies on first run.
+
+### Phase 5: Web Host Interaction
 
 * [ ] **JS Bridge:** Allowing Python code to manipulate the DOM or call Web APIs (GPS, Camera) via PyScript's FFI.
+
+### Phase 6: Hardware Integration
+- [ ] **Web Serial Bridge:** Connect to physical MicroPython boards (Pico, ESP32).
+- [ ] **Flash to Board:** Upload `main.py` directly from the browser to the board's flash memory.
+- [ ] **Hardware REPL:** Toggle the console to interact with the physical device's output.
+
+
+### Deferred / Parking lot
+
+* [ ] **Live Autocomplete:** Bridge between CodeMirror and MicroPython's `dir()` for real-time object inspection.
+* [ ] **Visual State Inspector:** Instead of a full `break` debugger, implement a "Snapshot" tool that runs `globals()` after execution and displays variables/types in an M3 Data Table.
+* **[ ] Exception Mapping:** Write a parser that takes MicroPython stack traces and uses the **CodeMirror 6 `EditorView**` to highlight the exact line of code where the error occurred with an M3 "Error" gutter icon.
+
 
 ---
 
