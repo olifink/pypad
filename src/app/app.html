@@ -1,11 +1,6 @@
 <header>
   <mat-toolbar class="app-toolbar">
     <span class="app-title">PyPad</span>
-    <span class="toolbar-spacer"></span>
-    <button mat-flat-button (click)="runCode()" aria-label="Run Python code">
-      <mat-icon aria-hidden="true">play_arrow</mat-icon>
-      Run
-    </button>
   </mat-toolbar>
 </header>
 
@@ -21,3 +16,7 @@
     <app-console [lines]="outputLines()" />
   </section>
 </main>
+
+<button mat-fab class="run-fab" (click)="runCode()" aria-label="Run Python code">
+  <mat-icon aria-hidden="true">play_arrow</mat-icon>
+</button>

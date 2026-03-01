@@ -16,10 +16,6 @@
   font-weight: 500;
 }
 
-.toolbar-spacer {
-  flex: 1;
-}
-
 .app-workspace {
   flex: 1;
   display: flex;
@@ -61,4 +57,10 @@
   background-color: var(--mat-sys-surface-container-low);
   border-bottom: 1px solid var(--mat-sys-outline-variant);
   flex-shrink: 0;
+}
+
+.run-fab {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
 }
