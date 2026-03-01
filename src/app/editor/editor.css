@@ -18,5 +18,5 @@
 
 .editor-container .cm-scroller {
   overflow: auto;
-  font-family: 'Roboto Mono', 'Courier New', monospace;
+  font-family: var(--font-mono);
 }
