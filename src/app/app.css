@@ -16,6 +16,10 @@
   font-weight: 500;
 }
 
+.toolbar-spacer {
+  flex: 1;
+}
+
 .app-workspace {
   flex: 1;
   display: flex;
