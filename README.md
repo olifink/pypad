@@ -33,9 +33,12 @@ To provide a zero-install, offline-capable Python editor that feels like a nativ
 
 * [x] **Shortcuts:** `Ctrl+S` saves immediately; `Ctrl+R` saves and runs.
 * [x] **Theming:** Dark/Light/System mode toggle following M3 system tokens.
-* [ ] **Tabs:** Prepare panel with multiple tabs (Output, AI, REPL, Packages)
-* [ ] **Panels:** Command button to change visibility/size for Editor, Panel, Both
-* [ ] **Virtual Keyboard:** Adjust viewport, "Sticky Accessory Bar" for symbols
+* [x] **Tabs:** Panel with M3 tabs (Output, AI, REPL, Packages); Output auto-scrolls to bottom.
+* [x] **Panels:** Layout toggle button (Editor | Both | Panel); draggable splitter between panes.
+* [x] **Output UX:** Clear button appears top-right of Output when content is present.
+* [x] **Virtual Keyboard:** Viewport shrinks correctly when Android virtual keyboard is open (`VirtualKeyboardAPI` + `env(keyboard-inset-height)`); FAB repositions above keyboard.
+* [ ] **Editor Scrolling:** Touch/gesture scroll inside the editor (known CM6 height constraint issue — under investigation).
+* [ ] **Sticky Accessory Bar:** Touch-friendly Python symbol bar above virtual keyboard.
 
 ### Phase 3: PWA & Sharing
 
@@ -83,11 +86,12 @@ To provide a zero-install, offline-capable Python editor that feels like a nativ
 
 | Symbol | Path | Responsibility |
 | --- | --- | --- |
-| `EditorComponent` | `src/app/editor/` | CodeMirror 6 instance; `isDark` input swaps Material theme via `Compartment`; emits `codeChange`. |
-| `ConsoleComponent` | `src/app/console/` | Scrollable monospace output panel; accepts `lines: string[]` input. |
+| `EditorComponent` | `src/app/editor/` | CodeMirror 6 instance; `isDark` input swaps Material theme via `Compartment`; emits `codeChange`; `ResizeObserver` tracks container height. |
+| `ConsoleComponent` | `src/app/console/` | Scrollable monospace output panel; accepts `lines: string[]` input; auto-scrolls to bottom; clear button. |
 | `RunnerService` | `src/app/runner/` | Polls for `window.pypad_run`; exposes `isReady` signal and `run(code)`. |
 | `StorageService` | `src/app/storage/` | Debounced `save()` + immediate `flush()` to `localStorage` key `pypad_code`. |
 | `ThemeService` | `src/app/theme/` | Three-way `light`/`dark`/`system` toggle; `effectiveIsDark` computed signal; persists to `localStorage`. |
+| `VirtualKeyboardService` | `src/app/virtual-keyboard/` | Opts into Virtual Keyboard API (`overlaysContent = true`); CSS `env(keyboard-inset-height)` shrinks the viewport. |
 
 ### PyScript Configuration
 
