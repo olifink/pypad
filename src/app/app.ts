@@ -18,6 +18,7 @@ import { ConsoleComponent } from './console/console';
 import { StorageService } from './storage/storage.service';
 import { RunnerService } from './runner/runner.service';
 import { ThemeService } from './theme/theme.service';
+import { VirtualKeyboardService } from './virtual-keyboard/virtual-keyboard.service';
 
 const DEFAULT_CODE = `# Welcome to PyPad!
 print("Hello, PyPad!")
@@ -51,6 +52,7 @@ export class App {
   private readonly storage = inject(StorageService);
   protected readonly runner = inject(RunnerService);
   protected readonly theme = inject(ThemeService);
+  private readonly _vk = inject(VirtualKeyboardService);
 
   protected readonly themeIcon = computed(() => {
     const icons = { light: 'light_mode', dark: 'dark_mode', system: 'brightness_auto' } as const;

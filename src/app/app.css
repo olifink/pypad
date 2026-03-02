@@ -1,7 +1,8 @@
 :host {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100dvh;
+  padding-bottom: env(keyboard-inset-height, 0px);
   overflow: hidden;
 }
 
@@ -103,7 +104,7 @@
 
 .run-fab {
   position: fixed;
-  bottom: 1.5rem;
+  bottom: calc(1.5rem + env(keyboard-inset-height, 0px));
   right: 1.5rem;
   z-index: 100;
 }
