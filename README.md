@@ -32,14 +32,16 @@ To provide a zero-install, offline-capable Python editor that feels like a nativ
 ### Phase 2: UX
 
 * [x] **Shortcuts:** `Ctrl+S` saves immediately; `Ctrl+R` saves and runs.
-* [ ] **Multi-file Support:** Tabbed interface for managing multiple `.py` snippets/files.
 * [x] **Theming:** Dark/Light/System mode toggle following M3 system tokens.
+* [ ] **Tabs:** Prepare panel with multiple tabs (Output, AI, REPL, Packages)
+* [ ] **Panels:** Command button to change visibility/size for Editor, Panel, Both
+* [ ] **Virtual Keyboard:** Adjust viewport, "Sticky Accessory Bar" for symbols
 
 ### Phase 3: PWA & Sharing
 
+* [ ] **Installation:** "Add to Home Screen" support for Android and Chromebooks.
 * [ ] **Offline Mode:** Service Worker caching for WASM binaries and assets.
 * [ ] **URL Packaging:** Share snippets via LZ-compressed Base64 strings in the URL.
-* [ ] **Installation:** "Add to Home Screen" support for Android and Chromebooks.
 
 ### Phase 4: Packages, REPL, and Debugging
 
@@ -47,21 +49,30 @@ To provide a zero-install, offline-capable Python editor that feels like a nativ
 * [ ] **Dependency Management (`mip`):** Packages tab find and use libraries from the `micropython-lib`
 * [ ] **Package Bundling:** Update the "Share" logic to include a list of required packages in the URL so shared snippets automatically "install" their dependencies on first run.
 
-### Phase 5: Web Host Interaction
+### Phase 5: AI Coding Support
+
+* [ ] **API Key:** Encode with Web Crypto API and save to localStorage  
+* [ ] **Gemini Service:** An Angular service that initializes the GoogleGenerativeAI client using the stored key.
+* [ ] **AI Prompt**: tab to prompt AI generate and insert code at cursor or refactor code if selected
+
+### Phase 6: Web Host Interaction
 
 * [ ] **JS Bridge:** Allowing Python code to manipulate the DOM or call Web APIs (GPS, Camera) via PyScript's FFI.
 
-### Phase 6: Hardware Integration
+### Phase 7: Hardware Integration
 - [ ] **Web Serial Bridge:** Connect to physical MicroPython boards (Pico, ESP32).
 - [ ] **Flash to Board:** Upload `main.py` directly from the browser to the board's flash memory.
 - [ ] **Hardware REPL:** Toggle the console to interact with the physical device's output.
 
+### Parking lot
 
-### Deferred / Parking lot
+* [ ] **Multi-file Support:** Tabbed interface for managing multiple `.py` snippets/files.
+
+### Deferred
 
 * [ ] **Live Autocomplete:** Bridge between CodeMirror and MicroPython's `dir()` for real-time object inspection.
 * [ ] **Visual State Inspector:** Instead of a full `break` debugger, implement a "Snapshot" tool that runs `globals()` after execution and displays variables/types in an M3 Data Table.
-* **[ ] Exception Mapping:** Write a parser that takes MicroPython stack traces and uses the **CodeMirror 6 `EditorView**` to highlight the exact line of code where the error occurred with an M3 "Error" gutter icon.
+* [ ] **Exception Mapping:** Write a parser that takes MicroPython stack traces and uses the **CodeMirror 6 `EditorView**` to highlight the exact line of code where the error occurred with an M3 "Error" gutter icon.
 
 
 ---
