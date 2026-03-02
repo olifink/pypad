@@ -2,6 +2,25 @@
   <mat-toolbar class="app-toolbar">
     <span class="app-title">PyPad</span>
     <span class="toolbar-spacer"></span>
+
+    <mat-button-toggle-group
+      class="layout-toggle"
+      [value]="layout()"
+      (change)="layout.set($event.value)"
+      hideSingleSelectionIndicator
+      aria-label="Layout mode"
+    >
+      <mat-button-toggle value="editor" matTooltip="Editor only" aria-label="Editor only">
+        <mat-icon>code</mat-icon>
+      </mat-button-toggle>
+      <mat-button-toggle value="both" matTooltip="Editor and panel" aria-label="Editor and panel">
+        <mat-icon>view_agenda</mat-icon>
+      </mat-button-toggle>
+      <mat-button-toggle value="panel" matTooltip="Panel only" aria-label="Panel only">
+        <mat-icon>dvr</mat-icon>
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+
     <button
       mat-icon-button
       (click)="theme.toggle()"
@@ -14,26 +33,32 @@
 </header>
 
 <main class="app-workspace" #workspace>
-  <section class="editor-pane" [style.flex]="splitRatio()" aria-label="Code editor">
-    <app-editor
-      [initialCode]="initialCode"
-      [isDark]="theme.effectiveIsDark()"
-      (codeChange)="onCodeChange($event)"
-    />
-  </section>
+  @if (showEditor()) {
+    <section class="editor-pane" [style.flex]="layout() === 'both' ? splitRatio() : 1" aria-label="Code editor">
+      <app-editor
+        [initialCode]="initialCode"
+        [isDark]="theme.effectiveIsDark()"
+        (codeChange)="onCodeChange($event)"
+      />
+    </section>
+  }
 
-  <div
-    class="pane-divider"
-    role="separator"
-    aria-orientation="horizontal"
-    aria-label="Resize panels"
-    (pointerdown)="onDividerPointerDown($event)"
-  ></div>
+  @if (showDivider()) {
+    <div
+      class="pane-divider"
+      role="separator"
+      aria-orientation="horizontal"
+      aria-label="Resize panels"
+      (pointerdown)="onDividerPointerDown($event)"
+    ></div>
+  }
 
-  <section class="console-pane" [style.flex]="1 - splitRatio()" aria-label="Console output">
-    <div class="pane-header" aria-hidden="true">Console</div>
-    <app-console [lines]="outputLines()" />
-  </section>
+  @if (showPanel()) {
+    <section class="console-pane" [style.flex]="layout() === 'both' ? 1 - splitRatio() : 1" aria-label="Console output">
+      <div class="pane-header" aria-hidden="true">Console</div>
+      <app-console [lines]="outputLines()" />
+    </section>
+  }
 </main>
 
 <button

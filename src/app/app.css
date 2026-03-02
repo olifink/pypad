@@ -20,6 +20,10 @@
   flex: 1;
 }
 
+.layout-toggle {
+  margin-right: 4px;
+}
+
 .app-workspace {
   flex: 1;
   display: flex;

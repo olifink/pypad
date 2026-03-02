@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { EditorComponent } from './editor/editor';
@@ -24,12 +25,15 @@ print("Hello, PyPad!")
 const MIN_RATIO = 0.15;
 const MAX_RATIO = 0.85;
 
+export type LayoutMode = 'editor' | 'both' | 'panel';
+
 @Component({
   selector: 'app-root',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatToolbarModule,
     MatButtonModule,
+    MatButtonToggleModule,
     MatIconModule,
     MatTooltipModule,
     EditorComponent,
@@ -65,7 +69,16 @@ export class App {
   protected readonly initialCode = this.storage.load() ?? DEFAULT_CODE;
   protected readonly outputLines = signal<string[]>([]);
   protected readonly splitRatio = signal(0.65);
+  protected readonly layout = signal<LayoutMode>('both');
   private readonly currentCode = signal(this.initialCode);
+
+  protected readonly showEditor = computed(
+    () => this.layout() === 'editor' || this.layout() === 'both',
+  );
+  protected readonly showPanel = computed(
+    () => this.layout() === 'panel' || this.layout() === 'both',
+  );
+  protected readonly showDivider = computed(() => this.layout() === 'both');
 
   protected onCodeChange(code: string): void {
     this.currentCode.set(code);
@@ -76,6 +89,8 @@ export class App {
     this.storage.flush();
     const lines = this.runner.run(this.currentCode());
     this.outputLines.set(lines);
+    // Switch to panel so the user sees the output.
+    if (this.layout() === 'editor') this.layout.set('both');
   }
 
   protected onKeyDown(e: KeyboardEvent): void {
