@@ -72,20 +72,36 @@
   overflow: hidden;
 }
 
-.pane-header {
-  padding: 4px 16px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+.panel-tabs {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Make the tab body fill remaining height */
+.panel-tabs ::ng-deep .mat-mdc-tab-body-wrapper {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.panel-tabs ::ng-deep .mat-mdc-tab-body-content {
+  height: 100%;
+  overflow: hidden;
+}
+
+.tab-placeholder {
+  padding: 24px 16px;
   color: var(--mat-sys-on-surface-variant);
-  background-color: var(--mat-sys-surface-container-low);
-  border-bottom: 1px solid var(--mat-sys-outline-variant);
-  flex-shrink: 0;
+  font-style: italic;
+  font-size: 0.875rem;
 }
 
 .run-fab {
   position: fixed;
   bottom: 1.5rem;
   right: 1.5rem;
+  z-index: 100;
 }

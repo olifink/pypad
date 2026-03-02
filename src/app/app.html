@@ -54,9 +54,21 @@
   }
 
   @if (showPanel()) {
-    <section class="console-pane" [style.flex]="layout() === 'both' ? 1 - splitRatio() : 1" aria-label="Console output">
-      <div class="pane-header" aria-hidden="true">Console</div>
-      <app-console [lines]="outputLines()" />
+    <section class="console-pane" [style.flex]="layout() === 'both' ? 1 - splitRatio() : 1" aria-label="Output panel">
+      <mat-tab-group class="panel-tabs" animationDuration="150ms">
+        <mat-tab label="Output">
+          <app-console [lines]="outputLines()" />
+        </mat-tab>
+        <mat-tab label="AI">
+          <div class="tab-placeholder">AI coding support — coming in Phase 5</div>
+        </mat-tab>
+        <mat-tab label="REPL">
+          <div class="tab-placeholder">Interactive REPL — coming in Phase 4</div>
+        </mat-tab>
+        <mat-tab label="Packages">
+          <div class="tab-placeholder">Package manager (mip) — coming in Phase 4</div>
+        </mat-tab>
+      </mat-tab-group>
     </section>
   }
 </main>

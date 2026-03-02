@@ -11,6 +11,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { EditorComponent } from './editor/editor';
 import { ConsoleComponent } from './console/console';
@@ -36,6 +37,7 @@ export type LayoutMode = 'editor' | 'both' | 'panel';
     MatButtonToggleModule,
     MatIconModule,
     MatTooltipModule,
+    MatTabsModule,
     EditorComponent,
     ConsoleComponent,
   ],
