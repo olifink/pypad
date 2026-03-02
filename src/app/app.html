@@ -57,7 +57,7 @@
     <section class="console-pane" [style.flex]="layout() === 'both' ? 1 - splitRatio() : 1" aria-label="Output panel">
       <mat-tab-group class="panel-tabs" animationDuration="150ms">
         <mat-tab label="Output">
-          <app-console [lines]="outputLines()" />
+          <app-console [lines]="outputLines()" (clear)="outputLines.set([])" />
         </mat-tab>
         <mat-tab label="AI">
           <div class="tab-placeholder">AI coding support — coming in Phase 5</div>
