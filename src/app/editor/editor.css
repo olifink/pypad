@@ -12,11 +12,11 @@
 }
 
 .editor-container .cm-editor {
-  height: 100%;
+  height: 100vh;
   font-size: 0.9375rem;
 }
 
-.editor-container .cm-scroller {
+.editor-container {
   overflow: auto;
   font-family: var(--font-mono);
 }
