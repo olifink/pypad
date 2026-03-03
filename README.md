@@ -13,7 +13,7 @@ To provide a zero-install, offline-capable Python editor that feels like a nativ
 * **Framework:** Angular 21 (Signals-based reactivity, standalone components).
 * **UI System:** Angular Material 3 (M3) with dynamic theming (`material-theme.scss`).
 * **Editor:** CodeMirror 6 with `@fsegurai/codemirror-theme-material-dark/light` themes.
-* **Engine:** PyScript `mpy` (MicroPython WASM) loaded via CDN in `index.html`.
+* **Engine:** PyScript `mpy` (MicroPython WASM) — self-hosted in `public/pyscript/` for offline use.
 * **Persistence:** LocalStorage (MVP) → File System Access API (Post-MVP).
 * **Deployment:** GitHub Actions → GitHub Pages (`.github/workflows/deploy.yml`).
 
@@ -29,7 +29,7 @@ To provide a zero-install, offline-capable Python editor that feels like a nativ
 * [x] **Reactive Output:** Intercepting Python `stdout` to display in the UI console.
 * [x] **Auto-Save:** Debounced persistence of the current session to `localStorage`.
 
-### Phase 2: UX
+### Phase 2: UX ✅
 
 * [x] **Shortcuts:** `Ctrl+S` saves immediately; `Ctrl+R` saves and runs.
 * [x] **Theming:** Dark/Light/System mode toggle following M3 system tokens.
@@ -37,26 +37,26 @@ To provide a zero-install, offline-capable Python editor that feels like a nativ
 * [x] **Panels:** Layout toggle button (Editor | Both | Panel); draggable splitter between panes.
 * [x] **Output UX:** Clear button appears top-right of Output when content is present.
 * [x] **Virtual Keyboard:** Viewport shrinks correctly when Android virtual keyboard is open (`VirtualKeyboardAPI` + `env(keyboard-inset-height)`); FAB repositions above keyboard.
-* [x] **Editor Scrolling:** Touch/gesture scroll inside the editor
+* [x] **Editor Scrolling:** Touch/gesture scroll inside the editor.
 
-### Phase 3: PWA & Sharing
+### Phase 3: PWA & Sharing ✅ (partial)
 
-* [ ] **Installation:** "Add to Home Screen" support for Android and Chromebooks.
-* [ ] **Offline Mode:** Service Worker caching for WASM binaries and assets.
-* [ ] **Download File:** Button to quickly download the current file as `main.py` 
+* [x] **Installation:** PWA manifest + service worker; "Add to Home Screen" support for Android and Chromebooks. Full icon set (regular, maskable, monochrome).
+* [x] **Offline Mode:** MicroPython WASM runtime self-hosted in `public/pyscript/`; all fonts (Roboto, Roboto Mono, Material Icons) bundled locally. Zero external dependencies at runtime.
+* [ ] **Download File:** Button to quickly download the current file as `main.py`.
 * [ ] **URL Packaging:** Share snippets via LZ-compressed Base64 strings in the URL.
 
 ### Phase 4: Packages, REPL, and Debugging
 
-* [ ] **Integrated REPL Overlay:** REPL tab using **Xterm.js** terminal 
-* [ ] **Dependency Management (`mip`):** Packages tab find and use libraries from the `micropython-lib`
+* [ ] **Integrated REPL Overlay:** REPL tab using **Xterm.js** terminal.
+* [ ] **Dependency Management (`mip`):** Packages tab find and use libraries from the `micropython-lib`.
 * [ ] **Package Bundling:** Update the "Share" logic to include a list of required packages in the URL so shared snippets automatically "install" their dependencies on first run.
 
 ### Phase 5: AI Coding Support
 
-* [ ] **API Key:** Encode with Web Crypto API and save to localStorage  
+* [ ] **API Key:** Encode with Web Crypto API and save to localStorage.
 * [ ] **Gemini Service:** An Angular service that initializes the GoogleGenerativeAI client using the stored key.
-* [ ] **AI Prompt**: Prompt AI generate and insert code at cursor or refactor code if selected
+* [ ] **AI Prompt**: Prompt AI generate and insert code at cursor or refactor code if selected.
 
 ### Phase 6: Web Host Interaction
 
@@ -96,8 +96,15 @@ To provide a zero-install, offline-capable Python editor that feels like a nativ
 
 ### PyScript Configuration
 
-The MicroPython runtime is loaded via CDN. An inline `<script type="mpy">` defines `_pypad_run(code)` which captures `print()` output by injecting a custom `print` into `exec` globals, then exposes it as `window.pypad_run`:
+The MicroPython runtime is self-hosted under `public/pyscript/` (copied from the official `offline_2026.2.1.zip` release). It is injected dynamically to avoid Vite dev-server pre-transform conflicts:
 
 ```html
-<script type="module" src="https://pyscript.net/releases/2026.2.1/core.js"></script>
+<script>
+  const s = document.createElement('script');
+  s.type = 'module';
+  s.src = 'pyscript/core.js';
+  document.head.appendChild(s);
+</script>
 ```
+
+An inline `<script type="mpy">` defines `_pypad_run(code)` which captures `print()` output by injecting a custom `print` into `exec` globals, then exposes it as `window.pypad_run`. Run `npm run icons` to regenerate icons from source SVG.
