@@ -12,7 +12,8 @@
 }
 
 .editor-container .cm-editor {
-  height: 100vh;
+  /* height: calc(100vh - 64px); */
+  height: 300px;
   font-size: 0.9375rem;
 }
 
