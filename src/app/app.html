@@ -3,13 +3,8 @@
     <span class="app-title">PyPad</span>
     <span class="toolbar-spacer"></span>
 
-    <mat-button-toggle-group
-      class="layout-toggle"
-      [value]="layout()"
-      (change)="setLayout($event.value)"
-      hideSingleSelectionIndicator
-      aria-label="Layout mode"
-    >
+    <mat-button-toggle-group class="layout-toggle" [value]="layout()" (change)="setLayout($event.value)"
+      hideSingleSelectionIndicator aria-label="Layout mode">
       <mat-button-toggle value="editor" matTooltip="Editor only" aria-label="Editor only">
         <mat-icon>code</mat-icon>
       </mat-button-toggle>
@@ -21,12 +16,7 @@
       </mat-button-toggle>
     </mat-button-toggle-group>
 
-    <button
-      mat-icon-button
-      (click)="theme.toggle()"
-      [matTooltip]="themeTooltip()"
-      [attr.aria-label]="themeTooltip()"
-    >
+    <button mat-icon-button (click)="theme.toggle()" [matTooltip]="themeTooltip()" [attr.aria-label]="themeTooltip()">
       <mat-icon>{{ themeIcon() }}</mat-icon>
     </button>
   </mat-toolbar>
@@ -34,28 +24,16 @@
 
 <main class="app-workspace" [style.--split-ratio]="splitRatio()" #workspace>
   <section class="editor-pane" [style.flex]="splitRatio()" aria-label="Code editor">
-    <app-editor
-      [initialCode]="initialCode"
-      [isDark]="theme.effectiveIsDark()"
-      (codeChange)="onCodeChange($event)"
-    />
+    <app-editor [initialCode]="initialCode" [isDark]="theme.effectiveIsDark()" (codeChange)="onCodeChange($event)" />
   </section>
 
-  <div
-    class="pane-divider"
-    role="separator"
-    aria-orientation="horizontal"
-    aria-label="Resize panels"
-    (pointerdown)="onDividerPointerDown($event)"
-  ></div>
+  <div class="pane-divider" role="separator" aria-orientation="horizontal" aria-label="Resize panels"
+    (pointerdown)="onDividerPointerDown($event)"></div>
 
   <section class="console-pane" [style.flex]="1 - splitRatio()" aria-label="Output panel">
     <mat-tab-group class="panel-tabs" animationDuration="150ms">
       <mat-tab label="Output">
         <app-console [lines]="outputLines()" (clear)="outputLines.set([])" />
-      </mat-tab>
-      <mat-tab label="AI">
-        <div class="tab-placeholder">AI coding support — coming in Phase 5</div>
       </mat-tab>
       <mat-tab label="REPL">
         <div class="tab-placeholder">Interactive REPL — coming in Phase 4</div>
@@ -67,13 +45,7 @@
   </section>
 </main>
 
-<button
-  mat-fab
-  class="run-fab"
-  (click)="runCode()"
-  [disabled]="!runner.isReady()"
-  [matTooltip]="runner.isReady() ? 'Run (Ctrl+R)' : 'Loading MicroPython…'"
-  aria-label="Run Python code"
->
+<button mat-fab class="run-fab" (click)="runCode()" [disabled]="!runner.isReady()"
+  [matTooltip]="runner.isReady() ? 'Run (Ctrl+R)' : 'Loading MicroPython…'" aria-label="Run Python code">
   <mat-icon aria-hidden="true">{{ runner.isReady() ? 'play_arrow' : 'hourglass_empty' }}</mat-icon>
 </button>
