@@ -7,14 +7,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
     <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32x32.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&amp;family=Roboto+Mono:wght@400;500&amp;display=swap"
-      rel="stylesheet"
-    />
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-    <script type="module" src="pyscript/core.js"></script>
+    <script>
+      const s = document.createElement('script');
+      s.type = 'module';
+      s.src = 'pyscript/core.js';
+      document.head.appendChild(s);
+    </script>
     <script type="mpy">
       import js
 
