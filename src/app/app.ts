@@ -84,6 +84,13 @@ export class App {
   );
   protected readonly showDivider = computed(() => this.layout() === 'both');
 
+  protected setLayout(mode: LayoutMode): void {
+    this.layout.set(mode);
+    if (mode === 'editor') this.splitRatio.set(1);
+    else if (mode === 'panel') this.splitRatio.set(0);
+    else this.splitRatio.set(0.65);
+  }
+
   protected onCodeChange(code: string): void {
     this.currentCode.set(code);
     this.storage.save(code);
@@ -93,8 +100,8 @@ export class App {
     this.storage.flush();
     const lines = this.runner.run(this.currentCode());
     this.outputLines.set(lines);
-    // Switch to panel so the user sees the output.
-    if (this.layout() === 'editor') this.layout.set('both');
+    // Switch to 'both' so the user sees the output.
+    if (this.layout() === 'editor') this.setLayout('both');
   }
 
   protected onKeyDown(e: KeyboardEvent): void {

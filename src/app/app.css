@@ -68,7 +68,7 @@
 .console-pane {
   display: flex;
   flex-direction: column;
-  min-height: 80px;
+  min-height: 0;
   overflow: hidden;
 }
 

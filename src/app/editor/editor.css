@@ -14,9 +14,8 @@
 
 .editor-container .cm-editor {
   height: calc(
-    100dvh
-    - env(keyboard-inset-height, 0px)
-    - var(--mat-toolbar-standard-height, 64px)
+    (100dvh - env(keyboard-inset-height, 0px) - var(--mat-toolbar-standard-height, 64px) - 8px)
+    * var(--split-ratio, 1)
   );
   font-size: 0.9375rem;
 }

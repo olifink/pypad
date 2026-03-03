@@ -6,7 +6,7 @@
     <mat-button-toggle-group
       class="layout-toggle"
       [value]="layout()"
-      (change)="layout.set($event.value)"
+      (change)="setLayout($event.value)"
       hideSingleSelectionIndicator
       aria-label="Layout mode"
     >
@@ -32,45 +32,39 @@
   </mat-toolbar>
 </header>
 
-<main class="app-workspace" #workspace>
-  @if (showEditor()) {
-    <section class="editor-pane" [style.flex]="layout() === 'both' ? splitRatio() : 1" aria-label="Code editor">
-      <app-editor
-        [initialCode]="initialCode"
-        [isDark]="theme.effectiveIsDark()"
-        (codeChange)="onCodeChange($event)"
-      />
-    </section>
-  }
+<main class="app-workspace" [style.--split-ratio]="splitRatio()" #workspace>
+  <section class="editor-pane" [style.flex]="splitRatio()" aria-label="Code editor">
+    <app-editor
+      [initialCode]="initialCode"
+      [isDark]="theme.effectiveIsDark()"
+      (codeChange)="onCodeChange($event)"
+    />
+  </section>
 
-  @if (showDivider()) {
-    <div
-      class="pane-divider"
-      role="separator"
-      aria-orientation="horizontal"
-      aria-label="Resize panels"
-      (pointerdown)="onDividerPointerDown($event)"
-    ></div>
-  }
+  <div
+    class="pane-divider"
+    role="separator"
+    aria-orientation="horizontal"
+    aria-label="Resize panels"
+    (pointerdown)="onDividerPointerDown($event)"
+  ></div>
 
-  @if (showPanel()) {
-    <section class="console-pane" [style.flex]="layout() === 'both' ? 1 - splitRatio() : 1" aria-label="Output panel">
-      <mat-tab-group class="panel-tabs" animationDuration="150ms">
-        <mat-tab label="Output">
-          <app-console [lines]="outputLines()" (clear)="outputLines.set([])" />
-        </mat-tab>
-        <mat-tab label="AI">
-          <div class="tab-placeholder">AI coding support — coming in Phase 5</div>
-        </mat-tab>
-        <mat-tab label="REPL">
-          <div class="tab-placeholder">Interactive REPL — coming in Phase 4</div>
-        </mat-tab>
-        <mat-tab label="Packages">
-          <div class="tab-placeholder">Package manager (mip) — coming in Phase 4</div>
-        </mat-tab>
-      </mat-tab-group>
-    </section>
-  }
+  <section class="console-pane" [style.flex]="1 - splitRatio()" aria-label="Output panel">
+    <mat-tab-group class="panel-tabs" animationDuration="150ms">
+      <mat-tab label="Output">
+        <app-console [lines]="outputLines()" (clear)="outputLines.set([])" />
+      </mat-tab>
+      <mat-tab label="AI">
+        <div class="tab-placeholder">AI coding support — coming in Phase 5</div>
+      </mat-tab>
+      <mat-tab label="REPL">
+        <div class="tab-placeholder">Interactive REPL — coming in Phase 4</div>
+      </mat-tab>
+      <mat-tab label="Packages">
+        <div class="tab-placeholder">Package manager (mip) — coming in Phase 4</div>
+      </mat-tab>
+    </mat-tab-group>
+  </section>
 </main>
 
 <button
