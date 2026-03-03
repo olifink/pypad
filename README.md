@@ -43,6 +43,7 @@ To provide a zero-install, offline-capable Python editor that feels like a nativ
 
 * [ ] **Installation:** "Add to Home Screen" support for Android and Chromebooks.
 * [ ] **Offline Mode:** Service Worker caching for WASM binaries and assets.
+* [ ] **Download File:** Button to quickly download the current file as `main.py` 
 * [ ] **URL Packaging:** Share snippets via LZ-compressed Base64 strings in the URL.
 
 ### Phase 4: Packages, REPL, and Debugging

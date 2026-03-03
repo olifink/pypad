@@ -1,4 +1,5 @@
 import sharp from 'sharp';
+import toIco from 'to-ico';
 import { writeFileSync, mkdirSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -40,7 +41,7 @@ async function makeMonoIcon(size, filename) {
   console.log(`✓ ${filename}`);
 }
 
-const SIZES = [72, 96, 128, 144, 152, 192, 256, 384, 512];
+const SIZES = [32, 72, 96, 128, 144, 152, 192, 256, 384, 512];
 
 console.log('Generating icons...');
 for (const size of SIZES) {
@@ -51,5 +52,26 @@ await makeIcon(192, LOGO_SVG, 'icon-maskable-192x192.png', 0.15);
 await makeIcon(512, LOGO_SVG, 'icon-maskable-512x512.png', 0.15);
 // Monochrome: white logo on transparent (Android themed icons)
 await makeMonoIcon(192, 'icon-monochrome-192x192.png');
-await makeMonoIcon(512, 'icon-monochrome-512x512.png');
+
+// favicon.ico — multi-size: 16, 32, 48px
+const icoSizes = [16, 32, 48];
+const icoBuffers = await Promise.all(
+  icoSizes.map((size) => {
+    const innerSize = Math.round(size * 0.8);
+    const offset = Math.round(size * 0.1);
+    return sharp(Buffer.from(LOGO_SVG))
+      .resize(innerSize, innerSize)
+      .toBuffer()
+      .then((logo) =>
+        sharp({ create: { width: size, height: size, channels: 4, background: BG } })
+          .composite([{ input: logo, top: offset, left: offset }])
+          .png()
+          .toBuffer(),
+      );
+  }),
+);
+const icoBuffer = await toIco(icoBuffers);
+writeFileSync(join(__dirname, '..', 'public', 'favicon.ico'), icoBuffer);
+console.log('✓ favicon.ico');
+
 console.log('Done!');
