@@ -2,17 +2,20 @@
   @if (lines().length === 0) {
     <p class="console-placeholder">Run your code to see output here.</p>
   } @else {
-    <button
-      mat-icon-button
-      class="clear-btn"
-      aria-label="Clear output"
-      matTooltip="Clear output"
-      (click)="clear.emit()"
-    >
-      <mat-icon>close</mat-icon>
-    </button>
     @for (line of lines(); track $index) {
       <div class="console-line">{{ line }}</div>
     }
   }
 </div>
+
+@if (lines().length > 0) {
+  <button
+    mat-icon-button
+    class="clear-btn"
+    aria-label="Clear output"
+    matTooltip="Clear output"
+    (click)="clear.emit()"
+  >
+    <mat-icon>close</mat-icon>
+  </button>
+}
