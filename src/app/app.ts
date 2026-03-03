@@ -24,8 +24,8 @@ const DEFAULT_CODE = `# Welcome to PyPad!
 print("Hello, PyPad!")
 `;
 
-const MIN_RATIO = 0.15;
-const MAX_RATIO = 0.85;
+const MIN_RATIO = 0;
+const MAX_RATIO = 1;
 
 export type LayoutMode = 'editor' | 'both' | 'panel';
 
