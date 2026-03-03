@@ -38,7 +38,6 @@ To provide a zero-install, offline-capable Python editor that feels like a nativ
 * [x] **Output UX:** Clear button appears top-right of Output when content is present.
 * [x] **Virtual Keyboard:** Viewport shrinks correctly when Android virtual keyboard is open (`VirtualKeyboardAPI` + `env(keyboard-inset-height)`); FAB repositions above keyboard.
 * [x] **Editor Scrolling:** Touch/gesture scroll inside the editor
-* [ ] **Sticky Accessory Bar:** Touch-friendly Python symbol bar above virtual keyboard.
 
 ### Phase 3: PWA & Sharing
 
@@ -56,7 +55,7 @@ To provide a zero-install, offline-capable Python editor that feels like a nativ
 
 * [ ] **API Key:** Encode with Web Crypto API and save to localStorage  
 * [ ] **Gemini Service:** An Angular service that initializes the GoogleGenerativeAI client using the stored key.
-* [ ] **AI Prompt**: tab to prompt AI generate and insert code at cursor or refactor code if selected
+* [ ] **AI Prompt**: Prompt AI generate and insert code at cursor or refactor code if selected
 
 ### Phase 6: Web Host Interaction
 
@@ -69,6 +68,7 @@ To provide a zero-install, offline-capable Python editor that feels like a nativ
 
 ### Parking lot
 
+* [ ] **Sticky Accessory Bar:** Touch-friendly Python symbol bar above virtual keyboard.
 * [ ] **Multi-file Support:** Tabbed interface for managing multiple `.py` snippets/files.
 
 ### Deferred

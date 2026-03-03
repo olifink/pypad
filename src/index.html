@@ -7,35 +7,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
     <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&family=Roboto+Mono:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&amp;family=Roboto+Mono:wght@400;500&amp;display=swap"
       rel="stylesheet"
     />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <script type="module" src="https://pyscript.net/releases/2026.2.1/core.js"></script>
     <script type="mpy">
-import js
+      import js
 
-def _pypad_run(code):
-    output = []
+      def _pypad_run(code):
+          output = []
 
-    def _print(*args, **kwargs):
-        sep = kwargs.get('sep', ' ')
-        end = kwargs.get('end', '\n')
-        output.append(sep.join(str(a) for a in args) + end)
+          def _print(*args, **kwargs):
+              sep = kwargs.get('sep', ' ')
+              end = kwargs.get('end', '\n')
+              output.append(sep.join(str(a) for a in args) + end)
 
-    try:
-        exec(code, {'__name__': '__main__', 'print': _print})
-    except Exception as e:
-        output.append(type(e).__name__ + ': ' + str(e) + '\n')
+          try:
+              exec(code, {'__name__': '__main__', 'print': _print})
+          except Exception as e:
+              output.append(type(e).__name__ + ': ' + str(e) + '\n')
 
-    return ''.join(output)
+          return ''.join(output)
 
-js.globalThis.pypad_run = _pypad_run
+      js.globalThis.pypad_run = _pypad_run
     </script>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="theme-color" content="#3776AB" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="PyPad" />
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png" />
   </head>
   <body>
     <app-root></app-root>
+    <noscript>Please enable JavaScript to continue using this application.</noscript>
   </body>
 </html>

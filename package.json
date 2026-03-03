@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "icons": "node scripts/generate-icons.mjs"
   },
   "private": true,
   "packageManager": "npm@11.11.0",
@@ -19,6 +20,7 @@
     "@angular/material": "~21.2.0",
     "@angular/platform-browser": "^21.2.0",
     "@angular/router": "^21.2.0",
+    "@angular/service-worker": "^21.2.0",
     "@codemirror/lang-python": "^6.2.1",
     "@fsegurai/codemirror-theme-material-dark": "^6.2.3",
     "@fsegurai/codemirror-theme-material-light": "^6.2.3",
@@ -33,6 +35,7 @@
     "@angular/material": "^21.2.0",
     "jsdom": "^28.0.0",
     "prettier": "^3.8.1",
+    "sharp": "^0.34.5",
     "typescript": "~5.9.2",
     "vitest": "^4.0.8"
   }
