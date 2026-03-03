@@ -8,16 +8,20 @@
 
 .editor-container {
   flex: 1;
-  overflow: auto;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .editor-container .cm-editor {
-  /* height: calc(100vh - 64px); */
-  height: 300px;
+  height: calc(
+    100dvh
+    - env(keyboard-inset-height, 0px)
+    - var(--mat-toolbar-standard-height, 64px)
+  );
   font-size: 0.9375rem;
 }
 
-.editor-container {
+.editor-container .cm-scroller {
   overflow: auto;
   font-family: var(--font-mono);
 }
