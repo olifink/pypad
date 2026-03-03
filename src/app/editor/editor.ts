@@ -11,6 +11,8 @@ import {
   viewChild,
 } from '@angular/core';
 import { EditorView, basicSetup } from 'codemirror';
+import { keymap } from "@codemirror/view"
+import { indentWithTab } from "@codemirror/commands"
 import { Compartment } from '@codemirror/state';
 import { python } from '@codemirror/lang-python';
 import { materialDark } from '@fsegurai/codemirror-theme-material-dark';
@@ -39,6 +41,7 @@ export class EditorComponent implements OnDestroy {
         doc: this.initialCode(),
         extensions: [
           basicSetup,
+          keymap.of([indentWithTab]),
           python(),
           this.themeCompartment.of(this.isDark() ? materialDark : materialLight),
           EditorView.updateListener.of((update) => {

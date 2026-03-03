@@ -37,7 +37,7 @@ To provide a zero-install, offline-capable Python editor that feels like a nativ
 * [x] **Panels:** Layout toggle button (Editor | Both | Panel); draggable splitter between panes.
 * [x] **Output UX:** Clear button appears top-right of Output when content is present.
 * [x] **Virtual Keyboard:** Viewport shrinks correctly when Android virtual keyboard is open (`VirtualKeyboardAPI` + `env(keyboard-inset-height)`); FAB repositions above keyboard.
-* [ ] **Editor Scrolling:** Touch/gesture scroll inside the editor (known CM6 height constraint issue — under investigation).
+* [x] **Editor Scrolling:** Touch/gesture scroll inside the editor
 * [ ] **Sticky Accessory Bar:** Touch-friendly Python symbol bar above virtual keyboard.
 
 ### Phase 3: PWA & Sharing
