@@ -1,6 +1,7 @@
 import {
   Component,
   ChangeDetectionStrategy,
+  DOCUMENT,
   ElementRef,
   computed,
   inject,
@@ -54,6 +55,7 @@ export type LayoutMode = 'editor' | 'both' | 'panel';
 })
 export class App {
   private readonly storage = inject(StorageService);
+  private readonly document = inject(DOCUMENT);
   protected readonly runner = inject(RunnerService);
   protected readonly theme = inject(ThemeService);
   private readonly _vk = inject(VirtualKeyboardService);
@@ -93,6 +95,16 @@ export class App {
     this.outputLines.set(lines);
     // Switch to 'both' so the user sees the output.
     if (this.layout() === 'editor') this.setLayout('both');
+  }
+
+  protected downloadCode(): void {
+    const blob = new Blob([this.currentCode()], { type: 'text/x-python' });
+    const url = URL.createObjectURL(blob);
+    const a = this.document.createElement('a');
+    a.href = url;
+    a.download = 'main.py';
+    a.click();
+    URL.revokeObjectURL(url);
   }
 
   protected onKeyDown(e: KeyboardEvent): void {

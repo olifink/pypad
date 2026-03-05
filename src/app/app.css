@@ -59,6 +59,12 @@
   font-size: 0.8125rem;
 }
 
+.sidenav-action {
+  justify-content: flex-start;
+  width: 100%;
+  padding-left: 0;
+}
+
 .app-toolbar {
   background-color: var(--mat-sys-surface-container);
   color: var(--mat-sys-on-surface);
