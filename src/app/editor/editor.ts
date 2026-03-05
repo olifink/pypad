@@ -60,6 +60,14 @@ export class EditorComponent implements OnDestroy {
     });
   }
 
+  setContent(code: string): void {
+    const view = this.editorView;
+    if (!view) return;
+    view.dispatch({
+      changes: { from: 0, to: view.state.doc.length, insert: code },
+    });
+  }
+
   ngOnDestroy(): void {
     this.editorView?.destroy();
   }

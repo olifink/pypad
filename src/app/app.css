@@ -5,6 +5,90 @@
   overflow: hidden;
 }
 
+.sidenav-container {
+  flex: 1;
+  min-height: 0;
+}
+
+.app-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.app-sidenav {
+  width: 296px;
+  background-color: var(--mat-sys-surface-container-low);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidenav-header {
+  display: flex;
+  align-items: center;
+  padding: 4px 4px 4px 16px;
+  flex-shrink: 0;
+}
+
+.sidenav-title {
+  flex: 1;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--mat-sys-on-surface);
+}
+
+.sidenav-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.sidenav-section {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sidenav-section--bottom {
+  margin-top: auto;
+}
+
+.sidenav-section-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.sidenav-toggle-group {
+  align-self: flex-start;
+}
+
+.toggle-label {
+  margin-left: 6px;
+  font-size: 0.8125rem;
+}
+
+.sidenav-action {
+  justify-content: flex-start;
+  width: 100%;
+  padding-left: 0;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
 .app-toolbar {
   background-color: var(--mat-sys-surface-container);
   color: var(--mat-sys-on-surface);
@@ -14,6 +98,7 @@
 .app-title {
   font-size: 1.25rem;
   font-weight: 500;
+  margin-left: 4px;
 }
 
 .toolbar-spacer {

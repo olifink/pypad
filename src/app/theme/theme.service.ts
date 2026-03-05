@@ -27,15 +27,18 @@ export class ThemeService {
       .addEventListener('change', (e) => this.systemIsDark.set(e.matches));
   }
 
-  toggle(): void {
-    const next = CYCLE[(CYCLE.indexOf(this.mode()) + 1) % CYCLE.length];
-    this.mode.set(next);
-    this.apply(next);
+  setMode(mode: ThemeMode): void {
+    this.mode.set(mode);
+    this.apply(mode);
     try {
-      localStorage.setItem(STORAGE_KEY, next);
+      localStorage.setItem(STORAGE_KEY, mode);
     } catch {
       // ignore
     }
+  }
+
+  toggle(): void {
+    this.setMode(CYCLE[(CYCLE.indexOf(this.mode()) + 1) % CYCLE.length]);
   }
 
   private apply(mode: ThemeMode): void {

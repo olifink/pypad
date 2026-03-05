@@ -1,51 +1,110 @@
-<header>
-  <mat-toolbar class="app-toolbar">
-    <span class="app-title">PyPad</span>
-    <span class="toolbar-spacer"></span>
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav class="app-sidenav" [opened]="sidenavOpen()" (openedChange)="sidenavOpen.set($event)" mode="over">
+    <div class="sidenav-header">
+      <span class="sidenav-title">Settings</span>
+      <button mat-icon-button (click)="sidenavOpen.set(false)" aria-label="Close settings">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
 
-    <mat-button-toggle-group class="layout-toggle" [value]="layout()" (change)="setLayout($event.value)"
-      hideSingleSelectionIndicator aria-label="Layout mode">
-      <mat-button-toggle value="editor" matTooltip="Editor only" aria-label="Editor only">
-        <mat-icon>code</mat-icon>
-      </mat-button-toggle>
-      <mat-button-toggle value="both" matTooltip="Editor and panel" aria-label="Editor and panel">
-        <mat-icon>view_agenda</mat-icon>
-      </mat-button-toggle>
-      <mat-button-toggle value="panel" matTooltip="Panel only" aria-label="Panel only">
-        <mat-icon>dvr</mat-icon>
-      </mat-button-toggle>
-    </mat-button-toggle-group>
+    <mat-divider />
 
-    <button mat-icon-button (click)="theme.toggle()" [matTooltip]="themeTooltip()" [attr.aria-label]="themeTooltip()">
-      <mat-icon>{{ themeIcon() }}</mat-icon>
-    </button>
-  </mat-toolbar>
-</header>
+    <div class="sidenav-body">
+      <div class="sidenav-section">
+        <div class="sidenav-section-label">File</div>
+        <button mat-button class="sidenav-action" (click)="newFile()">
+          <mat-icon>add</mat-icon>
+          New file
+        </button>
+        <button mat-button class="sidenav-action" (click)="openFile()" matTooltip="Ctrl+O">
+          <mat-icon>folder_open</mat-icon>
+          Open file
+        </button>
+        <button mat-button class="sidenav-action" (click)="downloadCode()">
+          <mat-icon>download</mat-icon>
+          Download file
+        </button>
+      </div>
 
-<main class="app-workspace" [style.--split-ratio]="splitRatio()" #workspace>
-  <section class="editor-pane" [style.flex]="splitRatio()" aria-label="Code editor">
-    <app-editor [initialCode]="initialCode" [isDark]="theme.effectiveIsDark()" (codeChange)="onCodeChange($event)" />
-  </section>
+      <div class="sidenav-section sidenav-section--bottom">
+        <mat-divider />
+        <div class="sidenav-section-label">Appearance</div>
+        <mat-button-toggle-group
+          class="sidenav-toggle-group"
+          [value]="theme.mode()"
+          (change)="theme.setMode($event.value)"
+          hideSingleSelectionIndicator
+          aria-label="Theme">
+          <mat-button-toggle value="light" aria-label="Light mode">
+            <mat-icon>light_mode</mat-icon>
+            <span class="toggle-label">Light</span>
+          </mat-button-toggle>
+          <mat-button-toggle value="dark" aria-label="Dark mode">
+            <mat-icon>dark_mode</mat-icon>
+            <span class="toggle-label">Dark</span>
+          </mat-button-toggle>
+          <mat-button-toggle value="system" aria-label="System theme">
+            <mat-icon>brightness_auto</mat-icon>
+            <span class="toggle-label">System</span>
+          </mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+    </div>
+  </mat-sidenav>
 
-  <div class="pane-divider" role="separator" aria-orientation="horizontal" aria-label="Resize panels"
-    (pointerdown)="onDividerPointerDown($event)"></div>
+  <mat-sidenav-content>
+    <input #fileInput type="file" accept=".py,.txt" class="visually-hidden" (change)="onFileSelected($event)">
+    <div class="app-content">
+      <header>
+        <mat-toolbar class="app-toolbar">
+          <button mat-icon-button (click)="sidenavOpen.set(true)" aria-label="Open settings">
+            <mat-icon>menu</mat-icon>
+          </button>
+          <span class="app-title">PyPad</span>
+          <span class="toolbar-spacer"></span>
 
-  <section class="console-pane" [style.flex]="1 - splitRatio()" aria-label="Output panel">
-    <mat-tab-group class="panel-tabs" animationDuration="150ms">
-      <mat-tab label="Output">
-        <app-console [lines]="outputLines()" (clear)="outputLines.set([])" />
-      </mat-tab>
-      <mat-tab label="REPL">
-        <div class="tab-placeholder">Interactive REPL — coming in Phase 4</div>
-      </mat-tab>
-      <mat-tab label="Packages">
-        <div class="tab-placeholder">Package manager (mip) — coming in Phase 4</div>
-      </mat-tab>
-    </mat-tab-group>
-  </section>
-</main>
+          <mat-button-toggle-group class="layout-toggle" [value]="layout()" (change)="setLayout($event.value)"
+            hideSingleSelectionIndicator aria-label="Layout mode">
+            <mat-button-toggle value="editor" matTooltip="Editor only" aria-label="Editor only">
+              <mat-icon>code</mat-icon>
+            </mat-button-toggle>
+            <mat-button-toggle value="both" matTooltip="Editor and panel" aria-label="Editor and panel">
+              <mat-icon>view_agenda</mat-icon>
+            </mat-button-toggle>
+            <mat-button-toggle value="panel" matTooltip="Panel only" aria-label="Panel only">
+              <mat-icon>dvr</mat-icon>
+            </mat-button-toggle>
+          </mat-button-toggle-group>
+        </mat-toolbar>
+      </header>
 
-<button mat-fab class="run-fab" (click)="runCode()" [disabled]="!runner.isReady()"
-  [matTooltip]="runner.isReady() ? 'Run (Ctrl+R)' : 'Loading MicroPython…'" aria-label="Run Python code">
-  <mat-icon aria-hidden="true">{{ runner.isReady() ? 'play_arrow' : 'hourglass_empty' }}</mat-icon>
-</button>
+      <main class="app-workspace" [style.--split-ratio]="splitRatio()" #workspace>
+        <section class="editor-pane" [style.flex]="splitRatio()" aria-label="Code editor">
+          <app-editor [initialCode]="initialCode" [isDark]="theme.effectiveIsDark()" (codeChange)="onCodeChange($event)" />
+        </section>
+
+        <div class="pane-divider" role="separator" aria-orientation="horizontal" aria-label="Resize panels"
+          (pointerdown)="onDividerPointerDown($event)"></div>
+
+        <section class="console-pane" [style.flex]="1 - splitRatio()" aria-label="Output panel">
+          <mat-tab-group class="panel-tabs" animationDuration="150ms">
+            <mat-tab label="Output">
+              <app-console [lines]="outputLines()" (clear)="outputLines.set([])" />
+            </mat-tab>
+            <mat-tab label="REPL">
+              <div class="tab-placeholder">Interactive REPL — coming in Phase 4</div>
+            </mat-tab>
+            <mat-tab label="Packages">
+              <div class="tab-placeholder">Package manager (mip) — coming in Phase 4</div>
+            </mat-tab>
+          </mat-tab-group>
+        </section>
+      </main>
+
+      <button mat-fab class="run-fab" (click)="runCode()" [disabled]="!runner.isReady()"
+        [matTooltip]="runner.isReady() ? 'Run (Ctrl+R)' : 'Loading MicroPython…'" aria-label="Run Python code">
+        <mat-icon aria-hidden="true">{{ runner.isReady() ? 'play_arrow' : 'hourglass_empty' }}</mat-icon>
+      </button>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
