@@ -10,7 +10,9 @@ import {
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { EditorComponent } from './editor/editor';
@@ -36,7 +38,9 @@ export type LayoutMode = 'editor' | 'both' | 'panel';
     MatToolbarModule,
     MatButtonModule,
     MatButtonToggleModule,
+    MatDividerModule,
     MatIconModule,
+    MatSidenavModule,
     MatTooltipModule,
     MatTabsModule,
     EditorComponent,
@@ -54,23 +58,10 @@ export class App {
   protected readonly theme = inject(ThemeService);
   private readonly _vk = inject(VirtualKeyboardService);
 
-  protected readonly themeIcon = computed(() => {
-    const icons = { light: 'light_mode', dark: 'dark_mode', system: 'brightness_auto' } as const;
-    return icons[this.theme.mode()];
-  });
-
-  protected readonly themeTooltip = computed(() => {
-    const labels = {
-      light: 'Light mode — click for dark',
-      dark: 'Dark mode — click for system',
-      system: 'System theme — click for light',
-    } as const;
-    return labels[this.theme.mode()];
-  });
-
   private readonly workspaceRef = viewChild.required<ElementRef<HTMLElement>>('workspace');
 
   protected readonly initialCode = this.storage.load() ?? DEFAULT_CODE;
+  protected readonly sidenavOpen = signal(false);
   protected readonly outputLines = signal<string[]>([]);
   protected readonly splitRatio = signal(0.65);
   protected readonly layout = signal<LayoutMode>('both');
