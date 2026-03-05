@@ -18,14 +18,17 @@
 }
 
 .app-sidenav {
-  width: 280px;
+  width: 296px;
   background-color: var(--mat-sys-surface-container-low);
+  display: flex;
+  flex-direction: column;
 }
 
 .sidenav-header {
   display: flex;
   align-items: center;
   padding: 4px 4px 4px 16px;
+  flex-shrink: 0;
 }
 
 .sidenav-title {
@@ -35,11 +38,23 @@
   color: var(--mat-sys-on-surface);
 }
 
+.sidenav-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  min-height: 0;
+}
+
 .sidenav-section {
   padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+.sidenav-section--bottom {
+  margin-top: auto;
 }
 
 .sidenav-section-label {
@@ -63,6 +78,15 @@
   justify-content: flex-start;
   width: 100%;
   padding-left: 0;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
 }
 
 .app-toolbar {

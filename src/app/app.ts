@@ -16,12 +16,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialog } from '@angular/material/dialog';
 import { EditorComponent } from './editor/editor';
 import { ConsoleComponent } from './console/console';
 import { StorageService } from './storage/storage.service';
 import { RunnerService } from './runner/runner.service';
 import { ThemeService } from './theme/theme.service';
 import { VirtualKeyboardService } from './virtual-keyboard/virtual-keyboard.service';
+import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog';
 
 const DEFAULT_CODE = `# Welcome to PyPad!
 print("Hello, PyPad!")
@@ -56,11 +58,14 @@ export type LayoutMode = 'editor' | 'both' | 'panel';
 export class App {
   private readonly storage = inject(StorageService);
   private readonly document = inject(DOCUMENT);
+  private readonly dialog = inject(MatDialog);
   protected readonly runner = inject(RunnerService);
   protected readonly theme = inject(ThemeService);
   private readonly _vk = inject(VirtualKeyboardService);
 
   private readonly workspaceRef = viewChild.required<ElementRef<HTMLElement>>('workspace');
+  private readonly fileInputRef = viewChild.required<ElementRef<HTMLInputElement>>('fileInput');
+  private readonly editorRef = viewChild.required(EditorComponent);
 
   protected readonly initialCode = this.storage.load() ?? DEFAULT_CODE;
   protected readonly sidenavOpen = signal(false);
@@ -97,6 +102,23 @@ export class App {
     if (this.layout() === 'editor') this.setLayout('both');
   }
 
+  protected newFile(): void {
+    this.dialog
+      .open(ConfirmDialogComponent, {
+        data: {
+          title: 'New file',
+          message: 'Your current code will be replaced.',
+          confirmLabel: 'New file',
+        },
+      })
+      .afterClosed()
+      .subscribe((confirmed: boolean) => {
+        if (!confirmed) return;
+        this.editorRef().setContent(DEFAULT_CODE);
+        this.sidenavOpen.set(false);
+      });
+  }
+
   protected downloadCode(): void {
     const blob = new Blob([this.currentCode()], { type: 'text/x-python' });
     const url = URL.createObjectURL(blob);
@@ -105,6 +127,23 @@ export class App {
     a.download = 'main.py';
     a.click();
     URL.revokeObjectURL(url);
+  }
+
+  protected openFile(): void {
+    this.sidenavOpen.set(false);
+    this.fileInputRef().nativeElement.click();
+  }
+
+  protected onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.editorRef().setContent(reader.result as string);
+      input.value = '';
+    };
+    reader.readAsText(file);
   }
 
   protected onKeyDown(e: KeyboardEvent): void {
@@ -117,6 +156,9 @@ export class App {
     } else if (e.key === 'r') {
       e.preventDefault();
       if (this.runner.isReady()) this.runCode();
+    } else if (e.key === 'o') {
+      e.preventDefault();
+      this.openFile();
     }
   }
 
