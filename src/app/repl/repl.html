@@ -1,0 +1,6 @@
+@if (!replService.isReady()) {
+  <div class="repl-loading" role="status" aria-live="polite">
+    <span>Loading MicroPython…</span>
+  </div>
+}
+<div #terminal class="repl-terminal" aria-label="MicroPython REPL terminal"></div>

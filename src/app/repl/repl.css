@@ -1,0 +1,34 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.repl-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 0.875rem;
+  font-style: italic;
+  flex-shrink: 0;
+}
+
+.repl-terminal {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  /* xterm.js needs a block-level container with defined dimensions */
+  display: block;
+}
+
+/* Ensure xterm's viewport fills the container */
+.repl-terminal ::ng-deep .xterm {
+  height: 100%;
+}
+
+.repl-terminal ::ng-deep .xterm-viewport {
+  overflow-y: auto;
+}

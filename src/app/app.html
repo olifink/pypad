@@ -92,7 +92,7 @@
               <app-console [lines]="outputLines()" (clear)="outputLines.set([])" />
             </mat-tab>
             <mat-tab label="REPL">
-              <div class="tab-placeholder">Interactive REPL — coming in Phase 4</div>
+              <app-repl [isDark]="theme.effectiveIsDark()" />
             </mat-tab>
             <mat-tab label="Packages">
               <div class="tab-placeholder">Package manager (mip) — coming in Phase 4</div>

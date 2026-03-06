@@ -1,0 +1,159 @@
+import { Injectable, DOCUMENT, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { interval } from 'rxjs';
+import { filter, take } from 'rxjs/operators';
+
+/** Minimal typings for the xterm.js Terminal (bundled inside public/pyscript/). */
+interface XTerminal {
+  onData(handler: (data: string) => void): void;
+  write(data: string | Uint8Array): void;
+  open(el: HTMLElement): void;
+  focus(): void;
+  dispose(): void;
+  options: Record<string, unknown>;
+}
+interface FitAddon {
+  activate(terminal: XTerminal): void;
+  fit(): void;
+}
+interface XTermModule {
+  Terminal: new (options?: Record<string, unknown>) => XTerminal;
+}
+interface FitAddonModule {
+  FitAddon: new () => FitAddon;
+}
+
+/** JS objects exposed by PyScript when the MicroPython WASM runtime is ready. */
+declare global {
+  interface Window {
+    pypad_interpreter?: {
+      replInit(): void;
+      replProcessChar(byte: number): void;
+    };
+    pypad_io?: {
+      stdout: ((data: Uint8Array) => void) | null;
+    };
+  }
+}
+
+@Injectable({ providedIn: 'root' })
+export class ReplService {
+  private readonly doc = inject(DOCUMENT);
+  private readonly destroyRef = inject(DestroyRef);
+
+  /** True once `window.pypad_interpreter` is available. */
+  readonly isReady = signal(false);
+
+  /** The xterm FitAddon instance, available after `startRepl()` resolves. */
+  fitAddon: FitAddon | null = null;
+
+  private terminal: XTerminal | null = null;
+
+  constructor() {
+    const win = this.doc.defaultView as Window;
+    if (win.pypad_interpreter) {
+      this.isReady.set(true);
+    } else {
+      interval(200)
+        .pipe(
+          filter(() => !!win.pypad_interpreter),
+          take(1),
+          takeUntilDestroyed(this.destroyRef),
+        )
+        .subscribe(() => this.isReady.set(true));
+    }
+  }
+
+  /**
+   * Initialises an xterm.js terminal inside `hostEl` and connects it to the
+   * MicroPython REPL. Safe to call only once. Resolves after the terminal is ready.
+   */
+  async startRepl(hostEl: HTMLElement, isDark: boolean): Promise<void> {
+    const win = this.doc.defaultView as Window;
+    const interpreter = win.pypad_interpreter;
+    const io = win.pypad_io;
+    if (!interpreter || !io) return;
+
+    // Inject xterm.css once.
+    const cssHref = './pyscript/xterm.css';
+    if (!this.doc.querySelector(`link[href="${cssHref}"]`)) {
+      const link = this.doc.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = cssHref;
+      this.doc.head.appendChild(link);
+    }
+
+    // Dynamic-import xterm and FitAddon from PyScript's local bundles.
+    const baseUrl = `${location.origin}/pyscript/`;
+    const xtermFiles = this._resolveXtermFiles(baseUrl);
+
+    const [{ Terminal }, { FitAddon }] = await Promise.all([
+      import(/* @vite-ignore */ xtermFiles.xterm) as Promise<XTermModule>,
+      import(/* @vite-ignore */ xtermFiles.fitAddon) as Promise<FitAddonModule>,
+    ]);
+
+    const theme = this._themeFor(isDark);
+
+    const terminal = new Terminal({
+      cursorBlink: true,
+      cursorStyle: 'block',
+      fontSize: 14,
+      fontFamily: '"Roboto Mono", "Courier New", monospace',
+      lineHeight: 1.4,
+      theme,
+      convertEol: false,
+    });
+
+    const fit = new FitAddon();
+    fit.activate(terminal);
+    this.fitAddon = fit;
+
+    terminal.open(hostEl);
+    fit.fit();
+    terminal.focus();
+    this.terminal = terminal;
+
+    // Route MicroPython stdout → terminal (convert bare LF to CRLF).
+    const cr = new Uint8Array([13]);
+    io.stdout = (data: Uint8Array) => {
+      if (data[0] === 10) terminal.write(cr);
+      terminal.write(data);
+    };
+
+    // Start the MicroPython REPL state machine.
+    interpreter.replInit();
+
+    // Route terminal keystrokes → MicroPython byte-by-byte.
+    const encoder = new TextEncoder();
+    terminal.onData((chars: string) => {
+      const bytes = encoder.encode(chars);
+      for (const byte of bytes) {
+        interpreter.replProcessChar(byte);
+      }
+    });
+  }
+
+  /** Updates the terminal colour scheme without restarting the REPL. */
+  setTheme(isDark: boolean): void {
+    if (this.terminal) {
+      this.terminal.options['theme'] = this._themeFor(isDark);
+    }
+  }
+
+  private _themeFor(isDark: boolean): Record<string, string> {
+    return isDark
+      ? { background: '#1e1e1e', foreground: '#d4d4d4' }
+      : { background: '#ffffff', foreground: '#1e1e1e', cursor: '#1e1e1e' };
+  }
+
+  /**
+   * Returns the hashed filenames for the xterm bundles.
+   * Update these filenames when upgrading pyscript.
+   */
+  private _resolveXtermFiles(baseUrl: string): { xterm: string; fitAddon: string } {
+    return {
+      xterm: `${baseUrl}xterm-DrSYbXEP.js`,
+      fitAddon: `${baseUrl}xterm_addon-fit-DxKdSnof.js`,
+    };
+  }
+}
