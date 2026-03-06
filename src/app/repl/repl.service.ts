@@ -83,8 +83,9 @@ export class ReplService {
       this.doc.head.appendChild(link);
     }
 
-    // Dynamic-import xterm and FitAddon from PyScript's local bundles.
-    const baseUrl = `${location.origin}/pyscript/`;
+    // Resolve pyscript files relative to the document's base URL so that
+    // sub-path deployments (e.g. GitHub Pages /pypad/) are handled correctly.
+    const baseUrl = new URL('pyscript/', this.doc.baseURI).href;
     const xtermFiles = this._resolveXtermFiles(baseUrl);
 
     const [{ Terminal }, { FitAddon }] = await Promise.all([
