@@ -43,12 +43,12 @@ To provide a zero-install, offline-capable Python editor that feels like a nativ
 
 * [x] **Installation:** PWA manifest + service worker; "Add to Home Screen" support for Android and Chromebooks. Full icon set (regular, maskable, monochrome).
 * [x] **Offline Mode:** MicroPython WASM runtime self-hosted in `public/pyscript/`; all fonts (Roboto, Roboto Mono, Material Icons) bundled locally. Zero external dependencies at runtime.
-* [ ] **Download File:** Button to quickly download the current file as `main.py`.
+* [x] **Download File:** Button to quickly download the current file as `main.py`.
 * [ ] **URL Packaging:** Share snippets via LZ-compressed Base64 strings in the URL.
 
 ### Phase 4: Packages, REPL, and Debugging
 
-* [ ] **Integrated REPL Overlay:** REPL tab using **Xterm.js** terminal.
+* [x] **Integrated REPL:** Interactive MicroPython REPL in the panel tab using the xterm.js terminal that is already bundled with PyScript — no extra npm dependencies. Supports dark/light theming.
 * [ ] **Dependency Management (`mip`):** Packages tab find and use libraries from the `micropython-lib`.
 * [ ] **Package Bundling:** Update the "Share" logic to include a list of required packages in the URL so shared snippets automatically "install" their dependencies on first run.
 
@@ -89,7 +89,9 @@ To provide a zero-install, offline-capable Python editor that feels like a nativ
 | --- | --- | --- |
 | `EditorComponent` | `src/app/editor/` | CodeMirror 6 instance; `isDark` input swaps Material theme via `Compartment`; emits `codeChange`; `ResizeObserver` tracks container height. |
 | `ConsoleComponent` | `src/app/console/` | Scrollable monospace output panel; accepts `lines: string[]` input; auto-scrolls to bottom; clear button. |
+| `ReplComponent` | `src/app/repl/` | Hosts the xterm.js terminal for the interactive REPL tab; lazy-inits on first render; `ResizeObserver` keeps the terminal sized to its container. |
 | `RunnerService` | `src/app/runner/` | Polls for `window.pypad_run`; exposes `isReady` signal and `run(code)`. |
+| `ReplService` | `src/app/repl/` | Polls for `window.pypad_interpreter`; `startRepl(el, isDark)` dynamically imports xterm.js from PyScript's local bundle, wires `io.stdout` → terminal and terminal keystrokes → `replProcessChar`; `setTheme(isDark)` for live theme switching. |
 | `StorageService` | `src/app/storage/` | Debounced `save()` + immediate `flush()` to `localStorage` key `pypad_code`. |
 | `ThemeService` | `src/app/theme/` | Three-way `light`/`dark`/`system` toggle; `effectiveIsDark` computed signal; persists to `localStorage`. |
 | `VirtualKeyboardService` | `src/app/virtual-keyboard/` | Opts into Virtual Keyboard API (`overlaysContent = true`); CSS `env(keyboard-inset-height)` shrinks the viewport. |
@@ -106,5 +108,7 @@ The MicroPython runtime is self-hosted under `public/pyscript/` (copied from the
   document.head.appendChild(s);
 </script>
 ```
+
+A second inline `<script>` (regular, not `type="module"`) imports `hooks` from `core.js` via a runtime-constructed URL and registers a `hooks.main.onReady` callback that stores the raw MicroPython `interpreter` and `io` objects on `globalThis` (`window.pypad_interpreter`, `window.pypad_io`). Using a plain script with a dynamic `import()` prevents Vite's static import analysis from trying to bundle the PyScript assets.
 
 An inline `<script type="mpy">` defines `_pypad_run(code)` which captures `print()` output by injecting a custom `print` into `exec` globals, then exposes it as `window.pypad_run`. Run `npm run icons` to regenerate icons from source SVG.
