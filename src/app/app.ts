@@ -74,6 +74,7 @@ export class App {
   protected readonly outputLines = signal<string[]>([]);
   protected readonly splitRatio = signal(0.65);
   protected readonly layout = signal<LayoutMode>('both');
+  protected readonly activePanelTab = signal(0);
   private readonly currentCode = signal(this.initialCode);
 
   protected readonly showEditor = computed(
@@ -100,6 +101,7 @@ export class App {
     this.storage.flush();
     const lines = this.runner.run(this.currentCode());
     this.outputLines.set(lines);
+    this.activePanelTab.set(0);
     // Switch to 'both' so the user sees the output.
     if (this.layout() === 'editor') this.setLayout('both');
   }

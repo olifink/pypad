@@ -87,7 +87,8 @@
           (pointerdown)="onDividerPointerDown($event)"></div>
 
         <section class="console-pane" [style.flex]="1 - splitRatio()" aria-label="Output panel">
-          <mat-tab-group class="panel-tabs" animationDuration="150ms">
+          <mat-tab-group class="panel-tabs" animationDuration="150ms"
+            [selectedIndex]="activePanelTab()" (selectedIndexChange)="activePanelTab.set($event)">
             <mat-tab label="Output">
               <app-console [lines]="outputLines()" (clear)="outputLines.set([])" />
             </mat-tab>
