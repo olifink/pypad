@@ -25,6 +25,13 @@ const SIMPLE_MODULES = ['math', 'sys', 'time', 'json', 'random'];
 /** Modules whose index page links to sub-pages we should also scrape. */
 const PAGED_MODULES = ['machine', 'network'];
 
+/**
+ * URL for the CPython built-in functions reference.
+ * Used to supplement MicroPython's minimal builtins page with complete
+ * signatures and descriptions.
+ */
+const CPYTHON_BUILTINS_URL = 'https://docs.python.org/3/library/functions.html';
+
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 /** Fetch a URL and return a jsdom Document. */
@@ -118,6 +125,34 @@ function discoverSubPages(doc, pattern) {
 async function main() {
   const docs = {};
   let pageCount = 0;
+
+  // --- Built-in functions: merge MicroPython stubs with CPython descriptions ---
+  console.log('Fetching builtins.html (MicroPython)…');
+  const mpyBuiltinsDoc = await fetchDoc(`${BASE}builtins.html`);
+  const mpyBuiltins = extractFromPage(mpyBuiltinsDoc, 'builtins.html');
+  pageCount++;
+  await sleep(300);
+
+  console.log('Fetching functions.html (CPython supplement)…');
+  const cpyDoc = await fetchDoc(CPYTHON_BUILTINS_URL);
+  const cpyEntries = extractFromPage(cpyDoc, 'functions.html');
+  // cpyEntries keys are unqualified names (abs, print, …) — same as mpyBuiltins keys.
+  // For each builtin, prefer CPython's richer signature/description but keep the
+  // MicroPython URL so the "Open docs" link stays relevant.
+  for (const [key, mpyEntry] of Object.entries(mpyBuiltins)) {
+    const cpy = cpyEntries[key];
+    if (cpy && (!mpyEntry.description || mpyEntry.signature === `${key}()`)) {
+      docs[key] = {
+        signature: cpy.signature,
+        description: cpy.description,
+        url: mpyEntry.url, // keep MicroPython link
+      };
+    } else {
+      docs[key] = mpyEntry;
+    }
+  }
+  pageCount++;
+  await sleep(300);
 
   // --- Simple single-page modules ---
   for (const mod of SIMPLE_MODULES) {

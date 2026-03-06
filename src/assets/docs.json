@@ -1,4 +1,419 @@
 {
+  "abs": {
+    "signature": "abs(number, /)",
+    "description": "Return the absolute value of a number. The argument may be an integer, a floating-point number, or an object implementing __abs__(). If the argument is a complex number, its magnitude is returned.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#abs"
+  },
+  "all": {
+    "signature": "all(iterable, /)",
+    "description": "Return True if all elements of the iterable are true (or if the iterable is empty). Equivalent to:",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#all"
+  },
+  "any": {
+    "signature": "any(iterable, /)",
+    "description": "Return True if any element of the iterable is true. If the iterable is empty, return False. Equivalent to:",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#any"
+  },
+  "bin": {
+    "signature": "bin(integer, /)",
+    "description": "Convert an integer number to a binary string prefixed with “0b”. The result is a valid Python expression. If integer is not a Python int object, it has to define an __index__() method that returns an integer. Some examples:",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#bin"
+  },
+  "bool": {
+    "signature": "class bool(object=False, /)",
+    "description": "Return a Boolean value, i.e. one of True or False. The argument is converted using the standard truth testing procedure. If the argument is false or omitted, this returns False; otherwise, it returns True. The bool class is a subclass of int (see Numeric Types — int, float, complex). It cannot be subclassed further. Its only instances are False and True (see Boolean Type - bool).",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#bool"
+  },
+  "bytearray": {
+    "signature": "class bytearray",
+    "description": "See CPython documentation: bytearray.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#bytearray"
+  },
+  "bytes": {
+    "signature": "class bytes",
+    "description": "See CPython documentation: bytes.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#bytes"
+  },
+  "callable": {
+    "signature": "callable(object, /)",
+    "description": "Return True if the object argument appears callable, False if not. If this returns True, it is still possible that a call fails, but if it is False, calling object will never succeed. Note that classes are callable (calling a class returns a new instance); instances are callable if their class has a __call__() method.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#callable"
+  },
+  "chr": {
+    "signature": "chr(codepoint, /)",
+    "description": "Return the string representing a character with the specified Unicode code point. For example, chr(97) returns the string 'a', while chr(8364) returns the string '€'. This is the inverse of ord().",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#chr"
+  },
+  "classmethod": {
+    "signature": "@classmethod",
+    "description": "Transform a method into a class method.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#classmethod"
+  },
+  "compile": {
+    "signature": "compile(source, filename, mode, flags=0, dont_inherit=False, optimize=-1)",
+    "description": "Compile the source into a code or AST object. Code objects can be executed by exec() or eval(). source can either be a normal string, a byte string, or an AST object. Refer to the ast module documentation for information on how to work with AST objects.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#compile"
+  },
+  "complex": {
+    "signature": "class complex(number=0, /)",
+    "description": "Convert a single string or number to a complex number, or create a complex number from real and imaginary parts.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#complex"
+  },
+  "delattr": {
+    "signature": "delattr(obj, name)",
+    "description": "The argument name should be a string, and this function deletes the named attribute from the object given by obj.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#delattr"
+  },
+  "dict": {
+    "signature": "class dict",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#dict"
+  },
+  "dir": {
+    "signature": "dir()",
+    "description": "Without arguments, return the list of names in the current local scope. With an argument, attempt to return a list of valid attributes for that object.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#dir"
+  },
+  "divmod": {
+    "signature": "divmod(a, b, /)",
+    "description": "Take two (non-complex) numbers as arguments and return a pair of numbers consisting of their quotient and remainder when using integer division. With mixed operand types, the rules for binary arithmetic operators apply. For integers, the result is the same as (a // b, a % b). For floating-point numbers the result is (q, a % b), where q is usually math.floor(a / b) but may be 1 less than that. In any case q * b + a % b is very close to a, if a % b is non-zero it has the same sign as b, and 0 <= abs(a % b) < abs(b).",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#divmod"
+  },
+  "enumerate": {
+    "signature": "enumerate(iterable, start=0)",
+    "description": "Return an enumerate object. iterable must be a sequence, an iterator, or some other object which supports iteration. The __next__() method of the iterator returned by enumerate() returns a tuple containing a count (from start which defaults to 0) and the values obtained from iterating over iterable.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#enumerate"
+  },
+  "eval": {
+    "signature": "eval(source, /, globals=None, locals=None)",
+    "description": "source (str | code object) – A Python expression.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#eval"
+  },
+  "exec": {
+    "signature": "exec(source, /, globals=None, locals=None, *, closure=None)",
+    "description": "Warning",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#exec"
+  },
+  "filter": {
+    "signature": "filter(function, iterable, /)",
+    "description": "Construct an iterator from those elements of iterable for which function is true. iterable may be either a sequence, a container which supports iteration, or an iterator. If function is None, the identity function is assumed, that is, all elements of iterable that are false are removed.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#filter"
+  },
+  "float": {
+    "signature": "class float(number=0.0, /)",
+    "description": "Return a floating-point number constructed from a number or a string.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#float"
+  },
+  "frozenset": {
+    "signature": "class frozenset",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#frozenset"
+  },
+  "getattr": {
+    "signature": "getattr(object, name, /)",
+    "description": "Return the value of the named attribute of object. name must be a string. If the string is the name of one of the object’s attributes, the result is the value of that attribute. For example, getattr(x, 'foobar') is equivalent to x.foobar. If the named attribute does not exist, default is returned if provided, otherwise AttributeError is raised. name need not be a Python identifier (see setattr()).",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#getattr"
+  },
+  "globals": {
+    "signature": "globals()",
+    "description": "Return the dictionary implementing the current module namespace. For code within functions, this is set when the function is defined and remains the same regardless of where the function is called.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#globals"
+  },
+  "hasattr": {
+    "signature": "hasattr(object, name, /)",
+    "description": "The arguments are an object and a string. The result is True if the string is the name of one of the object’s attributes, False if not. (This is implemented by calling getattr(object, name) and seeing whether it raises an AttributeError or not.)",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#hasattr"
+  },
+  "hash": {
+    "signature": "hash(object, /)",
+    "description": "Return the hash value of the object (if it has one). Hash values are integers. They are used to quickly compare dictionary keys during a dictionary lookup. Numeric values that compare equal have the same hash value (even if they are of different types, as is the case for 1 and 1.0).",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#hash"
+  },
+  "hex": {
+    "signature": "hex(integer, /)",
+    "description": "Convert an integer number to a lowercase hexadecimal string prefixed with “0x”. If integer is not a Python int object, it has to define an __index__() method that returns an integer. Some examples:",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#hex"
+  },
+  "id": {
+    "signature": "id(object, /)",
+    "description": "Return the “identity” of an object. This is an integer which is guaranteed to be unique and constant for this object during its lifetime. Two objects with non-overlapping lifetimes may have the same id() value.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#id"
+  },
+  "input": {
+    "signature": "input()",
+    "description": "If the prompt argument is present, it is written to standard output without a trailing newline. The function then reads a line from input, converts it to a string (stripping a trailing newline), and returns that. When EOF is read, EOFError is raised. Example:",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#input"
+  },
+  "int": {
+    "signature": "class int",
+    "description": "In MicroPython, byteorder parameter must be positional (this is compatible with CPython).",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#int"
+  },
+  "int.from_bytes": {
+    "signature": "classmethod from_bytes(bytes, byteorder)",
+    "description": "In MicroPython, byteorder parameter must be positional (this is compatible with CPython).",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#int.from_bytes"
+  },
+  "int.to_bytes": {
+    "signature": "to_bytes(size, byteorder)",
+    "description": "In MicroPython, byteorder parameter must be positional (this is compatible with CPython).",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#int.to_bytes"
+  },
+  "isinstance": {
+    "signature": "isinstance(object, classinfo, /)",
+    "description": "Return True if the object argument is an instance of the classinfo argument, or of a (direct, indirect, or virtual) subclass thereof. If object is not an object of the given type, the function always returns False. If classinfo is a tuple of type objects (or recursively, other such tuples) or a Union Type of multiple types, return True if object is an instance of any of the types. If classinfo is not a type or tuple of types and such tuples, a TypeError exception is raised. TypeError may not be raised for an invalid type if an earlier check succeeds.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#isinstance"
+  },
+  "issubclass": {
+    "signature": "issubclass(class, classinfo, /)",
+    "description": "Return True if class is a subclass (direct, indirect, or virtual) of classinfo. A class is considered a subclass of itself. classinfo may be a tuple of class objects (or recursively, other such tuples) or a Union Type, in which case return True if class is a subclass of any entry in classinfo. In any other case, a TypeError exception is raised.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#issubclass"
+  },
+  "iter": {
+    "signature": "iter(iterable, /)",
+    "description": "Return an iterator object. The first argument is interpreted very differently depending on the presence of the second argument. Without a second argument, the single argument must be a collection object which supports the iterable protocol (the __iter__() method), or it must support the sequence protocol (the __getitem__() method with integer arguments starting at 0). If it does not support either of those protocols, TypeError is raised. If the second argument, sentinel, is given, then the first argument must be a callable object. The iterator created in this case will call callable with no arguments for each call to its __next__() method; if the value returned is equal to sentinel, StopIteration will be raised, otherwise the value will be returned.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#iter"
+  },
+  "len": {
+    "signature": "len(object, /)",
+    "description": "Return the length (the number of items) of an object. The argument may be a sequence (such as a string, bytes, tuple, list, or range) or a collection (such as a dictionary, set, or frozen set).",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#len"
+  },
+  "list": {
+    "signature": "class list",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#list"
+  },
+  "locals": {
+    "signature": "locals()",
+    "description": "Return a mapping object representing the current local symbol table, with variable names as the keys, and their currently bound references as the values.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#locals"
+  },
+  "map": {
+    "signature": "map(function, iterable, /, *iterables, strict=False)",
+    "description": "Return an iterator that applies function to every item of iterable, yielding the results. If additional iterables arguments are passed, function must take that many arguments and is applied to the items from all iterables in parallel. With multiple iterables, the iterator stops when the shortest iterable is exhausted. If strict is True and one of the iterables is exhausted before the others, a ValueError is raised. For cases where the function inputs are already arranged into argument tuples, see itertools.starmap().",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#map"
+  },
+  "max": {
+    "signature": "max(iterable, /, *, key=None)",
+    "description": "Return the largest item in an iterable or the largest of two or more arguments.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#max"
+  },
+  "memoryview": {
+    "signature": "class memoryview",
+    "description": "See CPython documentation: memoryview.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#memoryview"
+  },
+  "min": {
+    "signature": "min(iterable, /, *, key=None)",
+    "description": "Return the smallest item in an iterable or the smallest of two or more arguments.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#min"
+  },
+  "next": {
+    "signature": "next(iterator, /)",
+    "description": "Retrieve the next item from the iterator by calling its __next__() method. If default is given, it is returned if the iterator is exhausted, otherwise StopIteration is raised.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#next"
+  },
+  "object": {
+    "signature": "class object",
+    "description": "This is the ultimate base class of all other classes. It has methods that are common to all instances of Python classes. When the constructor is called, it returns a new featureless object. The constructor does not accept any arguments.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#object"
+  },
+  "oct": {
+    "signature": "oct(integer, /)",
+    "description": "Convert an integer number to an octal string prefixed with “0o”. The result is a valid Python expression. If integer is not a Python int object, it has to define an __index__() method that returns an integer. For example:",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#oct"
+  },
+  "open": {
+    "signature": "open(file, mode='r', buffering=-1, encoding=None, errors=None, newline=None, closefd=True, opener=None)",
+    "description": "Open file and return a corresponding file object. If the file cannot be opened, an OSError is raised. See Reading and Writing Files for more examples of how to use this function.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#open"
+  },
+  "ord": {
+    "signature": "ord(character, /)",
+    "description": "Return the ordinal value of a character.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#ord"
+  },
+  "pow": {
+    "signature": "pow(base, exp, mod=None)",
+    "description": "Return base to the power exp; if mod is present, return base to the power exp, modulo mod (computed more efficiently than pow(base, exp) % mod). The two-argument form pow(base, exp) is equivalent to using the power operator: base**exp.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#pow"
+  },
+  "print": {
+    "signature": "print(*objects, sep=' ', end='\\n', file=None, flush=False)",
+    "description": "Print objects to the text stream file, separated by sep and followed by end. sep, end, file, and flush, if present, must be given as keyword arguments.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#print"
+  },
+  "property": {
+    "signature": "class property(fget=None, fset=None, fdel=None, doc=None)",
+    "description": "Return a property attribute.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#property"
+  },
+  "range": {
+    "signature": "range()",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#range"
+  },
+  "repr": {
+    "signature": "repr(object, /)",
+    "description": "Return a string containing a printable representation of an object. For many types, this function makes an attempt to return a string that would yield an object with the same value when passed to eval(); otherwise, the representation is a string enclosed in angle brackets that contains the name of the type of the object together with additional information often including the name and address of the object. A class can control what this function returns for its instances by defining a __repr__() method. If sys.displayhook() is not accessible, this function will raise RuntimeError.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#repr"
+  },
+  "reversed": {
+    "signature": "reversed(object, /)",
+    "description": "Return a reverse iterator. The argument must be an object which has a __reversed__() method or supports the sequence protocol (the __len__() method and the __getitem__() method with integer arguments starting at 0).",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#reversed"
+  },
+  "round": {
+    "signature": "round(number, ndigits=None)",
+    "description": "Return number rounded to ndigits precision after the decimal point. If ndigits is omitted or is None, it returns the nearest integer to its input.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#round"
+  },
+  "set": {
+    "signature": "class set",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#set"
+  },
+  "setattr": {
+    "signature": "setattr(object, name, value, /)",
+    "description": "This is the counterpart of getattr(). The arguments are an object, a string, and an arbitrary value. The string may name an existing attribute or a new attribute. The function assigns the value to the attribute, provided the object allows it. For example, setattr(x, 'foobar', 123) is equivalent to x.foobar = 123.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#setattr"
+  },
+  "slice": {
+    "signature": "class slice",
+    "description": "The slice builtin is the type that slice objects have.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#slice"
+  },
+  "sorted": {
+    "signature": "sorted(iterable, /, *, key=None, reverse=False)",
+    "description": "Return a new sorted list from the items in iterable.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#sorted"
+  },
+  "staticmethod": {
+    "signature": "@staticmethod",
+    "description": "Transform a method into a static method.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#staticmethod"
+  },
+  "str": {
+    "signature": "class str",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#str"
+  },
+  "sum": {
+    "signature": "sum(iterable, /, start=0)",
+    "description": "Sums start and the items of an iterable from left to right and returns the total. The iterable’s items are normally numbers, and the start value is not allowed to be a string.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#sum"
+  },
+  "super": {
+    "signature": "class super",
+    "description": "Return a proxy object that delegates method calls to a parent or sibling class of type. This is useful for accessing inherited methods that have been overridden in a class.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#super"
+  },
+  "tuple": {
+    "signature": "class tuple",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#tuple"
+  },
+  "type": {
+    "signature": "class type(object, /)",
+    "description": "With one argument, return the type of an object. The return value is a type object and generally the same object as returned by object.__class__.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#type"
+  },
+  "zip": {
+    "signature": "zip(*iterables, strict=False)",
+    "description": "Iterate over several iterables in parallel, producing tuples with an item from each one.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#zip"
+  },
+  "AssertionError": {
+    "signature": "exception AssertionError",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#AssertionError"
+  },
+  "AttributeError": {
+    "signature": "exception AttributeError",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#AttributeError"
+  },
+  "Exception": {
+    "signature": "exception Exception",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#Exception"
+  },
+  "ImportError": {
+    "signature": "exception ImportError",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#ImportError"
+  },
+  "IndexError": {
+    "signature": "exception IndexError",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#IndexError"
+  },
+  "KeyboardInterrupt": {
+    "signature": "exception KeyboardInterrupt",
+    "description": "See CPython documentation: KeyboardInterrupt.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#KeyboardInterrupt"
+  },
+  "KeyError": {
+    "signature": "exception KeyError",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#KeyError"
+  },
+  "MemoryError": {
+    "signature": "exception MemoryError",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#MemoryError"
+  },
+  "NameError": {
+    "signature": "exception NameError",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#NameError"
+  },
+  "NotImplementedError": {
+    "signature": "exception NotImplementedError",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#NotImplementedError"
+  },
+  "OSError": {
+    "signature": "exception OSError",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#OSError"
+  },
+  "RuntimeError": {
+    "signature": "exception RuntimeError",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#RuntimeError"
+  },
+  "StopIteration": {
+    "signature": "exception StopIteration",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#StopIteration"
+  },
+  "SyntaxError": {
+    "signature": "exception SyntaxError",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#SyntaxError"
+  },
+  "SystemExit": {
+    "signature": "exception SystemExit",
+    "description": "See CPython documentation: SystemExit.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#SystemExit"
+  },
+  "TypeError": {
+    "signature": "exception TypeError",
+    "description": "See CPython documentation: TypeError.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#TypeError"
+  },
+  "ValueError": {
+    "signature": "exception ValueError",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#ValueError"
+  },
+  "ZeroDivisionError": {
+    "signature": "exception ZeroDivisionError",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#ZeroDivisionError"
+  },
   "math.acos": {
     "signature": "math.acos(x)",
     "description": "Return the inverse cosine of x.",
