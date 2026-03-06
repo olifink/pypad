@@ -14,6 +14,19 @@
     s.src = 'pyscript/core.js';
     document.head.appendChild(s);
   </script>
+  <!-- Capture the MicroPython interpreter + io objects for the Angular REPL component.
+       Uses a regular script (not type="module") with a runtime-constructed URL so that
+       Vite's static import analysis never sees the pyscript path. -->
+  <script>
+    const coreUrl = new URL('./pyscript/core.js', document.baseURI).href;
+    import(coreUrl).then(({ hooks }) => {
+      hooks.main.onReady.add(function captureInterpreter({ interpreter, io }) {
+        hooks.main.onReady.delete(captureInterpreter);
+        globalThis.pypad_interpreter = interpreter;
+        globalThis.pypad_io = io;
+      });
+    });
+  </script>
   <script type="mpy">
       import js
 

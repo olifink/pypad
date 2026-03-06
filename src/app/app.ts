@@ -19,6 +19,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import { EditorComponent } from './editor/editor';
 import { ConsoleComponent } from './console/console';
+import { ReplComponent } from './repl/repl';
 import { StorageService } from './storage/storage.service';
 import { RunnerService } from './runner/runner.service';
 import { ThemeService } from './theme/theme.service';
@@ -48,6 +49,7 @@ export type LayoutMode = 'editor' | 'both' | 'panel';
     MatTabsModule,
     EditorComponent,
     ConsoleComponent,
+    ReplComponent,
   ],
   templateUrl: './app.html',
   styleUrl: './app.css',
