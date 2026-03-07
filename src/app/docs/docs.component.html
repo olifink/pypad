@@ -1,0 +1,19 @@
+<div class="docs-panel">
+  @if (!docsService.isLoaded()) {
+    <p class="docs-placeholder">Loading documentation…</p>
+  } @else if (docEntry()) {
+    <div class="docs-content">
+      <pre class="docs-signature">{{ docEntry()!.signature }}</pre>
+      <p class="docs-description">{{ docEntry()!.description }}</p>
+      <a class="docs-link" [href]="docEntry()!.url" target="_blank" rel="noopener noreferrer">
+        Open official docs ↗
+      </a>
+    </div>
+  } @else if (currentSymbol()) {
+    <p class="docs-empty">
+      No documentation available for <code class="docs-code">{{ currentSymbol() }}</code>
+    </p>
+  } @else {
+    <p class="docs-placeholder">Move the cursor over a symbol to see documentation.</p>
+  }
+</div>

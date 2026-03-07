@@ -2,7 +2,7 @@
  * build-docs.mjs
  *
  * Scrapes the MicroPython documentation from https://docs.micropython.org/en/latest/library/
- * and writes src/assets/docs.json — a flat map of fully-qualified symbol names to their
+ * and writes public/assets/docs.json — a flat map of fully-qualified symbol names to their
  * signature, one-line description, and deep-link URL.
  *
  * Usage:  node scripts/build-docs.mjs
@@ -15,7 +15,7 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const OUT_PATH = join(__dirname, '..', 'src', 'assets', 'docs.json');
+const OUT_PATH = join(__dirname, '..', 'public', 'assets', 'docs.json');
 
 const BASE = 'https://docs.micropython.org/en/latest/library/';
 

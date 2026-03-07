@@ -80,7 +80,7 @@
 
       <main class="app-workspace" [style.--split-ratio]="splitRatio()" #workspace>
         <section class="editor-pane" [style.flex]="splitRatio()" aria-label="Code editor">
-          <app-editor [initialCode]="initialCode" [isDark]="theme.effectiveIsDark()" (codeChange)="onCodeChange($event)" />
+          <app-editor [initialCode]="initialCode" [isDark]="theme.effectiveIsDark()" (codeChange)="onCodeChange($event)" (cursorChange)="onCursorChange($event)" />
         </section>
 
         <div class="pane-divider" role="separator" aria-orientation="horizontal" aria-label="Resize panels"
@@ -91,6 +91,9 @@
             [selectedIndex]="activePanelTab()" (selectedIndexChange)="activePanelTab.set($event)">
             <mat-tab label="Output">
               <app-console [lines]="outputLines()" (clear)="outputLines.set([])" />
+            </mat-tab>
+            <mat-tab label="Docs">
+              <app-docs [cursorInfo]="cursorInfo()" />
             </mat-tab>
             <mat-tab label="REPL">
               <app-repl [isDark]="theme.effectiveIsDark()" />

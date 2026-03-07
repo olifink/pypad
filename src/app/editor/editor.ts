@@ -12,6 +12,11 @@ import {
 } from '@angular/core';
 import { EditorView, basicSetup } from 'codemirror';
 import { keymap } from "@codemirror/view"
+
+export interface CursorInfo {
+  view: EditorView;
+  pos: number;
+}
 import { indentWithTab } from "@codemirror/commands"
 import { Compartment } from '@codemirror/state';
 import { python } from '@codemirror/lang-python';
@@ -30,6 +35,7 @@ export class EditorComponent implements OnDestroy {
   readonly initialCode = input('');
   readonly isDark = input(false);
   readonly codeChange = output<string>();
+  readonly cursorChange = output<CursorInfo>();
 
   private readonly container = viewChild.required<ElementRef<HTMLElement>>('container');
   private readonly themeCompartment = new Compartment();
@@ -47,6 +53,10 @@ export class EditorComponent implements OnDestroy {
           EditorView.updateListener.of((update) => {
             if (update.docChanged) {
               this.codeChange.emit(update.state.doc.toString());
+            }
+            if (update.selectionSet) {
+              const pos = update.state.selection.main.head;
+              this.cursorChange.emit({ view: update.view, pos });
             }
           }),
         ],
