@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   DOCUMENT,
   ElementRef,
+  afterNextRender,
   computed,
   inject,
   signal,
@@ -75,7 +76,15 @@ export class App {
   private readonly fileInputRef = viewChild.required<ElementRef<HTMLInputElement>>('fileInput');
   private readonly editorRef = viewChild.required(EditorComponent);
 
-  protected readonly initialCode = this.shareService.getSharedCode() ?? this.storage.load() ?? DEFAULT_CODE;
+  protected readonly initialCode = (() => {
+    const shared = this.shareService.getSharedCode();
+    if (shared) {
+      // Persist immediately so a subsequent reload uses localStorage, not the URL.
+      this.storage.save(shared);
+      return shared;
+    }
+    return this.storage.load() ?? DEFAULT_CODE;
+  })();
   protected readonly sidenavOpen = signal(false);
   protected readonly outputLines = signal<string[]>([]);
   protected readonly splitRatio = signal(0.65);
@@ -83,6 +92,12 @@ export class App {
   protected readonly activePanelTab = signal(0);
   protected readonly cursorInfo = signal<CursorInfo | null>(null);
   private readonly currentCode = signal(this.initialCode);
+
+  constructor() {
+    // Strip ?s= after Angular's router has completed its initial navigation,
+    // which may overwrite any earlier history.replaceState call.
+    afterNextRender(() => this.shareService.stripShareParam());
+  }
 
   protected readonly showEditor = computed(
     () => this.layout() === 'editor' || this.layout() === 'both',

@@ -20,6 +20,8 @@ export class ShareService {
   /**
    * Reads the `?s=` query param from the current location and decompresses it.
    * Returns `null` if the param is absent or the value is invalid.
+   * URL cleanup (stripping `?s=`) is handled separately by the caller after
+   * Angular's router has completed its initial navigation.
    */
   getSharedCode(): string | null {
     const encoded = new URLSearchParams(this.location.search).get('s');
@@ -29,5 +31,16 @@ export class ShareService {
     } catch {
       return null;
     }
+  }
+
+  /**
+   * Removes the `?s=` query param from the browser URL without triggering
+   * a navigation. Safe to call after Angular's router has settled.
+   */
+  stripShareParam(): void {
+    const url = new URL(this.location.href);
+    if (!url.searchParams.has('s')) return;
+    url.searchParams.delete('s');
+    history.replaceState(null, '', url.toString());
   }
 }
