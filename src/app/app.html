@@ -63,6 +63,10 @@
           <span class="app-title">PyPad</span>
           <span class="toolbar-spacer"></span>
 
+          <button mat-icon-button (click)="shareCode()" matTooltip="Share" aria-label="Share current file">
+            <mat-icon>share</mat-icon>
+          </button>
+
           <mat-button-toggle-group class="layout-toggle" [value]="layout()" (change)="setLayout($event.value)"
             hideSingleSelectionIndicator aria-label="Layout mode">
             <mat-button-toggle value="editor" matTooltip="Editor only" aria-label="Editor only">

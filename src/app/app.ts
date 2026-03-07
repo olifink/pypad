@@ -27,6 +27,8 @@ import { RunnerService } from './runner/runner.service';
 import { ThemeService } from './theme/theme.service';
 import { VirtualKeyboardService } from './virtual-keyboard/virtual-keyboard.service';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog';
+import { ShareService } from './share/share.service';
+import { ShareDialogComponent } from './share/share-dialog';
 
 const DEFAULT_CODE = `# Welcome to PyPad!
 print("Hello, PyPad!")
@@ -64,6 +66,7 @@ export class App {
   private readonly storage = inject(StorageService);
   private readonly document = inject(DOCUMENT);
   private readonly dialog = inject(MatDialog);
+  private readonly shareService = inject(ShareService);
   protected readonly runner = inject(RunnerService);
   protected readonly theme = inject(ThemeService);
   private readonly _vk = inject(VirtualKeyboardService);
@@ -72,7 +75,7 @@ export class App {
   private readonly fileInputRef = viewChild.required<ElementRef<HTMLInputElement>>('fileInput');
   private readonly editorRef = viewChild.required(EditorComponent);
 
-  protected readonly initialCode = this.storage.load() ?? DEFAULT_CODE;
+  protected readonly initialCode = this.shareService.getSharedCode() ?? this.storage.load() ?? DEFAULT_CODE;
   protected readonly sidenavOpen = signal(false);
   protected readonly outputLines = signal<string[]>([]);
   protected readonly splitRatio = signal(0.65);
@@ -139,6 +142,13 @@ export class App {
     a.download = 'main.py';
     a.click();
     URL.revokeObjectURL(url);
+  }
+
+  protected shareCode(): void {
+    this.dialog.open(ShareDialogComponent, {
+      data: { code: this.currentCode() },
+      width: '480px',
+    });
   }
 
   protected openFile(): void {
