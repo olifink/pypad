@@ -31,20 +31,20 @@ To provide a zero-install, offline-capable Python editor that feels like a nativ
 
 ### Phase 2: UX ✅
 
-* [x] **Shortcuts:** `Ctrl+S` saves immediately; `Ctrl+R` saves and runs.
+* [x] **Shortcuts:** `Ctrl+S` saves immediately; `Ctrl+R` saves and runs; `Ctrl+O` opens a file; `Ctrl+?` (Ctrl+Shift+/ on US keyboards) switches to the Docs tab without stealing editor focus.
 * [x] **Theming:** Dark/Light/System mode toggle following M3 system tokens.
-* [x] **Tabs:** Panel with M3 tabs (Output, AI, REPL, Packages); Output auto-scrolls to bottom.
+* [x] **Tabs:** Panel with M3 tabs (Output, Docs, REPL, Packages); Output auto-scrolls to bottom.
 * [x] **Panels:** Layout toggle button (Editor | Both | Panel); draggable splitter between panes.
 * [x] **Output UX:** Clear button appears top-right of Output when content is present.
 * [x] **Virtual Keyboard:** Viewport shrinks correctly when Android virtual keyboard is open (`VirtualKeyboardAPI` + `env(keyboard-inset-height)`); FAB repositions above keyboard.
 * [x] **Editor Scrolling:** Touch/gesture scroll inside the editor.
 
-### Phase 3: PWA & Sharing ✅ (partial)
+### Phase 3: PWA & Sharing ✅
 
 * [x] **Installation:** PWA manifest + service worker; "Add to Home Screen" support for Android and Chromebooks. Full icon set (regular, maskable, monochrome).
 * [x] **Offline Mode:** MicroPython WASM runtime self-hosted in `public/pyscript/`; all fonts (Roboto, Roboto Mono, Material Icons) bundled locally. Zero external dependencies at runtime.
 * [x] **Download File:** Button to quickly download the current file as `main.py`.
-* [ ] **URL Packaging:** Share snippets via LZ-compressed Base64 strings in the URL.
+* [x] **URL Sharing:** Share the current file via a compressed URL (`?s=` query param, LZ-compressed). A dialog shows the full shareable link with a one-click copy button and a client-side QR code. Opening a share URL automatically loads the code into the editor.
 
 ### Phase 4: Packages, REPL, and Debugging
 
@@ -90,8 +90,12 @@ To provide a zero-install, offline-capable Python editor that feels like a nativ
 | `EditorComponent` | `src/app/editor/` | CodeMirror 6 instance; `isDark` input swaps Material theme via `Compartment`; emits `codeChange`; `ResizeObserver` tracks container height. |
 | `ConsoleComponent` | `src/app/console/` | Scrollable monospace output panel; accepts `lines: string[]` input; auto-scrolls to bottom; clear button. |
 | `ReplComponent` | `src/app/repl/` | Hosts the xterm.js terminal for the interactive REPL tab; lazy-inits on first render; `ResizeObserver` keeps the terminal sized to its container. |
+| `DocumentationComponent` | `src/app/docs/` | Docs tab; debounces cursor position and looks up the symbol under the caret in `DocumentationService`; shows signature, description, and a deep-link to the official docs. |
 | `RunnerService` | `src/app/runner/` | Polls for `window.pypad_run`; exposes `isReady` signal and `run(code)`. |
 | `ReplService` | `src/app/repl/` | Polls for `window.pypad_interpreter`; `startRepl(el, isDark)` dynamically imports xterm.js from PyScript's local bundle, wires `io.stdout` → terminal and terminal keystrokes → `replProcessChar`; `setTheme(isDark)` for live theme switching. |
+| `DocumentationService` | `src/app/docs/` | Loads `assets/docs.json` (scraped MicroPython + CPython builtins); merges with a static `KEYWORD_DOCS` map covering ~36 Python keywords; exposes `lookup(fqn)`. |
+| `EditorContextService` | `src/app/docs/` | Resolves the symbol or keyword at the current cursor position using the lezer syntax tree. |
+| `ShareService` | `src/app/share/` | `buildShareUrl(code)` compresses the code with `lz-string` into a `?s=` query param; `getSharedCode()` decompresses it at startup for pre-loading shared snippets. |
 | `StorageService` | `src/app/storage/` | Debounced `save()` + immediate `flush()` to `localStorage` key `pypad_code`. |
 | `ThemeService` | `src/app/theme/` | Three-way `light`/`dark`/`system` toggle; `effectiveIsDark` computed signal; persists to `localStorage`. |
 | `VirtualKeyboardService` | `src/app/virtual-keyboard/` | Opts into Virtual Keyboard API (`overlaysContent = true`); CSS `env(keyboard-inset-height)` shrinks the viewport. |
