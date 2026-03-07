@@ -26,3 +26,9 @@
 :root {
   --font-mono: 'Roboto Mono', 'Courier New', monospace;
 }
+
+/* Prevent the bounce/rubber-band overscroll effect in PWA mode (Edge, Chrome). */
+html,
+body {
+  overscroll-behavior: none;
+}
