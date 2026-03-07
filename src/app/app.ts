@@ -18,8 +18,10 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import { EditorComponent } from './editor/editor';
+import type { CursorInfo } from './editor/editor';
 import { ConsoleComponent } from './console/console';
 import { ReplComponent } from './repl/repl';
+import { DocumentationComponent } from './docs/docs.component';
 import { StorageService } from './storage/storage.service';
 import { RunnerService } from './runner/runner.service';
 import { ThemeService } from './theme/theme.service';
@@ -50,6 +52,7 @@ export type LayoutMode = 'editor' | 'both' | 'panel';
     EditorComponent,
     ConsoleComponent,
     ReplComponent,
+    DocumentationComponent,
   ],
   templateUrl: './app.html',
   styleUrl: './app.css',
@@ -75,6 +78,7 @@ export class App {
   protected readonly splitRatio = signal(0.65);
   protected readonly layout = signal<LayoutMode>('both');
   protected readonly activePanelTab = signal(0);
+  protected readonly cursorInfo = signal<CursorInfo | null>(null);
   private readonly currentCode = signal(this.initialCode);
 
   protected readonly showEditor = computed(
@@ -95,6 +99,10 @@ export class App {
   protected onCodeChange(code: string): void {
     this.currentCode.set(code);
     this.storage.save(code);
+  }
+
+  protected onCursorChange(info: CursorInfo): void {
+    this.cursorInfo.set(info);
   }
 
   protected runCode(): void {

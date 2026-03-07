@@ -1,0 +1,1942 @@
+{
+  "abs": {
+    "signature": "abs(number, /)",
+    "description": "Return the absolute value of a number. The argument may be an integer, a floating-point number, or an object implementing __abs__(). If the argument is a complex number, its magnitude is returned.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#abs"
+  },
+  "all": {
+    "signature": "all(iterable, /)",
+    "description": "Return True if all elements of the iterable are true (or if the iterable is empty). Equivalent to:",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#all"
+  },
+  "any": {
+    "signature": "any(iterable, /)",
+    "description": "Return True if any element of the iterable is true. If the iterable is empty, return False. Equivalent to:",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#any"
+  },
+  "bin": {
+    "signature": "bin(integer, /)",
+    "description": "Convert an integer number to a binary string prefixed with “0b”. The result is a valid Python expression. If integer is not a Python int object, it has to define an __index__() method that returns an integer. Some examples:",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#bin"
+  },
+  "bool": {
+    "signature": "class bool(object=False, /)",
+    "description": "Return a Boolean value, i.e. one of True or False. The argument is converted using the standard truth testing procedure. If the argument is false or omitted, this returns False; otherwise, it returns True. The bool class is a subclass of int (see Numeric Types — int, float, complex). It cannot be subclassed further. Its only instances are False and True (see Boolean Type - bool).",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#bool"
+  },
+  "bytearray": {
+    "signature": "class bytearray",
+    "description": "See CPython documentation: bytearray.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#bytearray"
+  },
+  "bytes": {
+    "signature": "class bytes",
+    "description": "See CPython documentation: bytes.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#bytes"
+  },
+  "callable": {
+    "signature": "callable(object, /)",
+    "description": "Return True if the object argument appears callable, False if not. If this returns True, it is still possible that a call fails, but if it is False, calling object will never succeed. Note that classes are callable (calling a class returns a new instance); instances are callable if their class has a __call__() method.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#callable"
+  },
+  "chr": {
+    "signature": "chr(codepoint, /)",
+    "description": "Return the string representing a character with the specified Unicode code point. For example, chr(97) returns the string 'a', while chr(8364) returns the string '€'. This is the inverse of ord().",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#chr"
+  },
+  "classmethod": {
+    "signature": "@classmethod",
+    "description": "Transform a method into a class method.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#classmethod"
+  },
+  "compile": {
+    "signature": "compile(source, filename, mode, flags=0, dont_inherit=False, optimize=-1)",
+    "description": "Compile the source into a code or AST object. Code objects can be executed by exec() or eval(). source can either be a normal string, a byte string, or an AST object. Refer to the ast module documentation for information on how to work with AST objects.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#compile"
+  },
+  "complex": {
+    "signature": "class complex(number=0, /)",
+    "description": "Convert a single string or number to a complex number, or create a complex number from real and imaginary parts.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#complex"
+  },
+  "delattr": {
+    "signature": "delattr(obj, name)",
+    "description": "The argument name should be a string, and this function deletes the named attribute from the object given by obj.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#delattr"
+  },
+  "dict": {
+    "signature": "class dict",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#dict"
+  },
+  "dir": {
+    "signature": "dir()",
+    "description": "Without arguments, return the list of names in the current local scope. With an argument, attempt to return a list of valid attributes for that object.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#dir"
+  },
+  "divmod": {
+    "signature": "divmod(a, b, /)",
+    "description": "Take two (non-complex) numbers as arguments and return a pair of numbers consisting of their quotient and remainder when using integer division. With mixed operand types, the rules for binary arithmetic operators apply. For integers, the result is the same as (a // b, a % b). For floating-point numbers the result is (q, a % b), where q is usually math.floor(a / b) but may be 1 less than that. In any case q * b + a % b is very close to a, if a % b is non-zero it has the same sign as b, and 0 <= abs(a % b) < abs(b).",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#divmod"
+  },
+  "enumerate": {
+    "signature": "enumerate(iterable, start=0)",
+    "description": "Return an enumerate object. iterable must be a sequence, an iterator, or some other object which supports iteration. The __next__() method of the iterator returned by enumerate() returns a tuple containing a count (from start which defaults to 0) and the values obtained from iterating over iterable.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#enumerate"
+  },
+  "eval": {
+    "signature": "eval(source, /, globals=None, locals=None)",
+    "description": "source (str | code object) – A Python expression.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#eval"
+  },
+  "exec": {
+    "signature": "exec(source, /, globals=None, locals=None, *, closure=None)",
+    "description": "Warning",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#exec"
+  },
+  "filter": {
+    "signature": "filter(function, iterable, /)",
+    "description": "Construct an iterator from those elements of iterable for which function is true. iterable may be either a sequence, a container which supports iteration, or an iterator. If function is None, the identity function is assumed, that is, all elements of iterable that are false are removed.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#filter"
+  },
+  "float": {
+    "signature": "class float(number=0.0, /)",
+    "description": "Return a floating-point number constructed from a number or a string.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#float"
+  },
+  "frozenset": {
+    "signature": "class frozenset",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#frozenset"
+  },
+  "getattr": {
+    "signature": "getattr(object, name, /)",
+    "description": "Return the value of the named attribute of object. name must be a string. If the string is the name of one of the object’s attributes, the result is the value of that attribute. For example, getattr(x, 'foobar') is equivalent to x.foobar. If the named attribute does not exist, default is returned if provided, otherwise AttributeError is raised. name need not be a Python identifier (see setattr()).",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#getattr"
+  },
+  "globals": {
+    "signature": "globals()",
+    "description": "Return the dictionary implementing the current module namespace. For code within functions, this is set when the function is defined and remains the same regardless of where the function is called.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#globals"
+  },
+  "hasattr": {
+    "signature": "hasattr(object, name, /)",
+    "description": "The arguments are an object and a string. The result is True if the string is the name of one of the object’s attributes, False if not. (This is implemented by calling getattr(object, name) and seeing whether it raises an AttributeError or not.)",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#hasattr"
+  },
+  "hash": {
+    "signature": "hash(object, /)",
+    "description": "Return the hash value of the object (if it has one). Hash values are integers. They are used to quickly compare dictionary keys during a dictionary lookup. Numeric values that compare equal have the same hash value (even if they are of different types, as is the case for 1 and 1.0).",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#hash"
+  },
+  "hex": {
+    "signature": "hex(integer, /)",
+    "description": "Convert an integer number to a lowercase hexadecimal string prefixed with “0x”. If integer is not a Python int object, it has to define an __index__() method that returns an integer. Some examples:",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#hex"
+  },
+  "id": {
+    "signature": "id(object, /)",
+    "description": "Return the “identity” of an object. This is an integer which is guaranteed to be unique and constant for this object during its lifetime. Two objects with non-overlapping lifetimes may have the same id() value.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#id"
+  },
+  "input": {
+    "signature": "input()",
+    "description": "If the prompt argument is present, it is written to standard output without a trailing newline. The function then reads a line from input, converts it to a string (stripping a trailing newline), and returns that. When EOF is read, EOFError is raised. Example:",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#input"
+  },
+  "int": {
+    "signature": "class int",
+    "description": "In MicroPython, byteorder parameter must be positional (this is compatible with CPython).",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#int"
+  },
+  "int.from_bytes": {
+    "signature": "classmethod from_bytes(bytes, byteorder)",
+    "description": "In MicroPython, byteorder parameter must be positional (this is compatible with CPython).",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#int.from_bytes"
+  },
+  "int.to_bytes": {
+    "signature": "to_bytes(size, byteorder)",
+    "description": "In MicroPython, byteorder parameter must be positional (this is compatible with CPython).",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#int.to_bytes"
+  },
+  "isinstance": {
+    "signature": "isinstance(object, classinfo, /)",
+    "description": "Return True if the object argument is an instance of the classinfo argument, or of a (direct, indirect, or virtual) subclass thereof. If object is not an object of the given type, the function always returns False. If classinfo is a tuple of type objects (or recursively, other such tuples) or a Union Type of multiple types, return True if object is an instance of any of the types. If classinfo is not a type or tuple of types and such tuples, a TypeError exception is raised. TypeError may not be raised for an invalid type if an earlier check succeeds.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#isinstance"
+  },
+  "issubclass": {
+    "signature": "issubclass(class, classinfo, /)",
+    "description": "Return True if class is a subclass (direct, indirect, or virtual) of classinfo. A class is considered a subclass of itself. classinfo may be a tuple of class objects (or recursively, other such tuples) or a Union Type, in which case return True if class is a subclass of any entry in classinfo. In any other case, a TypeError exception is raised.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#issubclass"
+  },
+  "iter": {
+    "signature": "iter(iterable, /)",
+    "description": "Return an iterator object. The first argument is interpreted very differently depending on the presence of the second argument. Without a second argument, the single argument must be a collection object which supports the iterable protocol (the __iter__() method), or it must support the sequence protocol (the __getitem__() method with integer arguments starting at 0). If it does not support either of those protocols, TypeError is raised. If the second argument, sentinel, is given, then the first argument must be a callable object. The iterator created in this case will call callable with no arguments for each call to its __next__() method; if the value returned is equal to sentinel, StopIteration will be raised, otherwise the value will be returned.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#iter"
+  },
+  "len": {
+    "signature": "len(object, /)",
+    "description": "Return the length (the number of items) of an object. The argument may be a sequence (such as a string, bytes, tuple, list, or range) or a collection (such as a dictionary, set, or frozen set).",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#len"
+  },
+  "list": {
+    "signature": "class list",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#list"
+  },
+  "locals": {
+    "signature": "locals()",
+    "description": "Return a mapping object representing the current local symbol table, with variable names as the keys, and their currently bound references as the values.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#locals"
+  },
+  "map": {
+    "signature": "map(function, iterable, /, *iterables, strict=False)",
+    "description": "Return an iterator that applies function to every item of iterable, yielding the results. If additional iterables arguments are passed, function must take that many arguments and is applied to the items from all iterables in parallel. With multiple iterables, the iterator stops when the shortest iterable is exhausted. If strict is True and one of the iterables is exhausted before the others, a ValueError is raised. For cases where the function inputs are already arranged into argument tuples, see itertools.starmap().",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#map"
+  },
+  "max": {
+    "signature": "max(iterable, /, *, key=None)",
+    "description": "Return the largest item in an iterable or the largest of two or more arguments.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#max"
+  },
+  "memoryview": {
+    "signature": "class memoryview",
+    "description": "See CPython documentation: memoryview.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#memoryview"
+  },
+  "min": {
+    "signature": "min(iterable, /, *, key=None)",
+    "description": "Return the smallest item in an iterable or the smallest of two or more arguments.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#min"
+  },
+  "next": {
+    "signature": "next(iterator, /)",
+    "description": "Retrieve the next item from the iterator by calling its __next__() method. If default is given, it is returned if the iterator is exhausted, otherwise StopIteration is raised.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#next"
+  },
+  "object": {
+    "signature": "class object",
+    "description": "This is the ultimate base class of all other classes. It has methods that are common to all instances of Python classes. When the constructor is called, it returns a new featureless object. The constructor does not accept any arguments.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#object"
+  },
+  "oct": {
+    "signature": "oct(integer, /)",
+    "description": "Convert an integer number to an octal string prefixed with “0o”. The result is a valid Python expression. If integer is not a Python int object, it has to define an __index__() method that returns an integer. For example:",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#oct"
+  },
+  "open": {
+    "signature": "open(file, mode='r', buffering=-1, encoding=None, errors=None, newline=None, closefd=True, opener=None)",
+    "description": "Open file and return a corresponding file object. If the file cannot be opened, an OSError is raised. See Reading and Writing Files for more examples of how to use this function.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#open"
+  },
+  "ord": {
+    "signature": "ord(character, /)",
+    "description": "Return the ordinal value of a character.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#ord"
+  },
+  "pow": {
+    "signature": "pow(base, exp, mod=None)",
+    "description": "Return base to the power exp; if mod is present, return base to the power exp, modulo mod (computed more efficiently than pow(base, exp) % mod). The two-argument form pow(base, exp) is equivalent to using the power operator: base**exp.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#pow"
+  },
+  "print": {
+    "signature": "print(*objects, sep=' ', end='\\n', file=None, flush=False)",
+    "description": "Print objects to the text stream file, separated by sep and followed by end. sep, end, file, and flush, if present, must be given as keyword arguments.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#print"
+  },
+  "property": {
+    "signature": "class property(fget=None, fset=None, fdel=None, doc=None)",
+    "description": "Return a property attribute.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#property"
+  },
+  "range": {
+    "signature": "range()",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#range"
+  },
+  "repr": {
+    "signature": "repr(object, /)",
+    "description": "Return a string containing a printable representation of an object. For many types, this function makes an attempt to return a string that would yield an object with the same value when passed to eval(); otherwise, the representation is a string enclosed in angle brackets that contains the name of the type of the object together with additional information often including the name and address of the object. A class can control what this function returns for its instances by defining a __repr__() method. If sys.displayhook() is not accessible, this function will raise RuntimeError.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#repr"
+  },
+  "reversed": {
+    "signature": "reversed(object, /)",
+    "description": "Return a reverse iterator. The argument must be an object which has a __reversed__() method or supports the sequence protocol (the __len__() method and the __getitem__() method with integer arguments starting at 0).",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#reversed"
+  },
+  "round": {
+    "signature": "round(number, ndigits=None)",
+    "description": "Return number rounded to ndigits precision after the decimal point. If ndigits is omitted or is None, it returns the nearest integer to its input.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#round"
+  },
+  "set": {
+    "signature": "class set",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#set"
+  },
+  "setattr": {
+    "signature": "setattr(object, name, value, /)",
+    "description": "This is the counterpart of getattr(). The arguments are an object, a string, and an arbitrary value. The string may name an existing attribute or a new attribute. The function assigns the value to the attribute, provided the object allows it. For example, setattr(x, 'foobar', 123) is equivalent to x.foobar = 123.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#setattr"
+  },
+  "slice": {
+    "signature": "class slice",
+    "description": "The slice builtin is the type that slice objects have.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#slice"
+  },
+  "sorted": {
+    "signature": "sorted(iterable, /, *, key=None, reverse=False)",
+    "description": "Return a new sorted list from the items in iterable.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#sorted"
+  },
+  "staticmethod": {
+    "signature": "@staticmethod",
+    "description": "Transform a method into a static method.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#staticmethod"
+  },
+  "str": {
+    "signature": "class str",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#str"
+  },
+  "sum": {
+    "signature": "sum(iterable, /, start=0)",
+    "description": "Sums start and the items of an iterable from left to right and returns the total. The iterable’s items are normally numbers, and the start value is not allowed to be a string.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#sum"
+  },
+  "super": {
+    "signature": "class super",
+    "description": "Return a proxy object that delegates method calls to a parent or sibling class of type. This is useful for accessing inherited methods that have been overridden in a class.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#super"
+  },
+  "tuple": {
+    "signature": "class tuple",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#tuple"
+  },
+  "type": {
+    "signature": "class type(object, /)",
+    "description": "With one argument, return the type of an object. The return value is a type object and generally the same object as returned by object.__class__.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#type"
+  },
+  "zip": {
+    "signature": "zip(*iterables, strict=False)",
+    "description": "Iterate over several iterables in parallel, producing tuples with an item from each one.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#zip"
+  },
+  "AssertionError": {
+    "signature": "exception AssertionError",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#AssertionError"
+  },
+  "AttributeError": {
+    "signature": "exception AttributeError",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#AttributeError"
+  },
+  "Exception": {
+    "signature": "exception Exception",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#Exception"
+  },
+  "ImportError": {
+    "signature": "exception ImportError",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#ImportError"
+  },
+  "IndexError": {
+    "signature": "exception IndexError",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#IndexError"
+  },
+  "KeyboardInterrupt": {
+    "signature": "exception KeyboardInterrupt",
+    "description": "See CPython documentation: KeyboardInterrupt.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#KeyboardInterrupt"
+  },
+  "KeyError": {
+    "signature": "exception KeyError",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#KeyError"
+  },
+  "MemoryError": {
+    "signature": "exception MemoryError",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#MemoryError"
+  },
+  "NameError": {
+    "signature": "exception NameError",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#NameError"
+  },
+  "NotImplementedError": {
+    "signature": "exception NotImplementedError",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#NotImplementedError"
+  },
+  "OSError": {
+    "signature": "exception OSError",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#OSError"
+  },
+  "RuntimeError": {
+    "signature": "exception RuntimeError",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#RuntimeError"
+  },
+  "StopIteration": {
+    "signature": "exception StopIteration",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#StopIteration"
+  },
+  "SyntaxError": {
+    "signature": "exception SyntaxError",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#SyntaxError"
+  },
+  "SystemExit": {
+    "signature": "exception SystemExit",
+    "description": "See CPython documentation: SystemExit.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#SystemExit"
+  },
+  "TypeError": {
+    "signature": "exception TypeError",
+    "description": "See CPython documentation: TypeError.",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#TypeError"
+  },
+  "ValueError": {
+    "signature": "exception ValueError",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#ValueError"
+  },
+  "ZeroDivisionError": {
+    "signature": "exception ZeroDivisionError",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/builtins.html#ZeroDivisionError"
+  },
+  "math.acos": {
+    "signature": "math.acos(x)",
+    "description": "Return the inverse cosine of x.",
+    "url": "https://docs.micropython.org/en/latest/library/math.html#math.acos"
+  },
+  "math.acosh": {
+    "signature": "math.acosh(x)",
+    "description": "Return the inverse hyperbolic cosine of x.",
+    "url": "https://docs.micropython.org/en/latest/library/math.html#math.acosh"
+  },
+  "math.asin": {
+    "signature": "math.asin(x)",
+    "description": "Return the inverse sine of x.",
+    "url": "https://docs.micropython.org/en/latest/library/math.html#math.asin"
+  },
+  "math.asinh": {
+    "signature": "math.asinh(x)",
+    "description": "Return the inverse hyperbolic sine of x.",
+    "url": "https://docs.micropython.org/en/latest/library/math.html#math.asinh"
+  },
+  "math.atan": {
+    "signature": "math.atan(x)",
+    "description": "Return the inverse tangent of x.",
+    "url": "https://docs.micropython.org/en/latest/library/math.html#math.atan"
+  },
+  "math.atan2": {
+    "signature": "math.atan2(y, x)",
+    "description": "Return the principal value of the inverse tangent of y/x.",
+    "url": "https://docs.micropython.org/en/latest/library/math.html#math.atan2"
+  },
+  "math.atanh": {
+    "signature": "math.atanh(x)",
+    "description": "Return the inverse hyperbolic tangent of x.",
+    "url": "https://docs.micropython.org/en/latest/library/math.html#math.atanh"
+  },
+  "math.ceil": {
+    "signature": "math.ceil(x)",
+    "description": "Return an integer, being x rounded towards positive infinity.",
+    "url": "https://docs.micropython.org/en/latest/library/math.html#math.ceil"
+  },
+  "math.copysign": {
+    "signature": "math.copysign(x, y)",
+    "description": "Return x with the sign of y.",
+    "url": "https://docs.micropython.org/en/latest/library/math.html#math.copysign"
+  },
+  "math.cos": {
+    "signature": "math.cos(x)",
+    "description": "Return the cosine of x.",
+    "url": "https://docs.micropython.org/en/latest/library/math.html#math.cos"
+  },
+  "math.cosh": {
+    "signature": "math.cosh(x)",
+    "description": "Return the hyperbolic cosine of x.",
+    "url": "https://docs.micropython.org/en/latest/library/math.html#math.cosh"
+  },
+  "math.degrees": {
+    "signature": "math.degrees(x)",
+    "description": "Return radians x converted to degrees.",
+    "url": "https://docs.micropython.org/en/latest/library/math.html#math.degrees"
+  },
+  "math.erf": {
+    "signature": "math.erf(x)",
+    "description": "Return the error function of x.",
+    "url": "https://docs.micropython.org/en/latest/library/math.html#math.erf"
+  },
+  "math.erfc": {
+    "signature": "math.erfc(x)",
+    "description": "Return the complementary error function of x.",
+    "url": "https://docs.micropython.org/en/latest/library/math.html#math.erfc"
+  },
+  "math.exp": {
+    "signature": "math.exp(x)",
+    "description": "Return the exponential of x.",
+    "url": "https://docs.micropython.org/en/latest/library/math.html#math.exp"
+  },
+  "math.expm1": {
+    "signature": "math.expm1(x)",
+    "description": "Return exp(x) - 1.",
+    "url": "https://docs.micropython.org/en/latest/library/math.html#math.expm1"
+  },
+  "math.fabs": {
+    "signature": "math.fabs(x)",
+    "description": "Return the absolute value of x.",
+    "url": "https://docs.micropython.org/en/latest/library/math.html#math.fabs"
+  },
+  "math.floor": {
+    "signature": "math.floor(x)",
+    "description": "Return an integer, being x rounded towards negative infinity.",
+    "url": "https://docs.micropython.org/en/latest/library/math.html#math.floor"
+  },
+  "math.fmod": {
+    "signature": "math.fmod(x, y)",
+    "description": "Return the remainder of x/y.",
+    "url": "https://docs.micropython.org/en/latest/library/math.html#math.fmod"
+  },
+  "math.frexp": {
+    "signature": "math.frexp(x)",
+    "description": "Decomposes a floating-point number into its mantissa and exponent. The returned value is the tuple (m, e) such that x == m * 2**e exactly. If x == 0 then the function returns (0.0, 0), otherwise the relation 0.5 <= abs(m) < 1 holds.",
+    "url": "https://docs.micropython.org/en/latest/library/math.html#math.frexp"
+  },
+  "math.gamma": {
+    "signature": "math.gamma(x)",
+    "description": "Return the gamma function of x.",
+    "url": "https://docs.micropython.org/en/latest/library/math.html#math.gamma"
+  },
+  "math.isfinite": {
+    "signature": "math.isfinite(x)",
+    "description": "Return True if x is finite.",
+    "url": "https://docs.micropython.org/en/latest/library/math.html#math.isfinite"
+  },
+  "math.isinf": {
+    "signature": "math.isinf(x)",
+    "description": "Return True if x is infinite.",
+    "url": "https://docs.micropython.org/en/latest/library/math.html#math.isinf"
+  },
+  "math.isnan": {
+    "signature": "math.isnan(x)",
+    "description": "Return True if x is not-a-number",
+    "url": "https://docs.micropython.org/en/latest/library/math.html#math.isnan"
+  },
+  "math.ldexp": {
+    "signature": "math.ldexp(x, exp)",
+    "description": "Return x * (2**exp).",
+    "url": "https://docs.micropython.org/en/latest/library/math.html#math.ldexp"
+  },
+  "math.lgamma": {
+    "signature": "math.lgamma(x)",
+    "description": "Return the natural logarithm of the gamma function of x.",
+    "url": "https://docs.micropython.org/en/latest/library/math.html#math.lgamma"
+  },
+  "math.log": {
+    "signature": "math.log(x)",
+    "description": "With one argument, return the natural logarithm of x.",
+    "url": "https://docs.micropython.org/en/latest/library/math.html#math.log"
+  },
+  "math.log10": {
+    "signature": "math.log10(x)",
+    "description": "Return the base-10 logarithm of x.",
+    "url": "https://docs.micropython.org/en/latest/library/math.html#math.log10"
+  },
+  "math.log2": {
+    "signature": "math.log2(x)",
+    "description": "Return the base-2 logarithm of x.",
+    "url": "https://docs.micropython.org/en/latest/library/math.html#math.log2"
+  },
+  "math.modf": {
+    "signature": "math.modf(x)",
+    "description": "Return a tuple of two floats, being the fractional and integral parts of x. Both return values have the same sign as x.",
+    "url": "https://docs.micropython.org/en/latest/library/math.html#math.modf"
+  },
+  "math.pow": {
+    "signature": "math.pow(x, y)",
+    "description": "Returns x to the power of y.",
+    "url": "https://docs.micropython.org/en/latest/library/math.html#math.pow"
+  },
+  "math.radians": {
+    "signature": "math.radians(x)",
+    "description": "Return degrees x converted to radians.",
+    "url": "https://docs.micropython.org/en/latest/library/math.html#math.radians"
+  },
+  "math.sin": {
+    "signature": "math.sin(x)",
+    "description": "Return the sine of x.",
+    "url": "https://docs.micropython.org/en/latest/library/math.html#math.sin"
+  },
+  "math.sinh": {
+    "signature": "math.sinh(x)",
+    "description": "Return the hyperbolic sine of x.",
+    "url": "https://docs.micropython.org/en/latest/library/math.html#math.sinh"
+  },
+  "math.sqrt": {
+    "signature": "math.sqrt(x)",
+    "description": "Return the square root of x.",
+    "url": "https://docs.micropython.org/en/latest/library/math.html#math.sqrt"
+  },
+  "math.tan": {
+    "signature": "math.tan(x)",
+    "description": "Return the tangent of x.",
+    "url": "https://docs.micropython.org/en/latest/library/math.html#math.tan"
+  },
+  "math.tanh": {
+    "signature": "math.tanh(x)",
+    "description": "Return the hyperbolic tangent of x.",
+    "url": "https://docs.micropython.org/en/latest/library/math.html#math.tanh"
+  },
+  "math.trunc": {
+    "signature": "math.trunc(x)",
+    "description": "Return an integer, being x rounded towards 0.",
+    "url": "https://docs.micropython.org/en/latest/library/math.html#math.trunc"
+  },
+  "math.e": {
+    "signature": "math.e",
+    "description": "base of the natural logarithm",
+    "url": "https://docs.micropython.org/en/latest/library/math.html#math.e"
+  },
+  "math.pi": {
+    "signature": "math.pi",
+    "description": "the ratio of a circle’s circumference to its diameter",
+    "url": "https://docs.micropython.org/en/latest/library/math.html#math.pi"
+  },
+  "sys.exit": {
+    "signature": "sys.exit(retval=0, /)",
+    "description": "Terminate current program with a given exit code. Underlyingly, this function raises a SystemExit exception. If an argument is given, its value given as an argument to SystemExit.",
+    "url": "https://docs.micropython.org/en/latest/library/sys.html#sys.exit"
+  },
+  "sys.atexit": {
+    "signature": "sys.atexit(func)",
+    "description": "Register func to be called upon termination. func must be a callable that takes no arguments, or None to disable the call. The atexit function will return the previous value set by this function, which is initially None.",
+    "url": "https://docs.micropython.org/en/latest/library/sys.html#sys.atexit"
+  },
+  "sys.print_exception": {
+    "signature": "sys.print_exception(exc, file=sys.stdout, /)",
+    "description": "Print exception with a traceback to a file-like object file (or sys.stdout by default).",
+    "url": "https://docs.micropython.org/en/latest/library/sys.html#sys.print_exception"
+  },
+  "sys.settrace": {
+    "signature": "sys.settrace(tracefunc)",
+    "description": "Enable tracing of bytecode execution. For details see the CPython documentation.",
+    "url": "https://docs.micropython.org/en/latest/library/sys.html#sys.settrace"
+  },
+  "sys.argv": {
+    "signature": "sys.argv",
+    "description": "A mutable list of arguments the current program was started with.",
+    "url": "https://docs.micropython.org/en/latest/library/sys.html#sys.argv"
+  },
+  "sys.byteorder": {
+    "signature": "sys.byteorder",
+    "description": "The byte order of the system (\"little\" or \"big\").",
+    "url": "https://docs.micropython.org/en/latest/library/sys.html#sys.byteorder"
+  },
+  "sys.implementation": {
+    "signature": "sys.implementation",
+    "description": "Object with information about the current Python implementation. For MicroPython, it has following attributes:",
+    "url": "https://docs.micropython.org/en/latest/library/sys.html#sys.implementation"
+  },
+  "sys.maxsize": {
+    "signature": "sys.maxsize",
+    "description": "Maximum value which a native integer type can hold on the current platform, or maximum value representable by MicroPython integer type, if it’s smaller than platform max value (that is the case for MicroPython ports without long int support).",
+    "url": "https://docs.micropython.org/en/latest/library/sys.html#sys.maxsize"
+  },
+  "sys.modules": {
+    "signature": "sys.modules",
+    "description": "Dictionary of loaded modules. On some ports, it may not include builtin modules.",
+    "url": "https://docs.micropython.org/en/latest/library/sys.html#sys.modules"
+  },
+  "sys.path": {
+    "signature": "sys.path",
+    "description": "A mutable list of directories to search for imported modules.",
+    "url": "https://docs.micropython.org/en/latest/library/sys.html#sys.path"
+  },
+  "sys.platform": {
+    "signature": "sys.platform",
+    "description": "The platform that MicroPython is running on. For OS/RTOS ports, this is usually an identifier of the OS, e.g. \"linux\". For baremetal ports it is an identifier of a board, e.g. \"pyboard\" for the original MicroPython reference board. It thus can be used to distinguish one board from another. If you need to check whether your program runs on MicroPython (vs other Python implementation), use sys.implementation instead.",
+    "url": "https://docs.micropython.org/en/latest/library/sys.html#sys.platform"
+  },
+  "sys.ps1": {
+    "signature": "sys.ps1",
+    "description": "Mutable attributes holding strings, which are used for the REPL prompt. The defaults give the standard Python prompt of >>> and ....",
+    "url": "https://docs.micropython.org/en/latest/library/sys.html#sys.ps1"
+  },
+  "sys.stderr": {
+    "signature": "sys.stderr",
+    "description": "Standard error stream.",
+    "url": "https://docs.micropython.org/en/latest/library/sys.html#sys.stderr"
+  },
+  "sys.stdin": {
+    "signature": "sys.stdin",
+    "description": "Standard input stream.",
+    "url": "https://docs.micropython.org/en/latest/library/sys.html#sys.stdin"
+  },
+  "sys.stdout": {
+    "signature": "sys.stdout",
+    "description": "Standard output stream.",
+    "url": "https://docs.micropython.org/en/latest/library/sys.html#sys.stdout"
+  },
+  "sys.tracebacklimit": {
+    "signature": "sys.tracebacklimit",
+    "description": "A mutable attribute holding an integer value which is the maximum number of traceback entries to store in an exception. Set to 0 to disable adding tracebacks. Defaults to 1000.",
+    "url": "https://docs.micropython.org/en/latest/library/sys.html#sys.tracebacklimit"
+  },
+  "sys.version": {
+    "signature": "sys.version",
+    "description": "Python language version that this implementation conforms to, as a string.",
+    "url": "https://docs.micropython.org/en/latest/library/sys.html#sys.version"
+  },
+  "sys.version_info": {
+    "signature": "sys.version_info",
+    "description": "Python language version that this implementation conforms to, as a tuple of ints.",
+    "url": "https://docs.micropython.org/en/latest/library/sys.html#sys.version_info"
+  },
+  "time.gmtime": {
+    "signature": "time.gmtime([secs])",
+    "description": "Convert the time secs expressed in seconds since the Epoch (see above) into an 8-tuple which contains: (year, month, mday, hour, minute, second, weekday, yearday) If secs is not provided or None, then the current time from the RTC is used.",
+    "url": "https://docs.micropython.org/en/latest/library/time.html#time.gmtime"
+  },
+  "time.mktime": {
+    "signature": "time.mktime(date_time_tuple)",
+    "description": "This is inverse function of localtime. It’s argument is a full 8-tuple which expresses a time as per localtime. It returns an integer which is the number of seconds since the time epoch.",
+    "url": "https://docs.micropython.org/en/latest/library/time.html#time.mktime"
+  },
+  "time.sleep": {
+    "signature": "time.sleep(seconds)",
+    "description": "Sleep for the given number of seconds. Some boards may accept seconds as a floating-point number to sleep for a fractional number of seconds. Note that other boards may not accept a floating-point argument, for compatibility with them use sleep_ms() and sleep_us() functions.",
+    "url": "https://docs.micropython.org/en/latest/library/time.html#time.sleep"
+  },
+  "time.sleep_ms": {
+    "signature": "time.sleep_ms(ms)",
+    "description": "Delay for given number of milliseconds, should be positive or 0.",
+    "url": "https://docs.micropython.org/en/latest/library/time.html#time.sleep_ms"
+  },
+  "time.sleep_us": {
+    "signature": "time.sleep_us(us)",
+    "description": "Delay for given number of microseconds, should be positive or 0.",
+    "url": "https://docs.micropython.org/en/latest/library/time.html#time.sleep_us"
+  },
+  "time.ticks_ms": {
+    "signature": "time.ticks_ms()",
+    "description": "Returns an increasing millisecond counter with an arbitrary reference point, that wraps around after some value.",
+    "url": "https://docs.micropython.org/en/latest/library/time.html#time.ticks_ms"
+  },
+  "time.ticks_us": {
+    "signature": "time.ticks_us()",
+    "description": "Just like ticks_ms() above, but in microseconds.",
+    "url": "https://docs.micropython.org/en/latest/library/time.html#time.ticks_us"
+  },
+  "time.ticks_cpu": {
+    "signature": "time.ticks_cpu()",
+    "description": "Similar to ticks_ms() and ticks_us(), but with the highest possible resolution in the system. This is usually CPU clocks, and that’s why the function is named that way. But it doesn’t have to be a CPU clock, some other timing source available in a system (e.g. high-resolution timer) can be used instead. The exact timing unit (resolution) of this function is not specified on time module level, but documentation for a specific port may provide more specific information. This function is intended for very fine benchmarking or very tight real-time loops. Avoid using it in portable code.",
+    "url": "https://docs.micropython.org/en/latest/library/time.html#time.ticks_cpu"
+  },
+  "time.ticks_add": {
+    "signature": "time.ticks_add(ticks, delta)",
+    "description": "Offset ticks value by a given number, which can be either positive or negative. Given a ticks value, this function allows to calculate ticks value delta ticks before or after it, following modular-arithmetic definition of tick values (see ticks_ms() above). ticks parameter must be a direct result of call to ticks_ms(), ticks_us(), or ticks_cpu() functions (or from previous call to ticks_add()). However, delta can be an arbitrary integer number or numeric expression. ticks_add() is useful for calculating deadlines for events/tasks. (Note: you must use ticks_diff() function to work with deadlines.)",
+    "url": "https://docs.micropython.org/en/latest/library/time.html#time.ticks_add"
+  },
+  "time.ticks_diff": {
+    "signature": "time.ticks_diff(ticks1, ticks2)",
+    "description": "Measure ticks difference between values returned from ticks_ms(), ticks_us(), or ticks_cpu() functions, as a signed value which may wrap around.",
+    "url": "https://docs.micropython.org/en/latest/library/time.html#time.ticks_diff"
+  },
+  "time.time": {
+    "signature": "time.time()",
+    "description": "Returns the number of seconds, as an integer, since the Epoch, assuming that underlying RTC is set and maintained as described above. If an RTC is not set, this function returns number of seconds since a port-specific reference point in time (for embedded boards without a battery-backed RTC, usually since power up or reset). If you want to develop portable MicroPython application, you should not rely on this function to provide higher than second precision. If you need higher precision, absolute timestamps, use time_ns(). If relative times are acceptable then use the ticks_ms() and ticks_us() functions. If you need calendar time, gmtime() or localtime() without an argument is a better choice.",
+    "url": "https://docs.micropython.org/en/latest/library/time.html#time.time"
+  },
+  "time.time_ns": {
+    "signature": "time.time_ns()",
+    "description": "Similar to time() but returns nanoseconds since the Epoch, as an integer (usually a big integer, so will allocate on the heap).",
+    "url": "https://docs.micropython.org/en/latest/library/time.html#time.time_ns"
+  },
+  "json.dump": {
+    "signature": "json.dump(obj, stream, separators=None)",
+    "description": "Serialise obj to a JSON string, writing it to the given stream.",
+    "url": "https://docs.micropython.org/en/latest/library/json.html#json.dump"
+  },
+  "json.dumps": {
+    "signature": "json.dumps(obj, separators=None)",
+    "description": "Return obj represented as a JSON string.",
+    "url": "https://docs.micropython.org/en/latest/library/json.html#json.dumps"
+  },
+  "json.load": {
+    "signature": "json.load(stream)",
+    "description": "Parse the given stream, interpreting it as a JSON string and deserialising the data to a Python object. The resulting object is returned.",
+    "url": "https://docs.micropython.org/en/latest/library/json.html#json.load"
+  },
+  "json.loads": {
+    "signature": "json.loads(str)",
+    "description": "Parse the JSON str and return an object. Raises ValueError if the string is not correctly formed.",
+    "url": "https://docs.micropython.org/en/latest/library/json.html#json.loads"
+  },
+  "random.getrandbits": {
+    "signature": "random.getrandbits(n)",
+    "description": "Return an integer with n random bits (0 <= n <= 32).",
+    "url": "https://docs.micropython.org/en/latest/library/random.html#random.getrandbits"
+  },
+  "random.randint": {
+    "signature": "random.randint(a, b)",
+    "description": "Return a random integer in the range [a, b].",
+    "url": "https://docs.micropython.org/en/latest/library/random.html#random.randint"
+  },
+  "random.randrange": {
+    "signature": "random.randrange(stop)",
+    "description": "The first form returns a random integer from the range [0, stop). The second form returns a random integer from the range [start, stop). The third form returns a random integer from the range [start, stop) in steps of step. For instance, calling randrange(1, 10, 2) will return odd numbers between 1 and 9 inclusive.",
+    "url": "https://docs.micropython.org/en/latest/library/random.html#random.randrange"
+  },
+  "random.random": {
+    "signature": "random.random()",
+    "description": "Return a random floating point number in the range [0.0, 1.0).",
+    "url": "https://docs.micropython.org/en/latest/library/random.html#random.random"
+  },
+  "random.uniform": {
+    "signature": "random.uniform(a, b)",
+    "description": "Return a random floating point number N such that a <= N <= b for a <= b, and b <= N <= a for b < a.",
+    "url": "https://docs.micropython.org/en/latest/library/random.html#random.uniform"
+  },
+  "random.seed": {
+    "signature": "random.seed(n=None, /)",
+    "description": "Initialise the random number generator module with the seed n which should be an integer. When no argument (or None) is passed in it will (if supported by the port) initialise the PRNG with a true random number (usually a hardware generated random number).",
+    "url": "https://docs.micropython.org/en/latest/library/random.html#random.seed"
+  },
+  "random.choice": {
+    "signature": "random.choice(sequence)",
+    "description": "Chooses and returns one item at random from sequence (tuple, list or any object that supports the subscript operation).",
+    "url": "https://docs.micropython.org/en/latest/library/random.html#random.choice"
+  },
+  "machine.mem8": {
+    "signature": "machine.mem8",
+    "description": "Read/write 8 bits of memory.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.html#machine.mem8"
+  },
+  "machine.mem16": {
+    "signature": "machine.mem16",
+    "description": "Read/write 16 bits of memory.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.html#machine.mem16"
+  },
+  "machine.mem32": {
+    "signature": "machine.mem32",
+    "description": "Read/write 32 bits of memory.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.html#machine.mem32"
+  },
+  "machine.reset": {
+    "signature": "machine.reset()",
+    "description": "Hard resets the device in a manner similar to pushing the external RESET button.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.html#machine.reset"
+  },
+  "machine.soft_reset": {
+    "signature": "machine.soft_reset()",
+    "description": "Performs a soft reset of the interpreter, deleting all Python objects and resetting the Python heap.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.html#machine.soft_reset"
+  },
+  "machine.reset_cause": {
+    "signature": "machine.reset_cause()",
+    "description": "Get the reset cause. See constants for the possible return values.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.html#machine.reset_cause"
+  },
+  "machine.bootloader": {
+    "signature": "machine.bootloader([value])",
+    "description": "Reset the device and enter its bootloader. This is typically used to put the device into a state where it can be programmed with new firmware.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.html#machine.bootloader"
+  },
+  "machine.disable_irq": {
+    "signature": "machine.disable_irq()",
+    "description": "Disable interrupt requests. Returns the previous IRQ state which should be considered an opaque value. This return value should be passed to the enable_irq() function to restore interrupts to their original state, before disable_irq() was called.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.html#machine.disable_irq"
+  },
+  "machine.enable_irq": {
+    "signature": "machine.enable_irq(state)",
+    "description": "Re-enable interrupt requests. The state parameter should be the value that was returned from the most recent call to the disable_irq() function.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.html#machine.enable_irq"
+  },
+  "machine.freq": {
+    "signature": "machine.freq([hz])",
+    "description": "Returns the CPU frequency in hertz.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.html#machine.freq"
+  },
+  "machine.idle": {
+    "signature": "machine.idle()",
+    "description": "Gates the clock to the CPU, useful to reduce power consumption at any time during short or long periods. Peripherals continue working and execution resumes as soon as any interrupt is triggered, or at most one millisecond after the CPU was paused.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.html#machine.idle"
+  },
+  "machine.sleep": {
+    "signature": "machine.sleep()",
+    "description": "Note",
+    "url": "https://docs.micropython.org/en/latest/library/machine.html#machine.sleep"
+  },
+  "machine.lightsleep": {
+    "signature": "machine.lightsleep([time_ms])",
+    "description": "Stops execution in an attempt to enter a low power state.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.html#machine.lightsleep"
+  },
+  "machine.wake_reason": {
+    "signature": "machine.wake_reason()",
+    "description": "Get the wake reason. See constants for the possible return values.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.html#machine.wake_reason"
+  },
+  "machine.unique_id": {
+    "signature": "machine.unique_id()",
+    "description": "Returns a byte string with a unique identifier of a board/SoC. It will vary from a board/SoC instance to another, if underlying hardware allows. Length varies by hardware (so use substring of a full value if you expect a short ID). In some MicroPython ports, ID corresponds to the network MAC address.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.html#machine.unique_id"
+  },
+  "machine.time_pulse_us": {
+    "signature": "machine.time_pulse_us(pin, pulse_level, timeout_us=1000000, /)",
+    "description": "Time a pulse on the given pin, and return the duration of the pulse in microseconds. The pulse_level argument should be 0 to time a low pulse or 1 to time a high pulse.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.html#machine.time_pulse_us"
+  },
+  "machine.bitstream": {
+    "signature": "machine.bitstream(pin, encoding, timing, data, /)",
+    "description": "Transmits data by bit-banging the specified pin. The encoding argument specifies how the bits are encoded, and timing is an encoding-specific timing specification.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.html#machine.bitstream"
+  },
+  "machine.rng": {
+    "signature": "machine.rng()",
+    "description": "Return a 24-bit software generated random number.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.html#machine.rng"
+  },
+  "machine.machine.IDLE": {
+    "signature": "machine.IDLE",
+    "description": "IRQ wake values.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.html#machine.machine.IDLE"
+  },
+  "machine.machine.PWRON_RESET": {
+    "signature": "machine.PWRON_RESET",
+    "description": "Reset causes.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.html#machine.machine.PWRON_RESET"
+  },
+  "machine.machine.WLAN_WAKE": {
+    "signature": "machine.WLAN_WAKE",
+    "description": "Wake-up reasons.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.html#machine.machine.WLAN_WAKE"
+  },
+  "machine.Pin": {
+    "signature": "class machine.Pin(id, mode=-1, pull=-1, *, value=None, drive=0, alt=-1)",
+    "description": "Access the pin peripheral (GPIO pin) associated with the given id. If additional arguments are given in the constructor then they are used to initialise the pin. Any settings that are not specified will remain in their previous state.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Pin.html#machine.Pin"
+  },
+  "machine.Pin.init": {
+    "signature": "Pin.init(mode=-1, pull=-1, *, value=None, drive=0, alt=-1)",
+    "description": "Re-initialise the pin using the given parameters. Only those arguments that are specified will be set. The rest of the pin peripheral state will remain unchanged. See the constructor documentation for details of the arguments.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Pin.html#machine.Pin.init"
+  },
+  "machine.Pin.value": {
+    "signature": "Pin.value([x])",
+    "description": "This method allows to set and get the value of the pin, depending on whether the argument x is supplied or not.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Pin.html#machine.Pin.value"
+  },
+  "machine.Pin.__call__": {
+    "signature": "Pin.__call__([x])",
+    "description": "Pin objects are callable. The call method provides a (fast) shortcut to set and get the value of the pin. It is equivalent to Pin.value([x]). See Pin.value() for more details.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Pin.html#machine.Pin.__call__"
+  },
+  "machine.Pin.on": {
+    "signature": "Pin.on()",
+    "description": "Set pin to “1” output level.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Pin.html#machine.Pin.on"
+  },
+  "machine.Pin.off": {
+    "signature": "Pin.off()",
+    "description": "Set pin to “0” output level.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Pin.html#machine.Pin.off"
+  },
+  "machine.Pin.irq": {
+    "signature": "Pin.irq(handler=None, trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING, *, priority=1, wake=None, hard=False)",
+    "description": "Configure an interrupt handler to be called when the trigger source of the pin is active. If the pin mode is Pin.IN then the trigger source is the external value on the pin. If the pin mode is Pin.OUT then the trigger source is the output buffer of the pin. Otherwise, if the pin mode is Pin.OPEN_DRAIN then the trigger source is the output buffer for state ‘0’ and the external pin value for state ‘1’.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Pin.html#machine.Pin.irq"
+  },
+  "machine.Pin.low": {
+    "signature": "Pin.low()",
+    "description": "Set pin to “0” output level.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Pin.html#machine.Pin.low"
+  },
+  "machine.Pin.high": {
+    "signature": "Pin.high()",
+    "description": "Set pin to “1” output level.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Pin.html#machine.Pin.high"
+  },
+  "machine.Pin.mode": {
+    "signature": "Pin.mode([mode])",
+    "description": "Get or set the pin mode. See the constructor documentation for details of the mode argument.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Pin.html#machine.Pin.mode"
+  },
+  "machine.Pin.pull": {
+    "signature": "Pin.pull([pull])",
+    "description": "Get or set the pin pull state. See the constructor documentation for details of the pull argument.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Pin.html#machine.Pin.pull"
+  },
+  "machine.Pin.drive": {
+    "signature": "Pin.drive([drive])",
+    "description": "Get or set the pin drive strength. See the constructor documentation for details of the drive argument.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Pin.html#machine.Pin.drive"
+  },
+  "machine.Pin.toggle": {
+    "signature": "Pin.toggle()",
+    "description": "Toggle output pin from “0” to “1” or vice-versa.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Pin.html#machine.Pin.toggle"
+  },
+  "machine.Pin.IN": {
+    "signature": "Pin.IN",
+    "description": "Selects the pin mode.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Pin.html#machine.Pin.IN"
+  },
+  "machine.Pin.PULL_UP": {
+    "signature": "Pin.PULL_UP",
+    "description": "Selects whether there is a pull up/down resistor. Use the value None for no pull.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Pin.html#machine.Pin.PULL_UP"
+  },
+  "machine.Pin.DRIVE_0": {
+    "signature": "Pin.DRIVE_0",
+    "description": "Selects the pin drive strength. A port may define additional drive constants with increasing number corresponding to increasing drive strength.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Pin.html#machine.Pin.DRIVE_0"
+  },
+  "machine.Pin.IRQ_FALLING": {
+    "signature": "Pin.IRQ_FALLING",
+    "description": "Selects the IRQ trigger type.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Pin.html#machine.Pin.IRQ_FALLING"
+  },
+  "machine.Signal": {
+    "signature": "class machine.Signal(pin_obj, invert=False)",
+    "description": "Create a Signal object. There’re two ways to create it:",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Signal.html#machine.Signal"
+  },
+  "machine.Signal.value": {
+    "signature": "Signal.value([x])",
+    "description": "This method allows to set and get the value of the signal, depending on whether the argument x is supplied or not.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Signal.html#machine.Signal.value"
+  },
+  "machine.Signal.on": {
+    "signature": "Signal.on()",
+    "description": "Activate signal.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Signal.html#machine.Signal.on"
+  },
+  "machine.Signal.off": {
+    "signature": "Signal.off()",
+    "description": "Deactivate signal.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Signal.html#machine.Signal.off"
+  },
+  "machine.ADC": {
+    "signature": "class machine.ADC(id, *, sample_ns, atten)",
+    "description": "Access the ADC associated with a source identified by id. This id may be an integer (usually specifying a channel number), a Pin object, or other value supported by the underlying machine.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.ADC.html#machine.ADC"
+  },
+  "machine.ADC.init": {
+    "signature": "ADC.init(*, sample_ns, atten)",
+    "description": "Apply the given settings to the ADC. Only those arguments that are specified will be changed. See the ADC constructor above for what the arguments are.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.ADC.html#machine.ADC.init"
+  },
+  "machine.ADC.block": {
+    "signature": "ADC.block()",
+    "description": "Return the ADCBlock instance associated with this ADC object.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.ADC.html#machine.ADC.block"
+  },
+  "machine.ADC.read_u16": {
+    "signature": "ADC.read_u16()",
+    "description": "Take an analog reading and return an integer in the range 0-65535. The return value represents the raw reading taken by the ADC, scaled such that the minimum value is 0 and the maximum value is 65535.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.ADC.html#machine.ADC.read_u16"
+  },
+  "machine.ADC.read_uv": {
+    "signature": "ADC.read_uv()",
+    "description": "Take an analog reading and return an integer value with units of microvolts. It is up to the particular port whether or not this value is calibrated, and how calibration is done.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.ADC.html#machine.ADC.read_uv"
+  },
+  "machine.ADCBlock": {
+    "signature": "class machine.ADCBlock(id, *, bits)",
+    "description": "Access the ADC peripheral identified by id, which may be an integer or string.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.ADCBlock.html#machine.ADCBlock"
+  },
+  "machine.ADCBlock.init": {
+    "signature": "ADCBlock.init(*, bits)",
+    "description": "Configure the ADC peripheral. bits will set the resolution of the conversion process.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.ADCBlock.html#machine.ADCBlock.init"
+  },
+  "machine.ADCBlock.connect": {
+    "signature": "ADCBlock.connect(channel, *, ...)",
+    "description": "Connect up a channel on the ADC peripheral so it is ready for sampling, and return an ADC object that represents that connection.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.ADCBlock.html#machine.ADCBlock.connect"
+  },
+  "machine.DAC": {
+    "signature": "class machine.DAC(id)",
+    "description": "Construct a new DAC object.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.DAC.html#machine.DAC"
+  },
+  "machine.DAC.write": {
+    "signature": "DAC.write(value)",
+    "description": "Output an analog voltage to the pin connected to the DAC.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.DAC.html#machine.DAC.write"
+  },
+  "machine.PWM": {
+    "signature": "class machine.PWM(dest, *, freq, duty_u16, duty_ns, invert=False)",
+    "description": "Construct and return a new PWM object using the following parameters:",
+    "url": "https://docs.micropython.org/en/latest/library/machine.PWM.html#machine.PWM"
+  },
+  "machine.PWM.init": {
+    "signature": "PWM.init(*, freq, duty_u16, duty_ns)",
+    "description": "Modify settings for the PWM object. See the above constructor for details about the parameters.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.PWM.html#machine.PWM.init"
+  },
+  "machine.PWM.deinit": {
+    "signature": "PWM.deinit()",
+    "description": "Disable the PWM output.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.PWM.html#machine.PWM.deinit"
+  },
+  "machine.PWM.freq": {
+    "signature": "PWM.freq([value])",
+    "description": "Get or set the current frequency of the PWM output.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.PWM.html#machine.PWM.freq"
+  },
+  "machine.PWM.duty_u16": {
+    "signature": "PWM.duty_u16([value])",
+    "description": "Get or set the current duty cycle of the PWM output, as an unsigned 16-bit value in the range 0 to 65535 inclusive.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.PWM.html#machine.PWM.duty_u16"
+  },
+  "machine.PWM.duty_ns": {
+    "signature": "PWM.duty_ns([value])",
+    "description": "Get or set the current pulse width of the PWM output, as a value in nanoseconds.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.PWM.html#machine.PWM.duty_ns"
+  },
+  "machine.UART": {
+    "signature": "class machine.UART(id, ...)",
+    "description": "Construct a UART object of the given id.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.UART.html#machine.UART"
+  },
+  "machine.UART.init": {
+    "signature": "UART.init(baudrate=9600, bits=8, parity=None, stop=1, *, ...)",
+    "description": "Initialise the UART bus with the given parameters:",
+    "url": "https://docs.micropython.org/en/latest/library/machine.UART.html#machine.UART.init"
+  },
+  "machine.UART.deinit": {
+    "signature": "UART.deinit()",
+    "description": "Turn off the UART bus.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.UART.html#machine.UART.deinit"
+  },
+  "machine.UART.any": {
+    "signature": "UART.any()",
+    "description": "Returns an integer counting the number of characters that can be read without blocking. It will return 0 if there are no characters available and a positive number if there are characters. The method may return 1 even if there is more than one character available for reading.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.UART.html#machine.UART.any"
+  },
+  "machine.UART.read": {
+    "signature": "UART.read([nbytes])",
+    "description": "Read characters. If nbytes is specified then read at most that many bytes, otherwise read as much data as possible. It may return sooner if a timeout is reached. The timeout is configurable in the constructor.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.UART.html#machine.UART.read"
+  },
+  "machine.UART.readinto": {
+    "signature": "UART.readinto(buf[, nbytes])",
+    "description": "Read bytes into the buf. If nbytes is specified then read at most that many bytes. Otherwise, read at most len(buf) bytes. It may return sooner if a timeout is reached. The timeout is configurable in the constructor.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.UART.html#machine.UART.readinto"
+  },
+  "machine.UART.readline": {
+    "signature": "UART.readline()",
+    "description": "Read a line, ending in a newline character. It may return sooner if a timeout is reached. The timeout is configurable in the constructor.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.UART.html#machine.UART.readline"
+  },
+  "machine.UART.write": {
+    "signature": "UART.write(buf)",
+    "description": "Write the buffer of bytes to the bus.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.UART.html#machine.UART.write"
+  },
+  "machine.UART.sendbreak": {
+    "signature": "UART.sendbreak()",
+    "description": "Send a break condition on the bus. This drives the bus low for a duration longer than required for a normal transmission of a character.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.UART.html#machine.UART.sendbreak"
+  },
+  "machine.UART.flush": {
+    "signature": "UART.flush()",
+    "description": "Waits until all data has been sent. In case of a timeout, an exception is raised. The timeout duration depends on the tx buffer size and the baud rate. Unless flow control is enabled, a timeout should not occur.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.UART.html#machine.UART.flush"
+  },
+  "machine.UART.txdone": {
+    "signature": "UART.txdone()",
+    "description": "Tells whether all data has been sent or no data transfer is happening. In this case, it returns True. If a data transmission is ongoing it returns False.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.UART.html#machine.UART.txdone"
+  },
+  "machine.UART.irq": {
+    "signature": "UART.irq(handler=None, trigger=0, hard=False)",
+    "description": "Configure an interrupt handler to be called when a UART event occurs.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.UART.html#machine.UART.irq"
+  },
+  "machine.UART.RTS": {
+    "signature": "UART.RTS",
+    "description": "Flow control options.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.UART.html#machine.UART.RTS"
+  },
+  "machine.UART.IRQ_RXIDLE": {
+    "signature": "UART.IRQ_RXIDLE",
+    "description": "IRQ trigger sources.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.UART.html#machine.UART.IRQ_RXIDLE"
+  },
+  "machine.SPI": {
+    "signature": "class machine.SPI(id, ...)",
+    "description": "Construct an SPI object on the given bus, id. Values of id depend on a particular port and its hardware. Values 0, 1, etc. are commonly used to select hardware SPI block #0, #1, etc.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.SPI.html#machine.SPI"
+  },
+  "machine.SoftSPI": {
+    "signature": "class machine.SoftSPI(baudrate=500000, *, polarity=0, phase=0, bits=8, firstbit=MSB, sck=None, mosi=None, miso=None)",
+    "description": "Construct a new software SPI object. Additional parameters must be given, usually at least sck, mosi and miso, and these are used to initialise the bus. See SPI.init for a description of the parameters.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.SPI.html#machine.SoftSPI"
+  },
+  "machine.SPI.init": {
+    "signature": "SPI.init(baudrate=1000000, *, polarity=0, phase=0, bits=8, firstbit=SPI.MSB, sck=None, mosi=None, miso=None, pins=(SCK, MOSI, MISO))",
+    "description": "Initialise the SPI bus with the given parameters:",
+    "url": "https://docs.micropython.org/en/latest/library/machine.SPI.html#machine.SPI.init"
+  },
+  "machine.SPI.deinit": {
+    "signature": "SPI.deinit()",
+    "description": "Turn off the SPI bus.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.SPI.html#machine.SPI.deinit"
+  },
+  "machine.SPI.read": {
+    "signature": "SPI.read(nbytes, write=0x00)",
+    "description": "Read a number of bytes specified by nbytes while continuously writing the single byte given by write. Returns a bytes object with the data that was read.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.SPI.html#machine.SPI.read"
+  },
+  "machine.SPI.readinto": {
+    "signature": "SPI.readinto(buf, write=0x00)",
+    "description": "Read into the buffer specified by buf while continuously writing the single byte given by write. Returns None.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.SPI.html#machine.SPI.readinto"
+  },
+  "machine.SPI.write": {
+    "signature": "SPI.write(buf)",
+    "description": "Write the bytes contained in buf. Returns None.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.SPI.html#machine.SPI.write"
+  },
+  "machine.SPI.write_readinto": {
+    "signature": "SPI.write_readinto(write_buf, read_buf)",
+    "description": "Write the bytes from write_buf while reading into read_buf. The buffers can be the same or different, but both buffers must have the same length. Returns None.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.SPI.html#machine.SPI.write_readinto"
+  },
+  "machine.SPI.CONTROLLER": {
+    "signature": "SPI.CONTROLLER",
+    "description": "for initialising the SPI bus to controller; this is only used for the WiPy",
+    "url": "https://docs.micropython.org/en/latest/library/machine.SPI.html#machine.SPI.CONTROLLER"
+  },
+  "machine.SPI.MSB": {
+    "signature": "SPI.MSB",
+    "description": "set the first bit to be the most significant bit",
+    "url": "https://docs.micropython.org/en/latest/library/machine.SPI.html#machine.SPI.MSB"
+  },
+  "machine.SPI.LSB": {
+    "signature": "SPI.LSB",
+    "description": "set the first bit to be the least significant bit",
+    "url": "https://docs.micropython.org/en/latest/library/machine.SPI.html#machine.SPI.LSB"
+  },
+  "machine.I2C": {
+    "signature": "class machine.I2C(id, *, scl, sda, freq=400000, timeout=50000)",
+    "description": "Construct and return a new I2C object using the following parameters:",
+    "url": "https://docs.micropython.org/en/latest/library/machine.I2C.html#machine.I2C"
+  },
+  "machine.SoftI2C": {
+    "signature": "class machine.SoftI2C(scl, sda, *, freq=400000, timeout=50000)",
+    "description": "Construct a new software I2C object. The parameters are:",
+    "url": "https://docs.micropython.org/en/latest/library/machine.I2C.html#machine.SoftI2C"
+  },
+  "machine.I2C.init": {
+    "signature": "I2C.init(scl, sda, *, freq=400000)",
+    "description": "Initialise the I2C bus with the given arguments:",
+    "url": "https://docs.micropython.org/en/latest/library/machine.I2C.html#machine.I2C.init"
+  },
+  "machine.I2C.deinit": {
+    "signature": "I2C.deinit()",
+    "description": "Turn off the I2C bus.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.I2C.html#machine.I2C.deinit"
+  },
+  "machine.I2C.scan": {
+    "signature": "I2C.scan()",
+    "description": "Scan all I2C addresses between 0x08 and 0x77 inclusive and return a list of those that respond. A device responds if it pulls the SDA line low after its address (including a write bit) is sent on the bus.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.I2C.html#machine.I2C.scan"
+  },
+  "machine.I2C.start": {
+    "signature": "I2C.start()",
+    "description": "Generate a START condition on the bus (SDA transitions to low while SCL is high).",
+    "url": "https://docs.micropython.org/en/latest/library/machine.I2C.html#machine.I2C.start"
+  },
+  "machine.I2C.stop": {
+    "signature": "I2C.stop()",
+    "description": "Generate a STOP condition on the bus (SDA transitions to high while SCL is high).",
+    "url": "https://docs.micropython.org/en/latest/library/machine.I2C.html#machine.I2C.stop"
+  },
+  "machine.I2C.readinto": {
+    "signature": "I2C.readinto(buf, nack=True, /)",
+    "description": "Reads bytes from the bus and stores them into buf. The number of bytes read is the length of buf. An ACK will be sent on the bus after receiving all but the last byte. After the last byte is received, if nack is true then a NACK will be sent, otherwise an ACK will be sent (and in this case the peripheral assumes more bytes are going to be read in a later call).",
+    "url": "https://docs.micropython.org/en/latest/library/machine.I2C.html#machine.I2C.readinto"
+  },
+  "machine.I2C.write": {
+    "signature": "I2C.write(buf)",
+    "description": "Write the bytes from buf to the bus. Checks that an ACK is received after each byte and stops transmitting the remaining bytes if a NACK is received. The function returns the number of ACKs that were received.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.I2C.html#machine.I2C.write"
+  },
+  "machine.I2C.readfrom": {
+    "signature": "I2C.readfrom(addr, nbytes, stop=True, /)",
+    "description": "Read nbytes from the peripheral specified by addr. If stop is true then a STOP condition is generated at the end of the transfer. Returns a bytes object with the data read.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.I2C.html#machine.I2C.readfrom"
+  },
+  "machine.I2C.readfrom_into": {
+    "signature": "I2C.readfrom_into(addr, buf, stop=True, /)",
+    "description": "Read into buf from the peripheral specified by addr. The number of bytes read will be the length of buf. If stop is true then a STOP condition is generated at the end of the transfer.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.I2C.html#machine.I2C.readfrom_into"
+  },
+  "machine.I2C.writeto": {
+    "signature": "I2C.writeto(addr, buf, stop=True, /)",
+    "description": "Write the bytes from buf to the peripheral specified by addr. If a NACK is received following the write of a byte from buf then the remaining bytes are not sent. If stop is true then a STOP condition is generated at the end of the transfer, even if a NACK is received. The function returns the number of ACKs that were received.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.I2C.html#machine.I2C.writeto"
+  },
+  "machine.I2C.writevto": {
+    "signature": "I2C.writevto(addr, vector, stop=True, /)",
+    "description": "Write the bytes contained in vector to the peripheral specified by addr. vector should be a tuple or list of objects with the buffer protocol. The addr is sent once and then the bytes from each object in vector are written out sequentially. The objects in vector may be zero bytes in length in which case they don’t contribute to the output.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.I2C.html#machine.I2C.writevto"
+  },
+  "machine.I2C.readfrom_mem": {
+    "signature": "I2C.readfrom_mem(addr, memaddr, nbytes, *, addrsize=8)",
+    "description": "Read nbytes from the peripheral specified by addr starting from the memory address specified by memaddr. The argument addrsize specifies the address size in bits. Returns a bytes object with the data read.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.I2C.html#machine.I2C.readfrom_mem"
+  },
+  "machine.I2C.readfrom_mem_into": {
+    "signature": "I2C.readfrom_mem_into(addr, memaddr, buf, *, addrsize=8)",
+    "description": "Read into buf from the peripheral specified by addr starting from the memory address specified by memaddr. The number of bytes read is the length of buf. The argument addrsize specifies the address size in bits (on ESP8266 this argument is not recognised and the address size is always 8 bits).",
+    "url": "https://docs.micropython.org/en/latest/library/machine.I2C.html#machine.I2C.readfrom_mem_into"
+  },
+  "machine.I2C.writeto_mem": {
+    "signature": "I2C.writeto_mem(addr, memaddr, buf, *, addrsize=8)",
+    "description": "Write buf to the peripheral specified by addr starting from the memory address specified by memaddr. The argument addrsize specifies the address size in bits (on ESP8266 this argument is not recognised and the address size is always 8 bits).",
+    "url": "https://docs.micropython.org/en/latest/library/machine.I2C.html#machine.I2C.writeto_mem"
+  },
+  "machine.I2CTarget": {
+    "signature": "class machine.I2CTarget(id, addr, *, addrsize=7, mem=None, mem_addrsize=8, scl=None, sda=None)",
+    "description": "Construct and return a new I2CTarget object using the following parameters:",
+    "url": "https://docs.micropython.org/en/latest/library/machine.I2CTarget.html#machine.I2CTarget"
+  },
+  "machine.I2CTarget.deinit": {
+    "signature": "I2CTarget.deinit()",
+    "description": "Deinitialise the I2C target. After this method is called the hardware will no longer respond to requests on the I2C bus, and no other methods can be called.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.I2CTarget.html#machine.I2CTarget.deinit"
+  },
+  "machine.I2CTarget.readinto": {
+    "signature": "I2CTarget.readinto(buf)",
+    "description": "Read into the given buffer any pending bytes written by the I2C controller. Returns the number of bytes read.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.I2CTarget.html#machine.I2CTarget.readinto"
+  },
+  "machine.I2CTarget.write": {
+    "signature": "I2CTarget.write(buf)",
+    "description": "Write out the bytes from the given buffer, to be passed to the I2C controller after it sends a read request. Returns the number of bytes written. Most ports only accept one byte at a time to this method.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.I2CTarget.html#machine.I2CTarget.write"
+  },
+  "machine.I2CTarget.irq": {
+    "signature": "I2CTarget.irq(handler=None, trigger=IRQ_END_READ | IRQ_END_WRITE, hard=False)",
+    "description": "Configure an IRQ handler to be called when an event occurs. The possible events are given by the following constants, which can be or’d together and passed to the trigger argument:",
+    "url": "https://docs.micropython.org/en/latest/library/machine.I2CTarget.html#machine.I2CTarget.irq"
+  },
+  "machine.I2CTarget.memaddr": {
+    "signature": "I2CTarget.memaddr",
+    "description": "The integer value of the most recent memory address that was selected by the I2C controller (only valid if mem was specified in the constructor).",
+    "url": "https://docs.micropython.org/en/latest/library/machine.I2CTarget.html#machine.I2CTarget.memaddr"
+  },
+  "machine.I2CTarget.IRQ_ADDR_MATCH_READ": {
+    "signature": "I2CTarget.IRQ_ADDR_MATCH_READ",
+    "description": "IRQ trigger sources.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.I2CTarget.html#machine.I2CTarget.IRQ_ADDR_MATCH_READ"
+  },
+  "machine.I2S": {
+    "signature": "class machine.I2S(id, *, sck, ws, sd, mck=None, mode, bits, format, rate, ibuf)",
+    "description": "Construct an I2S object of the given id:",
+    "url": "https://docs.micropython.org/en/latest/library/machine.I2S.html#machine.I2S"
+  },
+  "machine.I2S.init": {
+    "signature": "I2S.init(sck, ...)",
+    "description": "see Constructor for argument descriptions",
+    "url": "https://docs.micropython.org/en/latest/library/machine.I2S.html#machine.I2S.init"
+  },
+  "machine.I2S.deinit": {
+    "signature": "I2S.deinit()",
+    "description": "Deinitialize the I2S bus",
+    "url": "https://docs.micropython.org/en/latest/library/machine.I2S.html#machine.I2S.deinit"
+  },
+  "machine.I2S.readinto": {
+    "signature": "I2S.readinto(buf)",
+    "description": "Read audio samples into the buffer specified by buf. buf must support the buffer protocol, such as bytearray or array. “buf” byte ordering is little-endian. For Stereo format, left channel sample precedes right channel sample. For Mono format, the left channel sample data is used. Returns number of bytes read",
+    "url": "https://docs.micropython.org/en/latest/library/machine.I2S.html#machine.I2S.readinto"
+  },
+  "machine.I2S.write": {
+    "signature": "I2S.write(buf)",
+    "description": "Write audio samples contained in buf. buf must support the buffer protocol, such as bytearray or array. “buf” byte ordering is little-endian. For Stereo format, left channel sample precedes right channel sample. For Mono format, the sample data is written to both the right and left channels. Returns number of bytes written",
+    "url": "https://docs.micropython.org/en/latest/library/machine.I2S.html#machine.I2S.write"
+  },
+  "machine.I2S.irq": {
+    "signature": "I2S.irq(handler)",
+    "description": "Set a callback. handler is called when buf is emptied (write method) or becomes full (readinto method). Setting a callback changes the write and readinto methods to non-blocking operation. handler is called in the context of the MicroPython scheduler.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.I2S.html#machine.I2S.irq"
+  },
+  "machine.I2S.shift": {
+    "signature": "static I2S.shift(*, buf, bits, shift)",
+    "description": "bitwise shift of all samples contained in buf. bits specifies sample size in bits. shift specifies the number of bits to shift each sample. Positive for left shift, negative for right shift. Typically used for volume control. Each bit shift changes sample volume by 6dB.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.I2S.html#machine.I2S.shift"
+  },
+  "machine.I2S.RX": {
+    "signature": "I2S.RX",
+    "description": "for initialising the I2S bus mode to receive",
+    "url": "https://docs.micropython.org/en/latest/library/machine.I2S.html#machine.I2S.RX"
+  },
+  "machine.I2S.TX": {
+    "signature": "I2S.TX",
+    "description": "for initialising the I2S bus mode to transmit",
+    "url": "https://docs.micropython.org/en/latest/library/machine.I2S.html#machine.I2S.TX"
+  },
+  "machine.I2S.STEREO": {
+    "signature": "I2S.STEREO",
+    "description": "for initialising the I2S bus format to stereo",
+    "url": "https://docs.micropython.org/en/latest/library/machine.I2S.html#machine.I2S.STEREO"
+  },
+  "machine.I2S.MONO": {
+    "signature": "I2S.MONO",
+    "description": "for initialising the I2S bus format to mono",
+    "url": "https://docs.micropython.org/en/latest/library/machine.I2S.html#machine.I2S.MONO"
+  },
+  "machine.RTC": {
+    "signature": "class machine.RTC(id=0, ...)",
+    "description": "Create an RTC object. See init for parameters of initialization.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.RTC.html#machine.RTC"
+  },
+  "machine.RTC.datetime": {
+    "signature": "RTC.datetime([datetimetuple])",
+    "description": "Get or set the date and time of the RTC.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.RTC.html#machine.RTC.datetime"
+  },
+  "machine.RTC.init": {
+    "signature": "RTC.init(datetime)",
+    "description": "Initialise the RTC. Datetime is a tuple of the form:",
+    "url": "https://docs.micropython.org/en/latest/library/machine.RTC.html#machine.RTC.init"
+  },
+  "machine.RTC.now": {
+    "signature": "RTC.now()",
+    "description": "Get get the current datetime tuple.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.RTC.html#machine.RTC.now"
+  },
+  "machine.RTC.deinit": {
+    "signature": "RTC.deinit()",
+    "description": "Resets the RTC to the time of January 1, 2015 and starts running it again.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.RTC.html#machine.RTC.deinit"
+  },
+  "machine.RTC.alarm": {
+    "signature": "RTC.alarm(id, time, *, repeat=False)",
+    "description": "Set the RTC alarm. Time might be either a millisecond value to program the alarm to current time + time_in_ms in the future, or a datetimetuple. If the time passed is in milliseconds, repeat can be set to True to make the alarm periodic.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.RTC.html#machine.RTC.alarm"
+  },
+  "machine.RTC.alarm_left": {
+    "signature": "RTC.alarm_left(alarm_id=0)",
+    "description": "Get the number of milliseconds left before the alarm expires.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.RTC.html#machine.RTC.alarm_left"
+  },
+  "machine.RTC.alarm_cancel": {
+    "signature": "RTC.alarm_cancel(alarm_id=0)",
+    "description": "Cancel a running alarm.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.RTC.html#machine.RTC.alarm_cancel"
+  },
+  "machine.RTC.irq": {
+    "signature": "RTC.irq(*, trigger, handler=None, wake=machine.IDLE)",
+    "description": "Create an irq object triggered by a real time clock alarm.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.RTC.html#machine.RTC.irq"
+  },
+  "machine.RTC.memory": {
+    "signature": "RTC.memory([data])",
+    "description": "RTC.memory(data) will write data to the RTC memory, where data is any object which supports the buffer protocol (including bytes, bytearray, memoryview and array.array). RTC.memory() reads RTC memory and returns a bytes object.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.RTC.html#machine.RTC.memory"
+  },
+  "machine.RTC.ALARM0": {
+    "signature": "RTC.ALARM0",
+    "description": "irq trigger source",
+    "url": "https://docs.micropython.org/en/latest/library/machine.RTC.html#machine.RTC.ALARM0"
+  },
+  "machine.Timer": {
+    "signature": "class machine.Timer(id, /, ...)",
+    "description": "Construct a new Timer object with the given id.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Timer.html#machine.Timer"
+  },
+  "machine.Timer.init": {
+    "signature": "Timer.init(*, mode=Timer.PERIODIC, freq=-1, period=-1, callback=None, hard=True)",
+    "description": "Initialise the timer. Example:",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Timer.html#machine.Timer.init"
+  },
+  "machine.Timer.deinit": {
+    "signature": "Timer.deinit()",
+    "description": "Deinitialises the timer. Stops the timer, and disables the timer peripheral.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Timer.html#machine.Timer.deinit"
+  },
+  "machine.Timer.ONE_SHOT": {
+    "signature": "Timer.ONE_SHOT",
+    "description": "Timer operating mode.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Timer.html#machine.Timer.ONE_SHOT"
+  },
+  "machine.Counter": {
+    "signature": "class machine.Counter(id, ...)",
+    "description": "Returns the singleton Counter object for the the given id. Values of id depend on a particular port and its hardware. Values 0, 1, etc. are commonly used to select hardware block #0, #1, etc.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Counter.html#machine.Counter"
+  },
+  "machine.Counter.init": {
+    "signature": "Counter.init(src, *, ...)",
+    "description": "Initialise and reset the Counter with the given parameters:",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Counter.html#machine.Counter.init"
+  },
+  "machine.Counter.deinit": {
+    "signature": "Counter.deinit()",
+    "description": "Stops the Counter, disabling any interrupts and releasing hardware resources. A Soft Reset should deinitialize all Counter objects.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Counter.html#machine.Counter.deinit"
+  },
+  "machine.Counter.value": {
+    "signature": "Counter.value([value])",
+    "description": "Get, and optionally set, the counter value as a signed integer. Implementations must aim to do the get and set atomically (i.e. without leading to skipped counts).",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Counter.html#machine.Counter.value"
+  },
+  "machine.Counter.RISING": {
+    "signature": "Counter.RISING",
+    "description": "Select the pulse edge.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Counter.html#machine.Counter.RISING"
+  },
+  "machine.Counter.UP": {
+    "signature": "Counter.UP",
+    "description": "Select the counting direction.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Counter.html#machine.Counter.UP"
+  },
+  "machine.Encoder": {
+    "signature": "class machine.Encoder(id, ...)",
+    "description": "Returns the singleton Encoder object for the the given id. Values of id depend on a particular port and its hardware. Values 0, 1, etc. are commonly used to select hardware block #0, #1, etc.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Encoder.html#machine.Encoder"
+  },
+  "machine.Encoder.init": {
+    "signature": "Encoder.init(phase_a, phase_b, *, ...)",
+    "description": "Initialise and reset the Encoder with the given parameters:",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Encoder.html#machine.Encoder.init"
+  },
+  "machine.Encoder.deinit": {
+    "signature": "Encoder.deinit()",
+    "description": "Stops the Encoder, disabling any interrupts and releasing hardware resources. A Soft Reset should deinitialize all Encoder objects.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Encoder.html#machine.Encoder.deinit"
+  },
+  "machine.Encoder.value": {
+    "signature": "Encoder.value([value])",
+    "description": "Get, and optionally set, the encoder value as a signed integer. Implementations should aim to do the get and set atomically.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Encoder.html#machine.Encoder.value"
+  },
+  "machine.WDT": {
+    "signature": "class machine.WDT(id=0, timeout=5000)",
+    "description": "Create a WDT object and start it. The timeout must be given in milliseconds. Once it is running the timeout cannot be changed and the WDT cannot be stopped either.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.WDT.html#machine.WDT"
+  },
+  "machine.WDT.feed": {
+    "signature": "WDT.feed()",
+    "description": "Feed the WDT to prevent it from resetting the system. The application should place this call in a sensible place ensuring that the WDT is only fed after verifying that everything is functioning correctly.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.WDT.html#machine.WDT.feed"
+  },
+  "machine.SD": {
+    "signature": "class machine.SD(id, ...)",
+    "description": "Create a SD card object. See init() for parameters if initialization.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.SD.html#machine.SD"
+  },
+  "machine.SD.init": {
+    "signature": "SD.init(id=0, pins=('GP10', 'GP11', 'GP15'))",
+    "description": "Enable the SD card. In order to initialize the card, give it a 3-tuple: (clk_pin, cmd_pin, dat0_pin).",
+    "url": "https://docs.micropython.org/en/latest/library/machine.SD.html#machine.SD.init"
+  },
+  "machine.SD.deinit": {
+    "signature": "SD.deinit()",
+    "description": "Disable the SD card.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.SD.html#machine.SD.deinit"
+  },
+  "machine.USBDevice": {
+    "signature": "class machine.USBDevice",
+    "description": "Construct a USBDevice object.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.USBDevice.html#machine.USBDevice"
+  },
+  "machine.USBDevice.config": {
+    "signature": "USBDevice.config(desc_dev, desc_cfg, desc_strs=None, open_itf_cb=None, reset_cb=None, control_xfer_cb=None, xfer_cb=None)",
+    "description": "Configures the USBDevice singleton object with the USB runtime device state and callback functions:",
+    "url": "https://docs.micropython.org/en/latest/library/machine.USBDevice.html#machine.USBDevice.config"
+  },
+  "machine.USBDevice.active": {
+    "signature": "USBDevice.active(self, [value] /)",
+    "description": "Returns the current active state of this runtime USB device as a boolean. The runtime USB device is “active” when it is available to interact with the host, it doesn’t mean that a USB Host is actually present.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.USBDevice.html#machine.USBDevice.active"
+  },
+  "machine.USBDevice.builtin_driver": {
+    "signature": "USBDevice.builtin_driver",
+    "description": "This attribute holds the current built-in driver configuration, and must be set to one of the USBDevice.BUILTIN_ named constants defined on this object.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.USBDevice.html#machine.USBDevice.builtin_driver"
+  },
+  "machine.USBDevice.remote_wakeup": {
+    "signature": "USBDevice.remote_wakeup(self)",
+    "description": "Wake up host if we are in suspend mode and the REMOTE_WAKEUP feature is enabled by the host. This has to be enabled in the USB attributes, and on the host. Returns True if remote wakeup was enabled and active and the host was woken up.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.USBDevice.html#machine.USBDevice.remote_wakeup"
+  },
+  "machine.USBDevice.submit_xfer": {
+    "signature": "USBDevice.submit_xfer(self, ep, buffer /)",
+    "description": "Submit a USB transfer on endpoint number ep. buffer must be an object implementing the buffer interface, with read access for IN endpoints and write access for OUT endpoints.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.USBDevice.html#machine.USBDevice.submit_xfer"
+  },
+  "machine.USBDevice.stall": {
+    "signature": "USBDevice.stall(self, ep, [stall] /)",
+    "description": "Calling this function gets or sets the STALL state of a device endpoint.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.USBDevice.html#machine.USBDevice.stall"
+  },
+  "machine.USBDevice.BUILTIN_NONE": {
+    "signature": "USBDevice.BUILTIN_NONE",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/machine.USBDevice.html#machine.USBDevice.BUILTIN_NONE"
+  },
+  "machine.USBDevice.BUILTIN_DEFAULT": {
+    "signature": "USBDevice.BUILTIN_DEFAULT",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/machine.USBDevice.html#machine.USBDevice.BUILTIN_DEFAULT"
+  },
+  "machine.USBDevice.BUILTIN_CDC": {
+    "signature": "USBDevice.BUILTIN_CDC",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/machine.USBDevice.html#machine.USBDevice.BUILTIN_CDC"
+  },
+  "machine.USBDevice.BUILTIN_MSC": {
+    "signature": "USBDevice.BUILTIN_MSC",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/machine.USBDevice.html#machine.USBDevice.BUILTIN_MSC"
+  },
+  "machine.USBDevice.BUILTIN_CDC_MSC": {
+    "signature": "USBDevice.BUILTIN_CDC_MSC",
+    "description": "These constant objects hold the built-in descriptor data which is compiled into the MicroPython firmware. USBDevice.BUILTIN_NONE and USBDevice.BUILTIN_DEFAULT are always present. Additional objects may be present depending on the firmware build configuration and the actual built-in drivers.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.USBDevice.html#machine.USBDevice.BUILTIN_CDC_MSC"
+  },
+  "network.AbstractNIC": {
+    "signature": "class network.AbstractNIC(id=None, ...)",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/network.html#network.AbstractNIC"
+  },
+  "network.AbstractNIC.active": {
+    "signature": "AbstractNIC.active([is_active])",
+    "description": "Activate (“up”) or deactivate (“down”) the network interface, if a boolean argument is passed. Otherwise, query current state if no argument is provided. Most other methods require an active interface (behaviour of calling them on inactive interface is undefined).",
+    "url": "https://docs.micropython.org/en/latest/library/network.html#network.AbstractNIC.active"
+  },
+  "network.AbstractNIC.connect": {
+    "signature": "AbstractNIC.connect([service_id, key=None, *, ...])",
+    "description": "Connect the interface to a network. This method is optional, and available only for interfaces which are not “always connected”. If no parameters are given, connect to the default (or the only) service. If a single parameter is given, it is the primary identifier of a service to connect to. It may be accompanied by a key (password) required to access said service. There can be further arbitrary keyword-only parameters, depending on the networking medium type and/or particular device. Parameters can be used to: a) specify alternative service identifier types; b) provide additional connection parameters. For various medium types, there are different sets of predefined/recommended parameters, among them:",
+    "url": "https://docs.micropython.org/en/latest/library/network.html#network.AbstractNIC.connect"
+  },
+  "network.AbstractNIC.disconnect": {
+    "signature": "AbstractNIC.disconnect()",
+    "description": "Disconnect from network.",
+    "url": "https://docs.micropython.org/en/latest/library/network.html#network.AbstractNIC.disconnect"
+  },
+  "network.AbstractNIC.isconnected": {
+    "signature": "AbstractNIC.isconnected()",
+    "description": "Returns True if connected to network, otherwise returns False.",
+    "url": "https://docs.micropython.org/en/latest/library/network.html#network.AbstractNIC.isconnected"
+  },
+  "network.AbstractNIC.scan": {
+    "signature": "AbstractNIC.scan(*, ...)",
+    "description": "Scan for the available network services/connections. Returns a list of tuples with discovered service parameters. For various network media, there are different variants of predefined/ recommended tuple formats, among them:",
+    "url": "https://docs.micropython.org/en/latest/library/network.html#network.AbstractNIC.scan"
+  },
+  "network.AbstractNIC.status": {
+    "signature": "AbstractNIC.status([param])",
+    "description": "Query dynamic status information of the interface. When called with no argument the return value describes the network link status. Otherwise param should be a string naming the particular status parameter to retrieve.",
+    "url": "https://docs.micropython.org/en/latest/library/network.html#network.AbstractNIC.status"
+  },
+  "network.AbstractNIC.ipconfig": {
+    "signature": "AbstractNIC.ipconfig('param')",
+    "description": "Get or set interface-specific IP-configuration interface parameters. Supported parameters are the following (availability of a particular parameter depends on the port and the specific network interface):",
+    "url": "https://docs.micropython.org/en/latest/library/network.html#network.AbstractNIC.ipconfig"
+  },
+  "network.AbstractNIC.ifconfig": {
+    "signature": "AbstractNIC.ifconfig([(ip, subnet, gateway, dns)])",
+    "description": "Note",
+    "url": "https://docs.micropython.org/en/latest/library/network.html#network.AbstractNIC.ifconfig"
+  },
+  "network.AbstractNIC.config": {
+    "signature": "AbstractNIC.config('param')",
+    "description": "Get or set general network interface parameters. These methods allow to work with additional parameters beyond standard IP configuration (as dealt with by ipconfig()). These include network-specific and hardware-specific parameters. For setting parameters, the keyword argument syntax should be used, and multiple parameters can be set at once. For querying, a parameter name should be quoted as a string, and only one parameter can be queried at a time:",
+    "url": "https://docs.micropython.org/en/latest/library/network.html#network.AbstractNIC.config"
+  },
+  "network.country": {
+    "signature": "network.country([code])",
+    "description": "Get or set the two-letter ISO 3166-1 Alpha-2 country code to be used for radio compliance.",
+    "url": "https://docs.micropython.org/en/latest/library/network.html#network.country"
+  },
+  "network.hostname": {
+    "signature": "network.hostname([name])",
+    "description": "Get or set the hostname that will identify this device on the network. It will be used by all interfaces.",
+    "url": "https://docs.micropython.org/en/latest/library/network.html#network.hostname"
+  },
+  "network.ipconfig": {
+    "signature": "network.ipconfig('param')",
+    "description": "Get or set global IP-configuration parameters. Supported parameters are the following (availability of a particular parameter depends on the port and the specific network interface):",
+    "url": "https://docs.micropython.org/en/latest/library/network.html#network.ipconfig"
+  },
+  "network.phy_mode": {
+    "signature": "network.phy_mode([mode])",
+    "description": "Get or set the PHY mode.",
+    "url": "https://docs.micropython.org/en/latest/library/network.html#network.phy_mode"
+  },
+  "network.WLAN": {
+    "signature": "class network.WLAN(interface_id)",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/network.WLAN.html#network.WLAN"
+  },
+  "network.WLAN.active": {
+    "signature": "WLAN.active([is_active])",
+    "description": "Activate (“up”) or deactivate (“down”) network interface, if boolean argument is passed. Otherwise, query current state if no argument is provided. Most other methods require active interface.",
+    "url": "https://docs.micropython.org/en/latest/library/network.WLAN.html#network.WLAN.active"
+  },
+  "network.WLAN.connect": {
+    "signature": "WLAN.connect(ssid=None, key=None, *, bssid=None)",
+    "description": "Connect to the specified wireless network, using the specified key. If bssid is given then the connection will be restricted to the access-point with that MAC address (the ssid must also be specified in this case).",
+    "url": "https://docs.micropython.org/en/latest/library/network.WLAN.html#network.WLAN.connect"
+  },
+  "network.WLAN.disconnect": {
+    "signature": "WLAN.disconnect()",
+    "description": "Disconnect from the currently connected wireless network.",
+    "url": "https://docs.micropython.org/en/latest/library/network.WLAN.html#network.WLAN.disconnect"
+  },
+  "network.WLAN.scan": {
+    "signature": "WLAN.scan()",
+    "description": "Scan for the available wireless networks. Hidden networks – where the SSID is not broadcast – will also be scanned if the WLAN interface allows it.",
+    "url": "https://docs.micropython.org/en/latest/library/network.WLAN.html#network.WLAN.scan"
+  },
+  "network.WLAN.status": {
+    "signature": "WLAN.status([param])",
+    "description": "Return the current status of the wireless connection.",
+    "url": "https://docs.micropython.org/en/latest/library/network.WLAN.html#network.WLAN.status"
+  },
+  "network.WLAN.isconnected": {
+    "signature": "WLAN.isconnected()",
+    "description": "In case of STA mode, returns True if connected to a WiFi access point and has a valid IP address. In AP mode returns True when a station is connected. Returns False otherwise.",
+    "url": "https://docs.micropython.org/en/latest/library/network.WLAN.html#network.WLAN.isconnected"
+  },
+  "network.WLAN.ifconfig": {
+    "signature": "WLAN.ifconfig([(ip, subnet, gateway, dns)])",
+    "description": "Get/set IP-level network interface parameters: IP address, subnet mask, gateway and DNS server. When called with no arguments, this method returns a 4-tuple with the above information. To set the above values, pass a 4-tuple with the required information. For example:",
+    "url": "https://docs.micropython.org/en/latest/library/network.WLAN.html#network.WLAN.ifconfig"
+  },
+  "network.WLAN.config": {
+    "signature": "WLAN.config('param')",
+    "description": "Get or set general network interface parameters. These methods allow to work with additional parameters beyond standard IP configuration (as dealt with by AbstractNIC.ipconfig()). These include network-specific and hardware-specific parameters. For setting parameters, keyword argument syntax should be used, multiple parameters can be set at once. For querying, parameters name should be quoted as a string, and only one parameter can be queries at time:",
+    "url": "https://docs.micropython.org/en/latest/library/network.WLAN.html#network.WLAN.config"
+  },
+  "network.WLAN.PM_PERFORMANCE": {
+    "signature": "WLAN.PM_PERFORMANCE",
+    "description": "Allowed values for the WLAN.config(pm=...) network interface parameter:",
+    "url": "https://docs.micropython.org/en/latest/library/network.WLAN.html#network.WLAN.PM_PERFORMANCE"
+  },
+  "network.WLAN.PROTOCOL_DEFAULT": {
+    "signature": "WLAN.PROTOCOL_DEFAULT",
+    "description": "A bitmap representing all of the default 802.11 Wi-Fi modes supported by the chip. Consult ESP-IDF Wi-Fi Protocols documentation for details.",
+    "url": "https://docs.micropython.org/en/latest/library/network.WLAN.html#network.WLAN.PROTOCOL_DEFAULT"
+  },
+  "network.WLAN.PROTOCOL_LR": {
+    "signature": "WLAN.PROTOCOL_LR",
+    "description": "This value corresponds to the Espressif proprietary “long-range” mode, which is not compatible with standard Wi-Fi devices. By setting this protocol it’s possible for an ESP32 STA in long-range mode to connect to an ESP32 AP in long-range mode, or to use ESP-NOW long range modes.",
+    "url": "https://docs.micropython.org/en/latest/library/network.WLAN.html#network.WLAN.PROTOCOL_LR"
+  },
+  "network.WLANWiPy": {
+    "signature": "class network.WLANWiPy(id=0, ...)",
+    "description": "Create a WLAN object, and optionally configure it. See init() for params of configuration.",
+    "url": "https://docs.micropython.org/en/latest/library/network.WLANWiPy.html#network.WLANWiPy"
+  },
+  "network.WLANWiPy.init": {
+    "signature": "WLANWiPy.init(mode, *, ssid, auth, channel, antenna)",
+    "description": "Set or get the WiFi network processor configuration.",
+    "url": "https://docs.micropython.org/en/latest/library/network.WLANWiPy.html#network.WLANWiPy.init"
+  },
+  "network.WLANWiPy.connect": {
+    "signature": "WLANWiPy.connect(ssid, *, auth=None, bssid=None, timeout=None)",
+    "description": "Connect to a WiFi access point using the given SSID, and other security parameters.",
+    "url": "https://docs.micropython.org/en/latest/library/network.WLANWiPy.html#network.WLANWiPy.connect"
+  },
+  "network.WLANWiPy.scan": {
+    "signature": "WLANWiPy.scan()",
+    "description": "Performs a network scan and returns a list of named tuples with (ssid, bssid, sec, channel, rssi). Note that channel is always None since this info is not provided by the WiPy.",
+    "url": "https://docs.micropython.org/en/latest/library/network.WLANWiPy.html#network.WLANWiPy.scan"
+  },
+  "network.WLANWiPy.disconnect": {
+    "signature": "WLANWiPy.disconnect()",
+    "description": "Disconnect from the WiFi access point.",
+    "url": "https://docs.micropython.org/en/latest/library/network.WLANWiPy.html#network.WLANWiPy.disconnect"
+  },
+  "network.WLANWiPy.isconnected": {
+    "signature": "WLANWiPy.isconnected()",
+    "description": "In case of STA mode, returns True if connected to a WiFi access point and has a valid IP address. In AP mode returns True when a station is connected, False otherwise.",
+    "url": "https://docs.micropython.org/en/latest/library/network.WLANWiPy.html#network.WLANWiPy.isconnected"
+  },
+  "network.WLANWiPy.ipconfig": {
+    "signature": "WLANWiPy.ipconfig('param')",
+    "description": "See AbstractNIC.ipconfig. Supported parameters are: dhcp4, addr4, gw4.",
+    "url": "https://docs.micropython.org/en/latest/library/network.WLANWiPy.html#network.WLANWiPy.ipconfig"
+  },
+  "network.WLANWiPy.mode": {
+    "signature": "WLANWiPy.mode([mode])",
+    "description": "Get or set the WLAN mode.",
+    "url": "https://docs.micropython.org/en/latest/library/network.WLANWiPy.html#network.WLANWiPy.mode"
+  },
+  "network.WLANWiPy.ssid": {
+    "signature": "WLANWiPy.ssid([ssid])",
+    "description": "Get or set the SSID when in AP mode.",
+    "url": "https://docs.micropython.org/en/latest/library/network.WLANWiPy.html#network.WLANWiPy.ssid"
+  },
+  "network.WLANWiPy.auth": {
+    "signature": "WLANWiPy.auth([auth])",
+    "description": "Get or set the authentication type when in AP mode.",
+    "url": "https://docs.micropython.org/en/latest/library/network.WLANWiPy.html#network.WLANWiPy.auth"
+  },
+  "network.WLANWiPy.channel": {
+    "signature": "WLANWiPy.channel([channel])",
+    "description": "Get or set the channel (only applicable in AP mode).",
+    "url": "https://docs.micropython.org/en/latest/library/network.WLANWiPy.html#network.WLANWiPy.channel"
+  },
+  "network.WLANWiPy.antenna": {
+    "signature": "WLANWiPy.antenna([antenna])",
+    "description": "Get or set the antenna type (external or internal).",
+    "url": "https://docs.micropython.org/en/latest/library/network.WLANWiPy.html#network.WLANWiPy.antenna"
+  },
+  "network.WLANWiPy.mac": {
+    "signature": "WLANWiPy.mac([mac_addr])",
+    "description": "Get or set a 6-byte long bytes object with the MAC address.",
+    "url": "https://docs.micropython.org/en/latest/library/network.WLANWiPy.html#network.WLANWiPy.mac"
+  },
+  "network.WLANWiPy.irq": {
+    "signature": "WLANWiPy.irq(*, handler, wake)",
+    "description": "Create a callback to be triggered when a WLAN event occurs during machine.SLEEP mode. Events are triggered by socket activity or by WLAN connection/disconnection.",
+    "url": "https://docs.micropython.org/en/latest/library/network.WLANWiPy.html#network.WLANWiPy.irq"
+  },
+  "network.WLANWiPy.STA": {
+    "signature": "WLANWiPy.STA",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/network.WLANWiPy.html#network.WLANWiPy.STA"
+  },
+  "network.WLANWiPy.AP": {
+    "signature": "WLANWiPy.AP",
+    "description": "selects the WLAN mode",
+    "url": "https://docs.micropython.org/en/latest/library/network.WLANWiPy.html#network.WLANWiPy.AP"
+  },
+  "network.WLANWiPy.WEP": {
+    "signature": "WLANWiPy.WEP",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/network.WLANWiPy.html#network.WLANWiPy.WEP"
+  },
+  "network.WLANWiPy.WPA": {
+    "signature": "WLANWiPy.WPA",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/network.WLANWiPy.html#network.WLANWiPy.WPA"
+  },
+  "network.WLANWiPy.WPA2": {
+    "signature": "WLANWiPy.WPA2",
+    "description": "selects the network security",
+    "url": "https://docs.micropython.org/en/latest/library/network.WLANWiPy.html#network.WLANWiPy.WPA2"
+  },
+  "network.WLANWiPy.INT_ANT": {
+    "signature": "WLANWiPy.INT_ANT",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/network.WLANWiPy.html#network.WLANWiPy.INT_ANT"
+  },
+  "network.WLANWiPy.EXT_ANT": {
+    "signature": "WLANWiPy.EXT_ANT",
+    "description": "selects the antenna type",
+    "url": "https://docs.micropython.org/en/latest/library/network.WLANWiPy.html#network.WLANWiPy.EXT_ANT"
+  },
+  "network.WIZNET5K": {
+    "signature": "class network.WIZNET5K(spi, pin_cs, pin_rst)",
+    "description": "Create a WIZNET5K driver object, initialise the WIZnet5x00 module using the given SPI bus and pins, and return the WIZNET5K object.",
+    "url": "https://docs.micropython.org/en/latest/library/network.WIZNET5K.html#network.WIZNET5K"
+  },
+  "network.WIZNET5K.regs": {
+    "signature": "WIZNET5K.regs()",
+    "description": "Dump the WIZnet5x00 registers. Useful for debugging.",
+    "url": "https://docs.micropython.org/en/latest/library/network.WIZNET5K.html#network.WIZNET5K.regs"
+  },
+  "network.LAN": {
+    "signature": "class network.LAN(id, *, phy_type=<board_default>, phy_addr=<board_default>, ref_clk_mode=<board_default>)",
+    "description": "Create a LAN driver object, initialise the LAN module using the given PHY driver name, and return the LAN object.",
+    "url": "https://docs.micropython.org/en/latest/library/network.LAN.html#network.LAN"
+  },
+  "network.LAN.active": {
+    "signature": "LAN.active([state])",
+    "description": "With a parameter, it sets the interface active if state is true, otherwise it sets it inactive. Without a parameter, it returns the state.",
+    "url": "https://docs.micropython.org/en/latest/library/network.LAN.html#network.LAN.active"
+  },
+  "network.LAN.isconnected": {
+    "signature": "LAN.isconnected()",
+    "description": "Returns True if the physical Ethernet link is connected and up. Returns False otherwise.",
+    "url": "https://docs.micropython.org/en/latest/library/network.LAN.html#network.LAN.isconnected"
+  },
+  "network.LAN.status": {
+    "signature": "LAN.status()",
+    "description": "Returns the LAN status.",
+    "url": "https://docs.micropython.org/en/latest/library/network.LAN.html#network.LAN.status"
+  },
+  "network.LAN.ifconfig": {
+    "signature": "LAN.ifconfig([(ip, subnet, gateway, dns)])",
+    "description": "Get/set IP address, subnet mask, gateway and DNS.",
+    "url": "https://docs.micropython.org/en/latest/library/network.LAN.html#network.LAN.ifconfig"
+  },
+  "network.LAN.config": {
+    "signature": "LAN.config(config_parameters)",
+    "description": "Sets or gets parameters of the LAN interface. The only parameter that can be retrieved is the MAC address, using:",
+    "url": "https://docs.micropython.org/en/latest/library/network.LAN.html#network.LAN.config"
+  },
+  "network.PPP": {
+    "signature": "class network.PPP(stream)",
+    "description": "Create a PPP driver object.",
+    "url": "https://docs.micropython.org/en/latest/library/network.PPP.html#network.PPP"
+  },
+  "network.PPP.connect": {
+    "signature": "PPP.connect(security=SEC_NONE, user=None, key=None)",
+    "description": "Initiate a PPP connection with the given parameters:",
+    "url": "https://docs.micropython.org/en/latest/library/network.PPP.html#network.PPP.connect"
+  },
+  "network.PPP.disconnect": {
+    "signature": "PPP.disconnect()",
+    "description": "Terminate the connection. This must be called to cleanly close the PPP connection.",
+    "url": "https://docs.micropython.org/en/latest/library/network.PPP.html#network.PPP.disconnect"
+  },
+  "network.PPP.isconnected": {
+    "signature": "PPP.isconnected()",
+    "description": "Returns True if the PPP link is connected and up. Returns False otherwise.",
+    "url": "https://docs.micropython.org/en/latest/library/network.PPP.html#network.PPP.isconnected"
+  },
+  "network.PPP.status": {
+    "signature": "PPP.status()",
+    "description": "Returns the PPP status.",
+    "url": "https://docs.micropython.org/en/latest/library/network.PPP.html#network.PPP.status"
+  },
+  "network.PPP.config": {
+    "signature": "PPP.config(config_parameters)",
+    "description": "Sets or gets parameters of the PPP interface. The only parameter that can be retrieved and set is the underlying stream, using:",
+    "url": "https://docs.micropython.org/en/latest/library/network.PPP.html#network.PPP.config"
+  },
+  "network.PPP.ipconfig": {
+    "signature": "PPP.ipconfig('param')",
+    "description": "See AbstractNIC.ipconfig.",
+    "url": "https://docs.micropython.org/en/latest/library/network.PPP.html#network.PPP.ipconfig"
+  },
+  "network.PPP.ifconfig": {
+    "signature": "PPP.ifconfig([(ip, subnet, gateway, dns)])",
+    "description": "See AbstractNIC.ifconfig.",
+    "url": "https://docs.micropython.org/en/latest/library/network.PPP.html#network.PPP.ifconfig"
+  },
+  "network.PPP.poll": {
+    "signature": "PPP.poll([irq_arg])",
+    "description": "Poll the underlying stream for data, and pass it up the PPP stack. This is called automatically if the stream is a UART with a RXIDLE interrupt, so it’s not usually necessary to call it manually.",
+    "url": "https://docs.micropython.org/en/latest/library/network.PPP.html#network.PPP.poll"
+  },
+  "network.PPP.SEC_NONE": {
+    "signature": "PPP.SEC_NONE",
+    "description": "The type of connection security.",
+    "url": "https://docs.micropython.org/en/latest/library/network.PPP.html#network.PPP.SEC_NONE"
+  }
+}
