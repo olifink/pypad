@@ -171,6 +171,12 @@ export class App {
     } else if (e.key === 'o') {
       e.preventDefault();
       this.openFile();
+    } else if (e.key === '?') {
+      e.preventDefault();
+      // Ctrl+? (Ctrl+Shift+/ on US keyboards): show the Docs tab and keep editor focus.
+      this.activePanelTab.set(1);
+      if (this.layout() === 'editor') this.setLayout('both');
+      this.editorRef().focus();
     }
   }
 

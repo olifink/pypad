@@ -70,6 +70,10 @@ export class EditorComponent implements OnDestroy {
     });
   }
 
+  focus(): void {
+    this.editorView?.focus();
+  }
+
   setContent(code: string): void {
     const view = this.editorView;
     if (!view) return;
