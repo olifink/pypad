@@ -99,15 +99,7 @@
 }
 
 .remove-btn {
-  width: 32px;
-  height: 32px;
-  line-height: 32px;
-}
-
-.remove-btn mat-icon {
-  font-size: 18px;
-  width: 18px;
-  height: 18px;
+  flex-shrink: 0;
 }
 
 .empty-state {

@@ -4,34 +4,13 @@ export interface InstalledPackage {
   name: string;
 }
 
-declare global {
-  interface Window {
-    pypad_install_status?: string;
-    pypad_install_log?: string;
-  }
-}
-
 /**
- * Builds a Python script that installs `name` via mip, captures stdout using
- * StringIO (mip uses Python-level print()), and exports the log + status to
- * window globals so TypeScript can read them back after runPython() returns.
+ * Builds a minimal Python script that installs `name` via mip.
+ * Errors propagate as JS exceptions from runPython(), caught by the caller.
  */
 function buildInstallScript(name: string): string {
-  // JSON.stringify ensures the name is properly escaped as a Python string literal.
   const pyName = JSON.stringify(name);
-  return `import sys, io, js
-_buf = io.StringIO()
-_old = sys.stdout
-sys.stdout = _buf
-try:
-    import mip
-    mip.install(${pyName})
-    js.globalThis.pypad_install_status = "ok"
-except Exception as e:
-    js.globalThis.pypad_install_status = "error:" + repr(e)
-finally:
-    sys.stdout = _old
-js.globalThis.pypad_install_log = _buf.getvalue()`.trim();
+  return `import mip\nmip.install(${pyName})`;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -67,35 +46,21 @@ export class PackagesService {
       // Yield to let Angular render the loading state before runPython() blocks.
       await new Promise<void>((resolve) => setTimeout(resolve, 0));
 
-      win.pypad_install_status = undefined;
-      win.pypad_install_log = undefined;
-
       try {
         interpreter.runPython(buildInstallScript(name));
       } catch (e) {
-        // runPython threw a JS-level exception — treat as hard failure.
+        // Python raised an exception — runPython re-throws it as a JS error.
         const msg = e instanceof Error ? e.message : String(e);
         if (!silent) this.lastLog.set(msg);
         return { success: false, log: msg };
       }
 
-      const log = win.pypad_install_log ?? '';
-      // `js.globalThis` property assignment is unreliable in some MicroPython builds,
-      // so pypad_install_status may never be set even on success. Default to 'ok' —
-      // a genuine Python exception would have been re-thrown as a JS error above.
-      const rawStatus: string = win.pypad_install_status ?? 'ok';
-      const success = !rawStatus.startsWith('error:');
-
-      if (!silent) {
-        this.lastLog.set(
-          log.trim() || (success ? `Installed ${name}.` : rawStatus.replace(/^error:/, '')),
-        );
-      }
-
-      if (success && !this.installedPackages().some((p) => p.name === name)) {
+      // If runPython didn't throw, the install succeeded.
+      if (!silent) this.lastLog.set(`Installed ${name}.`);
+      if (!this.installedPackages().some((p) => p.name === name)) {
         this.installedPackages.update((pkgs) => [...pkgs, { name }]);
       }
-      return { success, log };
+      return { success: true, log: '' };
     } finally {
       if (!silent) this.isInstalling.set(false);
     }
