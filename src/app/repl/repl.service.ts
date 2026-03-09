@@ -29,7 +29,33 @@ interface FitAddonModule {
 interface MicroPythonInterpreter {
   replInit(): void;
   replProcessChar(byte: number): void;
+  runPython(code: string): string;
 }
+
+/**
+ * Python code that re-registers `window.pypad_run` on a fresh interpreter.
+ * Must stay in sync with the equivalent block in index.html.
+ */
+const PYPAD_RUN_SETUP = `
+import js
+
+def _pypad_run(code):
+    output = []
+
+    def _print(*args, **kwargs):
+        sep = kwargs.get('sep', ' ')
+        end = kwargs.get('end', '\\n')
+        output.append(sep.join(str(a) for a in args) + end)
+
+    try:
+        exec(code, {'__name__': '__main__', 'print': _print})
+    except Exception as e:
+        output.append(type(e).__name__ + ': ' + str(e) + '\\n')
+
+    return ''.join(output)
+
+js.globalThis.pypad_run = _pypad_run
+`.trim();
 
 /** Options accepted by `loadMicroPython` from `micropython.mjs`. */
 interface LoadMicroPythonOptions {
@@ -171,6 +197,8 @@ export class ReplService {
     const newInterpreter = await this._createFreshInterpreter(this.terminal);
     this._interpreter = newInterpreter;
     (this.doc.defaultView as Window).pypad_interpreter = newInterpreter;
+    // Re-register pypad_run on the new WASM instance so the Output tab keeps working.
+    newInterpreter.runPython(PYPAD_RUN_SETUP);
     this.terminal.reset();
     newInterpreter.replInit();
     this.terminal.focus();
