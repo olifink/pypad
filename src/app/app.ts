@@ -5,6 +5,7 @@ import {
   ElementRef,
   afterNextRender,
   computed,
+  effect,
   inject,
   signal,
   viewChild,
@@ -31,6 +32,9 @@ import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog';
 import { ReplService } from './repl/repl.service';
 import { ShareService } from './share/share.service';
 import { ShareDialogComponent } from './share/share-dialog';
+import type { ShareDialogData } from './share/share-dialog';
+import { PackagesComponent } from './packages/packages';
+import { PackagesService } from './packages/packages.service';
 
 const DEFAULT_CODE = `# Welcome to PyPad!
 print("Hello, PyPad!")
@@ -57,6 +61,7 @@ export type LayoutMode = 'editor' | 'both' | 'panel';
     ConsoleComponent,
     ReplComponent,
     DocumentationComponent,
+    PackagesComponent,
   ],
   templateUrl: './app.html',
   styleUrl: './app.css',
@@ -72,18 +77,23 @@ export class App {
   protected readonly runner = inject(RunnerService);
   protected readonly replService = inject(ReplService);
   protected readonly theme = inject(ThemeService);
+  protected readonly packagesService = inject(PackagesService);
   private readonly _vk = inject(VirtualKeyboardService);
 
   private readonly workspaceRef = viewChild.required<ElementRef<HTMLElement>>('workspace');
   private readonly fileInputRef = viewChild.required<ElementRef<HTMLInputElement>>('fileInput');
   private readonly editorRef = viewChild.required(EditorComponent);
 
+  /** Packages bundled in the share URL, queued for auto-install once the interpreter is ready. */
+  private _sharedPackages: string[] = [];
+
   protected readonly initialCode = (() => {
     const shared = this.shareService.getSharedCode();
     if (shared) {
       // Persist immediately so a subsequent reload uses localStorage, not the URL.
-      this.storage.save(shared);
-      return shared;
+      this.storage.save(shared.code);
+      this._sharedPackages = shared.packages;
+      return shared.code;
     }
     return this.storage.load() ?? DEFAULT_CODE;
   })();
@@ -99,6 +109,17 @@ export class App {
     // Strip ?s= after Angular's router has completed its initial navigation,
     // which may overwrite any earlier history.replaceState call.
     afterNextRender(() => this.shareService.stripShareParam());
+
+    // Auto-install packages bundled in a share URL once the interpreter is ready.
+    effect(() => {
+      if (this.runner.isReady() && this._sharedPackages.length > 0) {
+        const pkgs = this._sharedPackages.splice(0);
+        void Promise.all(pkgs.map((p) => this.packagesService.install(p)));
+        // Switch to Packages tab so the user sees install progress.
+        this.activePanelTab.set(3);
+        if (this.layout() === 'editor') this.setLayout('both');
+      }
+    });
   }
 
   protected readonly showEditor = computed(
@@ -169,7 +190,10 @@ export class App {
 
   protected shareCode(): void {
     this.dialog.open(ShareDialogComponent, {
-      data: { code: this.currentCode() },
+      data: {
+        code: this.currentCode(),
+        packages: this.packagesService.installedPackages().map((p) => p.name),
+      } satisfies ShareDialogData,
       width: '480px',
     });
   }

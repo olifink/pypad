@@ -15,6 +15,7 @@ import { toDataURL } from 'qrcode';
 
 export interface ShareDialogData {
   code: string;
+  packages: string[];
 }
 
 @Component({
@@ -36,6 +37,26 @@ export interface ShareDialogData {
     .share-url-input {
       font-size: 13px;
       font-family: 'Roboto Mono', monospace;
+    }
+
+    .packages-note {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--mat-sys-on-surface-variant);
+      background: var(--mat-sys-surface-container);
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin: 0 0 16px;
+    }
+
+    .packages-note mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      color: var(--mat-sys-primary);
     }
 
     .qr-section {
@@ -62,6 +83,14 @@ export interface ShareDialogData {
     <h2 mat-dialog-title>Share</h2>
 
     <mat-dialog-content>
+      @if (packages.length > 0) {
+        <p class="packages-note">
+          <mat-icon aria-hidden="true">inventory_2</mat-icon>
+          {{ packages.length === 1 ? 'Includes package:' : 'Includes packages:' }}
+          <strong>{{ packages.join(', ') }}</strong>
+        </p>
+      }
+
       <div class="share-url-row">
         <mat-form-field class="share-url-field" appearance="outline" subscriptSizing="dynamic">
           <input
@@ -99,7 +128,11 @@ export class ShareDialogComponent implements OnInit {
   private readonly data = inject<ShareDialogData>(MAT_DIALOG_DATA);
   private readonly shareService = inject(ShareService);
 
-  protected readonly shareUrl = this.shareService.buildShareUrl(this.data.code);
+  protected readonly shareUrl = this.shareService.buildShareUrl(
+    this.data.code,
+    this.data.packages,
+  );
+  protected readonly packages = this.data.packages;
   protected readonly copied = signal(false);
   protected readonly qrDataUrl = signal('');
 

@@ -1,0 +1,79 @@
+<div class="packages-container">
+  <!-- Install form -->
+  <form class="install-form" (ngSubmit)="installPackage()">
+    <mat-form-field appearance="outline" class="install-field" subscriptSizing="dynamic">
+      <mat-label>Package name</mat-label>
+      <input
+        matInput
+        [formControl]="nameCtrl"
+        placeholder="e.g. datetime, umqtt.simple"
+        autocomplete="off"
+        spellcheck="false"
+        aria-label="Package name to install"
+      />
+    </mat-form-field>
+    <button
+      mat-flat-button
+      type="submit"
+      class="install-btn"
+      [disabled]="!nameCtrl.value.trim() || pkg.isInstalling()"
+      aria-label="Install package">
+      @if (pkg.isInstalling()) {
+        <mat-spinner diameter="18" aria-hidden="true" />
+        Installing…
+      } @else {
+        <ng-container>
+          <mat-icon aria-hidden="true">download</mat-icon>
+          Install
+        </ng-container>
+      }
+    </button>
+  </form>
+
+  <!-- Error banner -->
+  @if (installError()) {
+    <p class="install-error" role="alert">
+      <mat-icon aria-hidden="true">error_outline</mat-icon>
+      {{ installError() }}
+    </p>
+  }
+
+  <!-- Last install log -->
+  @if (pkg.lastLog()) {
+    <pre class="install-log" aria-live="polite">{{ pkg.lastLog() }}</pre>
+  }
+
+  <!-- Installed packages list -->
+  @if (pkg.installedPackages().length > 0) {
+    <div class="packages-list">
+      <div class="packages-list-label">Installed this session</div>
+      @for (p of pkg.installedPackages(); track p.name) {
+        <div class="package-item">
+          <mat-icon class="package-icon" aria-hidden="true">inventory_2</mat-icon>
+          <span class="package-name">{{ p.name }}</span>
+          <button
+            mat-icon-button
+            class="remove-btn"
+            (click)="pkg.remove(p.name)"
+            [attr.aria-label]="'Remove ' + p.name"
+            matTooltip="Remove">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      }
+    </div>
+  } @else if (!pkg.isInstalling()) {
+    <div class="empty-state">
+      <mat-icon class="empty-icon" aria-hidden="true">inventory_2</mat-icon>
+      <p class="empty-title">No packages installed</p>
+      <p class="empty-subtitle">
+        Install packages from
+        <a
+          href="https://github.com/micropython/micropython-lib"
+          target="_blank"
+          rel="noopener noreferrer">micropython-lib</a>
+        using <code>mip</code>. Packages are available for the current session.
+      </p>
+    </div>
+  }
+</div>
