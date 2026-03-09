@@ -172,6 +172,7 @@ export class ReplService {
     (this.doc.defaultView as Window).pypad_interpreter = newInterpreter;
     newInterpreter.replInit();
     this.terminal.clear();
+    this.terminal.focus();
   }
 
   /**
