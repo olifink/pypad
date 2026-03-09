@@ -46,11 +46,11 @@ To provide a zero-install, offline-capable Python editor that feels like a nativ
 * [x] **Download File:** Button to quickly download the current file as `main.py`.
 * [x] **URL Sharing:** Share the current file via a compressed URL (`?s=` query param, LZ-compressed). A dialog shows the full shareable link with a one-click copy button and a client-side QR code. Opening a share URL automatically loads the code into the editor.
 
-### Phase 4: Packages, REPL, and Debugging
+### Phase 4: Packages, REPL, and Debugging ✅
 
 * [x] **Integrated REPL:** Interactive MicroPython REPL in the panel tab using the xterm.js terminal that is already bundled with PyScript — no extra npm dependencies. Supports dark/light theming.
-* [ ] **Dependency Management (`mip`):** Packages tab find and use libraries from the `micropython-lib`.
-* [ ] **Package Bundling:** Update the "Share" logic to include a list of required packages in the URL so shared snippets automatically "install" their dependencies on first run.
+* [x] **Dependency Management (`mip`):** Packages tab to install libraries from `micropython-lib` via `mip.install()`. Installed packages survive REPL resets (automatically re-installed on each new interpreter instance). Package list is tracked in `PackagesService`.
+* [x] **Package Bundling:** Share URLs include a list of required packages (`{ v:1, c:code, p?:packages[] }` JSON payload, LZ-compressed). Opening a shared URL auto-installs its packages once the interpreter is ready and switches to the Packages tab. Backward-compatible with old plain-string share URLs.
 
 ### Phase 5: AI Coding Support
 
@@ -92,10 +92,11 @@ To provide a zero-install, offline-capable Python editor that feels like a nativ
 | `ReplComponent` | `src/app/repl/` | Hosts the xterm.js terminal for the interactive REPL tab; lazy-inits on first render; `ResizeObserver` keeps the terminal sized to its container. |
 | `DocumentationComponent` | `src/app/docs/` | Docs tab; debounces cursor position and looks up the symbol under the caret in `DocumentationService`; shows signature, description, and a deep-link to the official docs. |
 | `RunnerService` | `src/app/runner/` | Polls for `window.pypad_run`; exposes `isReady` signal and `run(code)`. |
-| `ReplService` | `src/app/repl/` | Polls for `window.pypad_interpreter`; `startRepl(el, isDark)` dynamically imports xterm.js from PyScript's local bundle, wires `io.stdout` → terminal and terminal keystrokes → `replProcessChar`; `setTheme(isDark)` for live theme switching. |
+| `ReplService` | `src/app/repl/` | Polls for `window.pypad_interpreter`; `startRepl(el, isDark)` dynamically imports xterm.js from PyScript's local bundle, wires `io.stdout` → terminal and terminal keystrokes → `replProcessChar`; `resetRepl()` loads a fresh WASM instance, re-registers `pypad_run`, and reinstalls tracked packages; `setTheme(isDark)` for live theme switching. |
+| `PackagesService` | `src/app/packages/` | Installs packages via `mip.install()` using `interpreter.runPython()`; tracks `installedPackages` signal; `reinstallAll()` re-installs all packages on a fresh interpreter after a REPL reset. |
 | `DocumentationService` | `src/app/docs/` | Loads `assets/docs.json` (scraped MicroPython + CPython builtins); merges with a static `KEYWORD_DOCS` map covering ~36 Python keywords; exposes `lookup(fqn)`. |
 | `EditorContextService` | `src/app/docs/` | Resolves the symbol or keyword at the current cursor position using the lezer syntax tree. |
-| `ShareService` | `src/app/share/` | `buildShareUrl(code)` compresses the code with `lz-string` into a `?s=` query param; `getSharedCode()` decompresses it at startup for pre-loading shared snippets. |
+| `ShareService` | `src/app/share/` | `buildShareUrl(code, packages?)` compresses a versioned JSON payload `{ v:1, c:code, p?:packages[] }` with `lz-string` into a `?s=` query param; `getSharedCode()` decompresses it, with fallback for legacy plain-string URLs. |
 | `StorageService` | `src/app/storage/` | Debounced `save()` + immediate `flush()` to `localStorage` key `pypad_code`. |
 | `ThemeService` | `src/app/theme/` | Three-way `light`/`dark`/`system` toggle; `effectiveIsDark` computed signal; persists to `localStorage`. |
 | `VirtualKeyboardService` | `src/app/virtual-keyboard/` | Opts into Virtual Keyboard API (`overlaysContent = true`); CSS `env(keyboard-inset-height)` shrinks the viewport. |

@@ -1,4 +1,5 @@
 import { Injectable, DOCUMENT, DestroyRef, inject, signal } from '@angular/core';
+import { PackagesService } from '../packages/packages.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { interval } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
@@ -84,6 +85,8 @@ export class ReplService {
 
   /** True once `window.pypad_interpreter` is available. */
   readonly isReady = signal(false);
+
+  private readonly packages = inject(PackagesService);
 
   /** The xterm FitAddon instance, available after `startRepl()` resolves. */
   fitAddon: FitAddon | null = null;
@@ -199,6 +202,8 @@ export class ReplService {
     (this.doc.defaultView as Window).pypad_interpreter = newInterpreter;
     // Re-register pypad_run on the new WASM instance so the Output tab keeps working.
     newInterpreter.runPython(PYPAD_RUN_SETUP);
+    // Re-install any packages the user had added this session.
+    await this.packages.reinstallAll();
     this.terminal.reset();
     newInterpreter.replInit();
     this.terminal.focus();
