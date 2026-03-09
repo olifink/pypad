@@ -8,6 +8,7 @@ interface XTerminal {
   onData(handler: (data: string) => void): void;
   write(data: string | Uint8Array): void;
   clear(): void;
+  reset(): void;
   open(el: HTMLElement): void;
   focus(): void;
   dispose(): void;
@@ -170,8 +171,8 @@ export class ReplService {
     const newInterpreter = await this._createFreshInterpreter(this.terminal);
     this._interpreter = newInterpreter;
     (this.doc.defaultView as Window).pypad_interpreter = newInterpreter;
+    this.terminal.reset();
     newInterpreter.replInit();
-    this.terminal.clear();
     this.terminal.focus();
   }
 
