@@ -9,6 +9,9 @@ import {
   input,
   viewChild,
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ReplService } from './repl.service';
 
 @Component({
@@ -16,6 +19,7 @@ import { ReplService } from './repl.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './repl.html',
   styleUrl: './repl.css',
+  imports: [MatButtonModule, MatIconModule, MatTooltipModule],
   host: { class: 'app-repl' },
 })
 export class ReplComponent implements AfterViewInit, OnDestroy {

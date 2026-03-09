@@ -28,6 +28,7 @@ import { RunnerService } from './runner/runner.service';
 import { ThemeService } from './theme/theme.service';
 import { VirtualKeyboardService } from './virtual-keyboard/virtual-keyboard.service';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog';
+import { ReplService } from './repl/repl.service';
 import { ShareService } from './share/share.service';
 import { ShareDialogComponent } from './share/share-dialog';
 
@@ -69,6 +70,7 @@ export class App {
   private readonly dialog = inject(MatDialog);
   private readonly shareService = inject(ShareService);
   protected readonly runner = inject(RunnerService);
+  protected readonly replService = inject(ReplService);
   protected readonly theme = inject(ThemeService);
   private readonly _vk = inject(VirtualKeyboardService);
 
@@ -125,6 +127,12 @@ export class App {
 
   protected runCode(): void {
     this.storage.flush();
+    // When the REPL tab is active, run inside the REPL so variables are inspectable.
+    if (this.activePanelTab() === 2) {
+      if (this.layout() === 'editor') this.setLayout('both');
+      this.replService.runInRepl(this.currentCode());
+      return;
+    }
     const lines = this.runner.run(this.currentCode());
     this.outputLines.set(lines);
     this.activePanelTab.set(0);

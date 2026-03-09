@@ -7,6 +7,7 @@ import { filter, take } from 'rxjs/operators';
 interface XTerminal {
   onData(handler: (data: string) => void): void;
   write(data: string | Uint8Array): void;
+  clear(): void;
   open(el: HTMLElement): void;
   focus(): void;
   dispose(): void;
@@ -48,6 +49,7 @@ export class ReplService {
   fitAddon: FitAddon | null = null;
 
   private terminal: XTerminal | null = null;
+  private readonly _encoder = new TextEncoder();
 
   constructor() {
     const win = this.doc.defaultView as Window;
@@ -125,9 +127,8 @@ export class ReplService {
     interpreter.replInit();
 
     // Route terminal keystrokes → MicroPython byte-by-byte.
-    const encoder = new TextEncoder();
     terminal.onData((chars: string) => {
-      const bytes = encoder.encode(chars);
+      const bytes = this._encoder.encode(chars);
       for (const byte of bytes) {
         interpreter.replProcessChar(byte);
       }
@@ -139,6 +140,40 @@ export class ReplService {
     if (this.terminal) {
       this.terminal.options['theme'] = this._themeFor(isDark);
     }
+  }
+
+  /**
+   * Clears the terminal display and re-initialises the MicroPython REPL state
+   * machine, resetting all Python globals. Safe to call at any time after
+   * `startRepl()` has resolved.
+   */
+  resetRepl(): void {
+    const win = this.doc.defaultView as Window;
+    this.terminal?.clear();
+    win.pypad_interpreter?.replInit();
+  }
+
+  /**
+   * Resets the REPL then executes `code` via MicroPython paste mode
+   * (Ctrl+E … bytes … Ctrl+D) so that variables remain inspectable afterward.
+   *
+   * If the terminal has not been started yet (user has never opened the REPL
+   * tab), this is a no-op — the caller should switch to the REPL tab first so
+   * that `ngAfterViewInit` triggers `startRepl()`, then try again.
+   */
+  runInRepl(code: string): void {
+    const interpreter = (this.doc.defaultView as Window).pypad_interpreter;
+    if (!this.terminal || !interpreter) return;
+
+    this.resetRepl();
+
+    // Enter paste mode, send the code, then execute.
+    interpreter.replProcessChar(0x05); // Ctrl+E
+    const bytes = this._encoder.encode(code);
+    for (const byte of bytes) {
+      interpreter.replProcessChar(byte);
+    }
+    interpreter.replProcessChar(0x04); // Ctrl+D
   }
 
   private _themeFor(isDark: boolean): Record<string, string> {
