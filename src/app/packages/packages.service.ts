@@ -69,16 +69,26 @@ export class PackagesService {
 
       win.pypad_install_status = undefined;
       win.pypad_install_log = undefined;
-      interpreter.runPython(buildInstallScript(name));
+
+      try {
+        interpreter.runPython(buildInstallScript(name));
+      } catch (e) {
+        // runPython threw a JS-level exception — treat as hard failure.
+        const msg = e instanceof Error ? e.message : String(e);
+        if (!silent) this.lastLog.set(msg);
+        return { success: false, log: msg };
+      }
 
       const log = win.pypad_install_log ?? '';
-      // Explicit string annotation prevents TypeScript narrowing status to "" after the reset above.
-      const status: string = win.pypad_install_status ?? '';
-      const success = status === 'ok';
+      // `js.globalThis` property assignment is unreliable in some MicroPython builds,
+      // so pypad_install_status may never be set even on success. Default to 'ok' —
+      // a genuine Python exception would have been re-thrown as a JS error above.
+      const rawStatus: string = win.pypad_install_status ?? 'ok';
+      const success = !rawStatus.startsWith('error:');
 
       if (!silent) {
         this.lastLog.set(
-          log.trim() || (success ? `Installed ${name}.` : status.replace(/^error:/, '')),
+          log.trim() || (success ? `Installed ${name}.` : rawStatus.replace(/^error:/, '')),
         );
       }
 
