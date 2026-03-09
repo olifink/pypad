@@ -24,13 +24,26 @@ interface FitAddonModule {
   FitAddon: new () => FitAddon;
 }
 
+/** Minimal typings for a MicroPython WASM interpreter instance. */
+interface MicroPythonInterpreter {
+  replInit(): void;
+  replProcessChar(byte: number): void;
+}
+
+/** Options accepted by `loadMicroPython` from `micropython.mjs`. */
+interface LoadMicroPythonOptions {
+  stdout?: (data: Uint8Array) => void;
+  stderr?: (data: Uint8Array) => void;
+  linebuffer?: boolean;
+  heapsize?: number;
+  pystack?: number;
+  url?: string;
+}
+
 /** JS objects exposed by PyScript when the MicroPython WASM runtime is ready. */
 declare global {
   interface Window {
-    pypad_interpreter?: {
-      replInit(): void;
-      replProcessChar(byte: number): void;
-    };
+    pypad_interpreter?: MicroPythonInterpreter;
     pypad_io?: {
       stdout: ((data: Uint8Array) => void) | null;
     };
@@ -50,6 +63,8 @@ export class ReplService {
 
   private terminal: XTerminal | null = null;
   private readonly _encoder = new TextEncoder();
+  /** The active MicroPython interpreter. Updated on every reset. */
+  private _interpreter: MicroPythonInterpreter | null = null;
 
   constructor() {
     const win = this.doc.defaultView as Window;
@@ -124,13 +139,15 @@ export class ReplService {
     };
 
     // Start the MicroPython REPL state machine.
+    this._interpreter = interpreter;
     interpreter.replInit();
 
-    // Route terminal keystrokes → MicroPython byte-by-byte.
+    // Route terminal keystrokes → current interpreter (read via this._interpreter
+    // so resets transparently swap to a new instance).
     terminal.onData((chars: string) => {
       const bytes = this._encoder.encode(chars);
       for (const byte of bytes) {
-        interpreter.replProcessChar(byte);
+        this._interpreter?.replProcessChar(byte);
       }
     });
   }
@@ -143,29 +160,34 @@ export class ReplService {
   }
 
   /**
-   * Clears the terminal display and re-initialises the MicroPython REPL state
-   * machine, resetting all Python globals. Safe to call at any time after
-   * `startRepl()` has resolved.
+   * Creates a brand-new MicroPython WASM interpreter instance, swaps it in,
+   * and clears the terminal. All previously defined Python globals are gone
+   * because the entire heap is discarded with the old instance.
+   * Safe to call at any time after `startRepl()` has resolved.
    */
-  resetRepl(): void {
-    const win = this.doc.defaultView as Window;
-    this.terminal?.clear();
-    win.pypad_interpreter?.replInit();
+  async resetRepl(): Promise<void> {
+    if (!this.terminal) return;
+    const newInterpreter = await this._createFreshInterpreter(this.terminal);
+    this._interpreter = newInterpreter;
+    (this.doc.defaultView as Window).pypad_interpreter = newInterpreter;
+    newInterpreter.replInit();
+    this.terminal.clear();
   }
 
   /**
-   * Resets the REPL then executes `code` via MicroPython paste mode
-   * (Ctrl+E … bytes … Ctrl+D) so that variables remain inspectable afterward.
+   * Resets the REPL (fresh interpreter) then executes `code` via MicroPython
+   * paste mode (Ctrl+E … bytes … Ctrl+D) so that the new run's variables
+   * remain inspectable afterward.
    *
    * If the terminal has not been started yet (user has never opened the REPL
    * tab), this is a no-op — the caller should switch to the REPL tab first so
    * that `ngAfterViewInit` triggers `startRepl()`, then try again.
    */
-  runInRepl(code: string): void {
-    const interpreter = (this.doc.defaultView as Window).pypad_interpreter;
-    if (!this.terminal || !interpreter) return;
-
-    this.resetRepl();
+  async runInRepl(code: string): Promise<void> {
+    if (!this.terminal) return;
+    await this.resetRepl();
+    const interpreter = this._interpreter;
+    if (!interpreter) return;
 
     // Enter paste mode, send the code, then execute.
     interpreter.replProcessChar(0x05); // Ctrl+E
@@ -174,6 +196,25 @@ export class ReplService {
       interpreter.replProcessChar(byte);
     }
     interpreter.replProcessChar(0x04); // Ctrl+D
+  }
+
+  /**
+   * Instantiates a fresh MicroPython WASM module and wires its stdout directly
+   * to the terminal. Each call loads a new WASM instance with a clean heap.
+   */
+  private async _createFreshInterpreter(terminal: XTerminal): Promise<MicroPythonInterpreter> {
+    const mpjsUrl = new URL('pyscript/micropython/micropython.mjs', this.doc.baseURI).href;
+    const { loadMicroPython } = (await import(/* @vite-ignore */ mpjsUrl)) as {
+      loadMicroPython: (options: LoadMicroPythonOptions) => Promise<MicroPythonInterpreter>;
+    };
+    const cr = new Uint8Array([13]);
+    return loadMicroPython({
+      linebuffer: false,
+      stdout: (data: Uint8Array) => {
+        if (data[0] === 10) terminal.write(cr);
+        terminal.write(data);
+      },
+    });
   }
 
   private _themeFor(isDark: boolean): Record<string, string> {
