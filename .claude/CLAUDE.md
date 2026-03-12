@@ -1,5 +1,78 @@
+# CLAUDE.md
 
-You are an expert in TypeScript, Angular, and scalable web application development. You write functional, maintainable, performant, and accessible code following Angular and TypeScript best practices.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project Overview
+
+**PyPad** is a mobile-first, offline-capable Python IDE that runs entirely in the browser. It uses MicroPython WASM (via PyScript) for execution, CodeMirror 6 for editing, and Angular Material 3 for UI. Built as a PWA targeting Android tablets and Chromebooks.
+
+## Commands
+
+```bash
+npm start          # Dev server (http://localhost:4200), service worker disabled
+npm run build      # Production build → dist/pypad/browser/
+npm test           # Run unit tests with Vitest via Angular CLI
+npm run icons      # Regenerate PWA icons from source SVG (scripts/generate-icons.mjs)
+npm run docs       # Rebuild assets/docs.json from MicroPython/CPython sources (scripts/build-docs.mjs)
+```
+
+Tests use Vitest with Angular's `@angular/build:unit-test` builder. Test files are `*.spec.ts` co-located with their source.
+
+## Architecture
+
+### Angular Application
+
+Single-page Angular 21 app with no feature routes (only a root route). All components are standalone, use signals for state, and `ChangeDetectionStrategy.OnPush`.
+
+**Root component** (`src/app/app.ts`) orchestrates layout (editor/both/panel modes with a draggable splitter), keyboard shortcuts (`Ctrl+R` run, `Ctrl+S` save, `Ctrl+O` open, `Ctrl+?` docs), and coordinates all services.
+
+**Component → Service map:**
+
+| Component | Path | Purpose |
+|---|---|---|
+| `App` | `src/app/app.ts` | Root shell; layout, shortcuts, file I/O |
+| `EditorComponent` | `src/app/editor/` | CodeMirror 6; emits `codeChange` + `cursorInfo`; dark/light theme via Compartment |
+| `ConsoleComponent` | `src/app/console/` | Output display; auto-scrolls |
+| `ReplComponent` | `src/app/repl/` | xterm.js REPL terminal; lazy-init on first render |
+| `DocumentationComponent` | `src/app/docs/` | Symbol lookup at cursor via lezer syntax tree |
+| `PackagesComponent` | `src/app/packages/` | `mip.install()` UI |
+
+| Service | Path | Purpose |
+|---|---|---|
+| `RunnerService` | `src/app/runner/` | Polls for `window.pypad_run`; exposes `isReady` signal + `run(code)` |
+| `ReplService` | `src/app/repl/` | Polls for `window.pypad_interpreter`; wires xterm.js to MicroPython io; `resetRepl()` loads fresh WASM |
+| `PackagesService` | `src/app/packages/` | `mip.install()` calls; tracks `installedPackages` signal; `reinstallAll()` after REPL reset |
+| `ShareService` | `src/app/share/` | LZ-compresses `{ v:1, c:code, p?:packages[] }` into `?s=` query param |
+| `StorageService` | `src/app/storage/` | Debounced + immediate flush to `localStorage` key `pypad_code` |
+| `ThemeService` | `src/app/theme/` | `light`/`dark`/`system` toggle; `effectiveIsDark` computed signal |
+| `DocumentationService` | `src/app/docs/` | Loads `assets/docs.json`; merges with `KEYWORD_DOCS` for ~36 Python keywords |
+| `EditorContextService` | `src/app/docs/` | Resolves symbol at cursor position using lezer |
+| `VirtualKeyboardService` | `src/app/virtual-keyboard/` | Virtual Keyboard API (`overlaysContent = true`); CSS `env(keyboard-inset-height)` |
+
+### PyScript / MicroPython Bridge
+
+The MicroPython WASM runtime is self-hosted under `public/pyscript/` (copied from the official offline bundle — do not modify these files). It is injected in `src/index.html` via dynamically-constructed `<script>` tags specifically to avoid Vite's static import analysis bundling the PyScript assets.
+
+Three globals bridge Python → Angular:
+- `window.pypad_run` — Python function (set by inline `<script type="mpy">`) that `exec`s code with a custom `print` interceptor and returns captured output
+- `window.pypad_interpreter` — raw MicroPython interpreter object (for `mip.install()` and REPL)
+- `window.pypad_io` — PyScript io object (for REPL stdout/stdin wiring)
+
+`RunnerService` and `ReplService` each poll for their respective global to become available before marking `isReady`.
+
+### Theming & Styles
+
+- `src/material-theme.scss` — Angular Material 3 dynamic theme (M3 system tokens)
+- `src/styles.css` — Global styles + `env(keyboard-inset-height)` viewport fix
+- Fonts (Roboto, Roboto Mono, Material Icons) and all runtime assets are bundled locally for offline use
+
+### Share URL Format
+
+Share URLs encode a versioned JSON payload compressed with `lz-string`:
+- Current: `{ v:1, c:"<code>", p?:["pkg1",...] }` → LZ-compressed → `?s=<encoded>`
+- Legacy (v0): plain LZ-compressed code string (backwards-compatible)
+
+---
 
 ## TypeScript Best Practices
 
