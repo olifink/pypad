@@ -1,7 +1,7 @@
 <div class="docs-panel">
   @if (!docsService.isLoaded()) {
     <p class="docs-placeholder">Loading documentation…</p>
-  } @else if (docEntry()) {
+  } @else if (!showCheatSheet() && docEntry()) {
     <div class="docs-content">
       <pre class="docs-signature">{{ docEntry()!.signature }}</pre>
       <p class="docs-description">{{ docEntry()!.description }}</p>
@@ -9,7 +9,7 @@
         Open official docs ↗
       </a>
     </div>
-  } @else if (currentSymbol()) {
+  } @else if (!showCheatSheet() && currentSymbol()) {
     <p class="docs-empty">
       No documentation available for <code class="docs-code">{{ currentSymbol() }}</code>
     </p>
@@ -18,3 +18,15 @@
     <app-markdown src="assets/cheat-sheet.md" />
   }
 </div>
+
+@if (docsService.isLoaded() && (docEntry() || currentSymbol())) {
+  <button
+    mat-icon-button
+    class="cheatsheet-btn"
+    [attr.aria-label]="showCheatSheet() ? 'Back to symbol docs' : 'Show cheat sheet'"
+    [matTooltip]="showCheatSheet() ? 'Back to symbol docs' : 'Show cheat sheet'"
+    (click)="showCheatSheet.set(!showCheatSheet())"
+  >
+    <mat-icon>{{ showCheatSheet() ? 'info' : 'menu_book' }}</mat-icon>
+  </button>
+}
