@@ -32,3 +32,20 @@ html,
 body {
   overscroll-behavior: none;
 }
+
+/* Ensure Angular Material dialogs don't overlap with the virtual keyboard on mobile. */
+.cdk-global-overlay-wrapper {
+  /* Use keyboard-inset-height for modern browsers (PWA mode), otherwise 0. */
+  padding-bottom: env(keyboard-inset-height, 0px);
+}
+
+/* Material 3 dialog containers should be centered in the remaining viewport. */
+.mat-mdc-dialog-container {
+  max-height: calc(90dvh - env(keyboard-inset-height, 0px)) !important;
+}
+
+.mat-mdc-dialog-content {
+  /* Ensure content remains scrollable if the keyboard takes up too much space. */
+  max-height: none !important;
+  flex: 1;
+}
