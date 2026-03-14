@@ -1,16 +1,32 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
 .docs-panel {
-  height: 100%;
+  flex: 1;
+  min-height: 0;
   padding: 16px;
   overflow-y: auto;
   box-sizing: border-box;
 }
 
 .docs-placeholder,
-.docs-empty {
+.docs-empty,
+.docs-hint {
   color: var(--mat-sys-on-surface-variant);
   font-size: 14px;
   line-height: 1.5;
   margin: 0;
+}
+
+.docs-hint {
+  font-size: 12px;
+  font-style: italic;
+  margin-bottom: 14px;
 }
 
 .docs-signature {

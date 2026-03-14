@@ -4,12 +4,14 @@ import { debounceTime } from 'rxjs';
 import { DocumentationService } from './docs.service';
 import { EditorContextService } from './editor-context.service';
 import type { CursorInfo } from '../editor/editor';
+import { MarkdownComponent } from '../markdown/markdown.component';
 
 @Component({
   selector: 'app-docs',
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './docs.component.html',
   styleUrl: './docs.component.css',
+  imports: [MarkdownComponent],
 })
 export class DocumentationComponent {
   readonly cursorInfo = input<CursorInfo | null>(null);
