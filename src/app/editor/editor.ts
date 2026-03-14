@@ -12,6 +12,7 @@ import {
 } from '@angular/core';
 import { EditorView, basicSetup } from 'codemirror';
 import { keymap } from "@codemirror/view"
+import { indentUnit } from "@codemirror/language"
 
 export interface CursorInfo {
   view: EditorView;
@@ -74,6 +75,7 @@ export class EditorComponent implements OnDestroy {
         extensions: [
           basicSetup,
           keymap.of([indentWithTab]),
+          indentUnit.of("    "),
           python(),
           highlightLineField,
           this.themeCompartment.of(this.isDark() ? materialDark : materialLight),
@@ -125,6 +127,18 @@ export class EditorComponent implements OnDestroy {
     view.dispatch({
       changes: { from: 0, to: view.state.doc.length, insert: code },
     });
+  }
+
+  insertText(text: string): void {
+    const view = this.editorView;
+    if (!view) return;
+    const { from, to } = view.state.selection.main;
+    view.dispatch({
+      changes: { from, to, insert: text },
+      selection: { anchor: from + text.length },
+      scrollIntoView: true,
+    });
+    view.focus();
   }
 
   ngOnDestroy(): void {

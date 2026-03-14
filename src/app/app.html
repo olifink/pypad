@@ -77,6 +77,12 @@
           <span class="app-title">PyPad</span>
           <span class="toolbar-spacer"></span>
 
+          @if (aiService.hasApiKey()) {
+            <button mat-icon-button (click)="insertAiCode()" matTooltip="AI Insert (Ctrl+\)" aria-label="AI Insert">
+              <mat-icon>auto_awesome</mat-icon>
+            </button>
+          }
+
           <mat-button-toggle-group class="layout-toggle" [value]="layout()" (change)="setLayout($event.value)"
             hideSingleSelectionIndicator aria-label="Layout mode">
             <mat-button-toggle value="editor" matTooltip="Editor only" aria-label="Editor only">

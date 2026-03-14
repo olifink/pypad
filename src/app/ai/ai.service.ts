@@ -8,6 +8,14 @@ export class AiService {
   /** Signal indicating if an AI operation is currently in progress. */
   readonly isGenerating = signal(false);
 
+  /** Signal indicating if a Gemini API key is configured. */
+  readonly hasApiKey = signal(!!this.storage.loadApiKey());
+
+  /** Refreshes the hasApiKey status from storage. */
+  updateApiKeyStatus(): void {
+    this.hasApiKey.set(!!this.storage.loadApiKey());
+  }
+
   async generateCode(prompt: string): Promise<string> {
     const apiKey = this.storage.loadApiKey();
     if (!apiKey) {
@@ -18,6 +26,7 @@ export class AiService {
 
     const systemPrompt = `You are an expert Python developer for MicroPython. 
 Generate readable, efficient Python code for a MicroPython interpreter.
+Follow PEP 8 style guidelines. Use 4 spaces for indentation.
 ONLY return the Python code itself, no explanations, no markdown code blocks, no preamble.
 If you cannot fulfill the request, return an error message starting with # ERROR:`;
 

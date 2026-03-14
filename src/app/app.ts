@@ -39,6 +39,7 @@ import { PackagesService } from './packages/packages.service';
 import { AiSettingsDialogComponent } from './ai-settings-dialog/ai-settings-dialog';
 import { AiService } from './ai/ai.service';
 import { NewFileDialogComponent } from './new-file-dialog/new-file-dialog';
+import { AiPromptDialogComponent } from './ai-prompt-dialog/ai-prompt-dialog';
 
 const DEFAULT_CODE = `# Welcome to PyPad!
 print("Hello, PyPad!")
@@ -77,6 +78,7 @@ export type LayoutMode = 'editor' | 'both' | 'panel';
     PackagesComponent,
     AiSettingsDialogComponent,
     NewFileDialogComponent,
+    AiPromptDialogComponent,
   ],
   templateUrl: './app.html',
   styleUrl: './app.css',
@@ -256,6 +258,35 @@ export class App {
     });
   }
 
+  protected insertAiCode(): void {
+    if (!this.aiService.hasApiKey()) {
+      this.openAiSettings();
+      return;
+    }
+
+    this.dialog
+      .open(AiPromptDialogComponent, {
+        width: '480px',
+      })
+      .afterClosed()
+      .subscribe(async (prompt: string | undefined) => {
+        if (!prompt) return;
+
+        try {
+          const generatedCode = await this.aiService.generateCode(prompt);
+          this.editorRef().insertText(generatedCode);
+        } catch (err) {
+          this.dialog.open(ConfirmDialogComponent, {
+            data: {
+              title: 'AI Insertion Failed',
+              message: err instanceof Error ? err.message : 'An unknown error occurred',
+              confirmLabel: 'OK',
+            },
+          });
+        }
+      });
+  }
+
   protected onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
@@ -281,6 +312,9 @@ export class App {
     } else if (e.key === 'o') {
       e.preventDefault();
       this.openFile();
+    } else if (e.key === '\\') {
+      e.preventDefault();
+      this.insertAiCode();
     } else if (e.key === '?') {
       e.preventDefault();
       // Ctrl+? (Ctrl+Shift+/ on US keyboards): show the Docs tab and keep editor focus.

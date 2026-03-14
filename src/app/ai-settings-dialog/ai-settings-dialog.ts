@@ -6,6 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { StorageService } from '../storage/storage.service';
+import { AiService } from '../ai/ai.service';
 
 @Component({
   selector: 'app-ai-settings-dialog',
@@ -71,6 +72,7 @@ import { StorageService } from '../storage/storage.service';
 export class AiSettingsDialogComponent {
   private readonly dialogRef = inject(MatDialogRef<AiSettingsDialogComponent>);
   private readonly storage = inject(StorageService);
+  private readonly aiService = inject(AiService);
 
   protected readonly apiKey = signal(this.storage.loadApiKey() ?? '');
   protected readonly hideKey = signal(true);
@@ -81,6 +83,7 @@ export class AiSettingsDialogComponent {
 
   protected onSave(): void {
     this.storage.saveApiKey(this.apiKey().trim() || null);
+    this.aiService.updateApiKeyStatus();
     this.dialogRef.close(true);
   }
 }
