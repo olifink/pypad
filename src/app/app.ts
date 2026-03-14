@@ -26,6 +26,7 @@ import { ReplComponent } from './repl/repl';
 import { DocumentationComponent } from './docs/docs.component';
 import { StorageService } from './storage/storage.service';
 import { RunnerService } from './runner/runner.service';
+import type { OutputLine } from './runner/runner.service';
 import { ThemeService } from './theme/theme.service';
 import { VirtualKeyboardService } from './virtual-keyboard/virtual-keyboard.service';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog';
@@ -42,6 +43,15 @@ print("Hello, PyPad!")
 
 const MIN_RATIO = 0;
 const MAX_RATIO = 1;
+
+/** Extracts the 1-based line number from the last "line N" occurrence in a traceback. */
+function parseErrorLine(errorLines: string[]): number | null {
+  for (let i = errorLines.length - 1; i >= 0; i--) {
+    const match = errorLines[i].match(/\bline (\d+)\b/);
+    if (match) return parseInt(match[1], 10);
+  }
+  return null;
+}
 
 export type LayoutMode = 'editor' | 'both' | 'panel';
 
@@ -98,7 +108,7 @@ export class App {
     return this.storage.load() ?? DEFAULT_CODE;
   })();
   protected readonly sidenavOpen = signal(false);
-  protected readonly outputLines = signal<string[]>([]);
+  protected readonly outputLines = signal<OutputLine[]>([]);
   protected readonly splitRatio = signal(0.65);
   protected readonly layout = signal<LayoutMode>('both');
   protected readonly activePanelTab = signal(0);
@@ -148,6 +158,7 @@ export class App {
 
   protected runCode(): void {
     this.storage.flush();
+    this.editorRef().clearErrorHighlight();
     // When the REPL tab is active, run inside the REPL so variables are inspectable.
     if (this.activePanelTab() === 2) {
       if (this.layout() === 'editor') this.setLayout('both');
@@ -159,6 +170,16 @@ export class App {
     this.activePanelTab.set(0);
     // Switch to 'both' so the user sees the output.
     if (this.layout() === 'editor') this.setLayout('both');
+    // Highlight the error line in the editor if the output contains a traceback.
+    const errorLine = parseErrorLine(lines.filter((l) => l.isError).map((l) => l.text));
+    if (errorLine !== null) {
+      this.editorRef().goToLine(errorLine);
+    }
+  }
+
+  protected clearOutput(): void {
+    this.outputLines.set([]);
+    this.editorRef().clearErrorHighlight();
   }
 
   protected newFile(): void {

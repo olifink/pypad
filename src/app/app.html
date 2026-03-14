@@ -94,7 +94,7 @@
           <mat-tab-group class="panel-tabs" animationDuration="150ms"
             [selectedIndex]="activePanelTab()" (selectedIndexChange)="activePanelTab.set($event)">
             <mat-tab label="Output">
-              <app-console [lines]="outputLines()" (clear)="outputLines.set([])" />
+              <app-console [lines]="outputLines()" (clear)="clearOutput()" />
             </mat-tab>
             <mat-tab label="Docs">
               <app-docs [cursorInfo]="cursorInfo()" />

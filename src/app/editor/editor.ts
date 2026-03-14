@@ -18,10 +18,36 @@ export interface CursorInfo {
   pos: number;
 }
 import { indentWithTab } from "@codemirror/commands"
-import { Compartment } from '@codemirror/state';
+import { Compartment, StateEffect, StateField } from '@codemirror/state';
+import { Decoration, DecorationSet } from '@codemirror/view';
 import { python } from '@codemirror/lang-python';
 import { materialDark } from '@fsegurai/codemirror-theme-material-dark';
 import { materialLight } from '@fsegurai/codemirror-theme-material-light';
+
+const highlightLineEffect = StateEffect.define<number | null>();
+
+const highlightLineField = StateField.define<DecorationSet>({
+  create: () => Decoration.none,
+  update(decorations, tr) {
+    decorations = decorations.map(tr.changes);
+    for (const effect of tr.effects) {
+      if (effect.is(highlightLineEffect)) {
+        if (effect.value === null) {
+          decorations = Decoration.none;
+        } else {
+          const line = tr.state.doc.line(
+            Math.min(effect.value, tr.state.doc.lines),
+          );
+          decorations = Decoration.set([
+            Decoration.line({ class: 'cm-error-line' }).range(line.from),
+          ]);
+        }
+      }
+    }
+    return decorations;
+  },
+  provide: (field) => EditorView.decorations.from(field),
+});
 
 @Component({
   selector: 'app-editor',
@@ -49,6 +75,7 @@ export class EditorComponent implements OnDestroy {
           basicSetup,
           keymap.of([indentWithTab]),
           python(),
+          highlightLineField,
           this.themeCompartment.of(this.isDark() ? materialDark : materialLight),
           EditorView.updateListener.of((update) => {
             if (update.docChanged) {
@@ -72,6 +99,24 @@ export class EditorComponent implements OnDestroy {
 
   focus(): void {
     this.editorView?.focus();
+  }
+
+  /** Highlights the given 1-based line number and scrolls it into view. */
+  goToLine(lineNumber: number): void {
+    const view = this.editorView;
+    if (!view) return;
+    const clampedLine = Math.min(Math.max(lineNumber, 1), view.state.doc.lines);
+    const line = view.state.doc.line(clampedLine);
+    view.dispatch({
+      effects: highlightLineEffect.of(clampedLine),
+      selection: { anchor: line.from },
+      scrollIntoView: true,
+    });
+  }
+
+  /** Removes the error line highlight. */
+  clearErrorHighlight(): void {
+    this.editorView?.dispatch({ effects: highlightLineEffect.of(null) });
   }
 
   setContent(code: string): void {

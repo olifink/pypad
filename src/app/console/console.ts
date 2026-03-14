@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, ElementRef, effect, input, output, 
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import type { OutputLine } from '../runner/runner.service';
 
 @Component({
   selector: 'app-console',
@@ -12,7 +13,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   host: { class: 'app-console' },
 })
 export class ConsoleComponent {
-  readonly lines = input<string[]>([]);
+  readonly lines = input<OutputLine[]>([]);
   readonly clear = output<void>();
 
   private readonly outputEl = viewChild<ElementRef<HTMLElement>>('output');

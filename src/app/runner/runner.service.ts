@@ -3,6 +3,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { interval } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
 
+/** A single line of output from a Python run, tagged as normal output or error. */
+export interface OutputLine {
+  text: string;
+  isError: boolean;
+}
+
 /** Exposed by the inline MicroPython script in index.html once PyScript has initialised. */
 declare global {
   interface Window {
@@ -36,17 +42,34 @@ export class RunnerService {
 
   /**
    * Executes the given Python code string via MicroPython (synchronous, main thread).
-   * Returns captured stdout/stderr split into lines.
+   * Returns captured stdout and stderr split into tagged output lines.
    */
-  run(code: string): string[] {
+  run(code: string): OutputLine[] {
     const pyRun = this.doc.defaultView?.pypad_run;
     if (!pyRun) {
-      return ['PyScript runtime is not ready yet. Please wait a moment and try again.'];
+      return [
+        {
+          text: 'PyScript runtime is not ready yet. Please wait a moment and try again.',
+          isError: true,
+        },
+      ];
     }
-    const raw = pyRun(code);
-    const lines = raw.split('\n');
-    // Remove the trailing empty string left by a final newline.
-    if (lines.at(-1) === '') lines.pop();
-    return lines.length > 0 ? lines : ['(no output)'];
+
+    const result = JSON.parse(pyRun(code)) as { out: string; err: string };
+    const lines: OutputLine[] = [];
+
+    if (result.out) {
+      const outLines = result.out.split('\n');
+      if (outLines.at(-1) === '') outLines.pop();
+      outLines.forEach((text) => lines.push({ text, isError: false }));
+    }
+
+    if (result.err) {
+      const errLines = result.err.split('\n');
+      if (errLines.at(-1) === '') errLines.pop();
+      errLines.forEach((text) => lines.push({ text, isError: true }));
+    }
+
+    return lines.length > 0 ? lines : [{ text: '(no output)', isError: false }];
   }
 }

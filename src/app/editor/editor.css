@@ -24,3 +24,7 @@
   overflow: auto;
   font-family: var(--font-mono);
 }
+
+.cm-error-line {
+  background-color: color-mix(in srgb, var(--mat-sys-error) 15%, transparent);
+}

@@ -39,3 +39,7 @@
   word-break: break-all;
   line-height: 1.5;
 }
+
+.console-line--error {
+  color: var(--mat-sys-error);
+}

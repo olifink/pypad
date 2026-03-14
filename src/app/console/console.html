@@ -3,7 +3,7 @@
     <p class="console-placeholder">Run your code to see output here.</p>
   } @else {
     @for (line of lines(); track $index) {
-      <div class="console-line">{{ line }}</div>
+      <div class="console-line" [class.console-line--error]="line.isError">{{ line.text }}</div>
     }
   }
 </div>

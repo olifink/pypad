@@ -28,10 +28,11 @@
     });
   </script>
   <script type="mpy">
-      import js
+      import js, sys, io, json
 
       def _pypad_run(code):
           output = []
+          error = ''
 
           def _print(*args, **kwargs):
               sep = kwargs.get('sep', ' ')
@@ -41,9 +42,11 @@
           try:
               exec(code, {'__name__': '__main__', 'print': _print})
           except Exception as e:
-              output.append(type(e).__name__ + ': ' + str(e) + '\n')
+              buf = io.StringIO()
+              sys.print_exception(e, buf)
+              error = buf.getvalue()
 
-          return ''.join(output)
+          return json.dumps({'out': ''.join(output), 'err': error})
 
       js.globalThis.pypad_run = _pypad_run
     </script>
