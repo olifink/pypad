@@ -37,6 +37,8 @@ import type { ShareDialogData } from './share/share-dialog';
 import { PackagesComponent } from './packages/packages';
 import { PackagesService } from './packages/packages.service';
 import { AiSettingsDialogComponent } from './ai-settings-dialog/ai-settings-dialog';
+import { AiService } from './ai/ai.service';
+import { NewFileDialogComponent } from './new-file-dialog/new-file-dialog';
 
 const DEFAULT_CODE = `# Welcome to PyPad!
 print("Hello, PyPad!")
@@ -74,6 +76,7 @@ export type LayoutMode = 'editor' | 'both' | 'panel';
     DocumentationComponent,
     PackagesComponent,
     AiSettingsDialogComponent,
+    NewFileDialogComponent,
   ],
   templateUrl: './app.html',
   styleUrl: './app.css',
@@ -90,6 +93,7 @@ export class App {
   protected readonly replService = inject(ReplService);
   protected readonly theme = inject(ThemeService);
   protected readonly packagesService = inject(PackagesService);
+  protected readonly aiService = inject(AiService);
   private readonly _vk = inject(VirtualKeyboardService);
 
   private readonly workspaceRef = viewChild.required<ElementRef<HTMLElement>>('workspace');
@@ -186,18 +190,37 @@ export class App {
 
   protected newFile(): void {
     this.dialog
-      .open(ConfirmDialogComponent, {
+      .open(NewFileDialogComponent, {
         data: {
           title: 'New file',
           message: 'Your current code will be replaced.',
-          confirmLabel: 'New file',
         },
+        width: '480px',
       })
       .afterClosed()
-      .subscribe((confirmed: boolean) => {
-        if (!confirmed) return;
-        this.editorRef().setContent(DEFAULT_CODE);
+      .subscribe(async (result: { confirmed: boolean; prompt: string } | undefined) => {
+        if (!result?.confirmed) return;
+
         this.sidenavOpen.set(false);
+
+        if (result.prompt) {
+          try {
+            // Temporarily show a loading state in the output if possible, 
+            // or just rely on the fact that it's an async operation.
+            const generatedCode = await this.aiService.generateCode(result.prompt);
+            this.editorRef().setContent(generatedCode);
+          } catch (err) {
+            this.dialog.open(ConfirmDialogComponent, {
+              data: {
+                title: 'AI Generation Failed',
+                message: err instanceof Error ? err.message : 'An unknown error occurred',
+                confirmLabel: 'OK',
+              },
+            });
+          }
+        } else {
+          this.editorRef().setContent(DEFAULT_CODE);
+        }
       });
   }
 

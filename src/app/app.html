@@ -119,9 +119,9 @@
         </section>
       </main>
 
-      <button mat-fab class="run-fab" (click)="runCode()" [disabled]="!runner.isReady()"
-        [matTooltip]="runner.isReady() ? 'Run (Ctrl+R)' : 'Loading MicroPython…'" aria-label="Run Python code">
-        <mat-icon aria-hidden="true">{{ runner.isReady() ? 'play_arrow' : 'hourglass_empty' }}</mat-icon>
+      <button mat-fab class="run-fab" (click)="runCode()" [disabled]="!runner.isReady() || aiService.isGenerating()"
+        [matTooltip]="aiService.isGenerating() ? 'AI is generating code...' : (runner.isReady() ? 'Run (Ctrl+R)' : 'Loading MicroPython…')" aria-label="Run Python code">
+        <mat-icon aria-hidden="true">{{ aiService.isGenerating() ? 'auto_awesome' : (runner.isReady() ? 'play_arrow' : 'hourglass_empty') }}</mat-icon>
       </button>
     </div>
   </mat-sidenav-content>
