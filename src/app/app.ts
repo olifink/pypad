@@ -36,6 +36,7 @@ import { ShareDialogComponent } from './share/share-dialog';
 import type { ShareDialogData } from './share/share-dialog';
 import { PackagesComponent } from './packages/packages';
 import { PackagesService } from './packages/packages.service';
+import { AiSettingsDialogComponent } from './ai-settings-dialog/ai-settings-dialog';
 
 const DEFAULT_CODE = `# Welcome to PyPad!
 print("Hello, PyPad!")
@@ -72,6 +73,7 @@ export type LayoutMode = 'editor' | 'both' | 'panel';
     ReplComponent,
     DocumentationComponent,
     PackagesComponent,
+    AiSettingsDialogComponent,
   ],
   templateUrl: './app.html',
   styleUrl: './app.css',
@@ -222,6 +224,13 @@ export class App {
   protected openFile(): void {
     this.sidenavOpen.set(false);
     this.fileInputRef().nativeElement.click();
+  }
+
+  protected openAiSettings(): void {
+    this.sidenavOpen.set(false);
+    this.dialog.open(AiSettingsDialogComponent, {
+      width: '440px',
+    });
   }
 
   protected onFileSelected(event: Event): void {

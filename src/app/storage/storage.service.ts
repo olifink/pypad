@@ -3,6 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject, debounceTime } from 'rxjs';
 
 const STORAGE_KEY = 'pypad_code';
+const API_KEY_STORAGE_KEY = 'pypad_gemini_api_key';
 const DEBOUNCE_MS = 500;
 
 @Injectable({ providedIn: 'root' })
@@ -43,6 +44,26 @@ export class StorageService {
       localStorage.setItem(STORAGE_KEY, code);
     } catch {
       // localStorage may be unavailable (private browsing quota exceeded, etc.)
+    }
+  }
+
+  loadApiKey(): string | null {
+    try {
+      return localStorage.getItem(API_KEY_STORAGE_KEY);
+    } catch {
+      return null;
+    }
+  }
+
+  saveApiKey(key: string | null): void {
+    try {
+      if (key) {
+        localStorage.setItem(API_KEY_STORAGE_KEY, key);
+      } else {
+        localStorage.removeItem(API_KEY_STORAGE_KEY);
+      }
+    } catch {
+      // localStorage may be unavailable
     }
   }
 }
