@@ -34,20 +34,29 @@ body {
 }
 
 /* Ensure Angular Material dialogs don't overlap with the virtual keyboard on mobile. */
+.cdk-overlay-container {
+  /* Use dvh to ensure the container shrinks when the keyboard appears. */
+  height: 100dvh !important;
+  /* Use a fallback for browsers that don't support dvh well in fixed containers. */
+  max-height: calc(100% - env(keyboard-inset-height, 0px));
+}
+
 .cdk-global-overlay-wrapper {
-  /* Use keyboard-inset-height for modern browsers (PWA mode), otherwise 0. */
-  padding-bottom: env(keyboard-inset-height, 0px);
-  /* Ensure padding doesn't increase the total height. */
-  box-sizing: border-box !important;
-  /* Ensure the wrapper remains a flex container for centering. */
+  /* Ensure the wrapper follows the container height for correct vertical centering. */
+  height: 100% !important;
+  width: 100% !important;
   display: flex !important;
   align-items: center;
   justify-content: center;
+  /* Add padding-bottom as a second layer of protection for PWA mode. */
+  padding-bottom: env(keyboard-inset-height, 0px);
+  box-sizing: border-box !important;
 }
 
 /* Material 3 dialog containers should be centered in the remaining viewport. */
 .mat-mdc-dialog-container {
-  max-height: calc(98dvh - env(keyboard-inset-height, 0px)) !important;
+  /* Use dvh to ensure the dialog itself doesn't exceed the visible area. */
+  max-height: calc(96dvh - env(keyboard-inset-height, 0px)) !important;
 }
 
 .mat-mdc-dialog-container .mdc-dialog__surface {

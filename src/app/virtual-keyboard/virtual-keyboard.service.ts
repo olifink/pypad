@@ -9,8 +9,8 @@ import { Injectable } from '@angular/core';
 @Injectable({ providedIn: 'root' })
 export class VirtualKeyboardService {
   constructor() {
-    const vk = (navigator as Navigator & { virtualKeyboard?: { overlaysContent: boolean } })
-      .virtualKeyboard;
-    if (vk) vk.overlaysContent = true;
+    // We rely on the browser's native 'resizes-content' viewport behavior for dialogs.
+    // Setting overlaysContent=true can prevent the layout viewport from resizing,
+    // which makes vertical centering in the visible area difficult for fixed overlays.
   }
 }
