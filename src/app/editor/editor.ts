@@ -50,6 +50,12 @@ const highlightLineField = StateField.define<DecorationSet>({
   provide: (field) => EditorView.decorations.from(field),
 });
 
+export interface SelectionInfo {
+  text: string;
+  from: number;
+  to: number;
+}
+
 @Component({
   selector: 'app-editor',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -63,6 +69,7 @@ export class EditorComponent implements OnDestroy {
   readonly isDark = input(false);
   readonly codeChange = output<string>();
   readonly cursorChange = output<CursorInfo>();
+  readonly selectionChange = output<SelectionInfo>();
 
   private readonly container = viewChild.required<ElementRef<HTMLElement>>('container');
   private readonly themeCompartment = new Compartment();
@@ -84,8 +91,13 @@ export class EditorComponent implements OnDestroy {
               this.codeChange.emit(update.state.doc.toString());
             }
             if (update.selectionSet) {
-              const pos = update.state.selection.main.head;
-              this.cursorChange.emit({ view: update.view, pos });
+              const main = update.state.selection.main;
+              this.cursorChange.emit({ view: update.view, pos: main.head });
+              this.selectionChange.emit({
+                text: update.state.sliceDoc(main.from, main.to),
+                from: main.from,
+                to: main.to,
+              });
             }
           }),
         ],
@@ -97,6 +109,17 @@ export class EditorComponent implements OnDestroy {
       const theme = this.isDark() ? materialDark : materialLight;
       this.editorView?.dispatch({ effects: this.themeCompartment.reconfigure(theme) });
     });
+  }
+
+  getSelection(): SelectionInfo | null {
+    const view = this.editorView;
+    if (!view) return null;
+    const main = view.state.selection.main;
+    return {
+      text: view.state.sliceDoc(main.from, main.to),
+      from: main.from,
+      to: main.to,
+    };
   }
 
   focus(): void {

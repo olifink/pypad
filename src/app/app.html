@@ -78,7 +78,7 @@
           <span class="toolbar-spacer"></span>
 
           @if (aiService.hasApiKey()) {
-            <button mat-icon-button (click)="insertAiCode()" matTooltip="AI Insert (Ctrl+\)" aria-label="AI Insert">
+            <button mat-icon-button (click)="openAiPrompt()" [matTooltip]="selection() ? 'AI Fix (Ctrl+\\)' : 'AI Insert (Ctrl+\\)'" [attr.aria-label]="selection() ? 'AI Fix' : 'AI Insert'">
               <mat-icon>auto_awesome</mat-icon>
             </button>
           }
@@ -100,7 +100,7 @@
 
       <main class="app-workspace" [style.--split-ratio]="splitRatio()" #workspace>
         <section class="editor-pane" [style.flex]="splitRatio()" aria-label="Code editor">
-          <app-editor [initialCode]="initialCode" [isDark]="theme.effectiveIsDark()" (codeChange)="onCodeChange($event)" (cursorChange)="onCursorChange($event)" />
+          <app-editor [initialCode]="initialCode" [isDark]="theme.effectiveIsDark()" (codeChange)="onCodeChange($event)" (cursorChange)="onCursorChange($event)" (selectionChange)="onSelectionChange($event)" />
         </section>
 
         <div class="pane-divider" role="separator" aria-orientation="horizontal" aria-label="Resize panels"

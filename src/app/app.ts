@@ -19,8 +19,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
-import { EditorComponent } from './editor/editor';
-import type { CursorInfo } from './editor/editor';
+import { EditorComponent, type SelectionInfo, type CursorInfo } from './editor/editor';
 import { ConsoleComponent } from './console/console';
 import { ReplComponent } from './repl/repl';
 import { DocumentationComponent } from './docs/docs.component';
@@ -40,6 +39,7 @@ import { AiSettingsDialogComponent } from './ai-settings-dialog/ai-settings-dial
 import { AiService } from './ai/ai.service';
 import { NewFileDialogComponent } from './new-file-dialog/new-file-dialog';
 import { AiPromptDialogComponent } from './ai-prompt-dialog/ai-prompt-dialog';
+import type { AiPromptDialogData } from './ai-prompt-dialog/ai-prompt-dialog';
 
 const DEFAULT_CODE = `# Welcome to PyPad!
 print("Hello, PyPad!")
@@ -118,6 +118,7 @@ export class App {
   protected readonly layout = signal<LayoutMode>('both');
   protected readonly activePanelTab = signal(0);
   protected readonly cursorInfo = signal<CursorInfo | null>(null);
+  protected readonly selection = signal<SelectionInfo | null>(null);
   private readonly currentCode = signal(this.initialCode);
 
   constructor() {
@@ -159,6 +160,10 @@ export class App {
 
   protected onCursorChange(info: CursorInfo): void {
     this.cursorInfo.set(info);
+  }
+
+  protected onSelectionChange(selection: SelectionInfo): void {
+    this.selection.set(selection.text.trim() ? selection : null);
   }
 
   protected runCode(): void {
@@ -255,14 +260,21 @@ export class App {
     });
   }
 
-  protected insertAiCode(): void {
+  protected openAiPrompt(): void {
     if (!this.aiService.hasApiKey()) {
       this.openAiSettings();
       return;
     }
 
+    const currentSelection = this.editorRef().getSelection();
+    const isFixMode = !!currentSelection?.text.trim();
+
     this.dialog
       .open(AiPromptDialogComponent, {
+        data: {
+          isFixMode,
+          selectedText: currentSelection?.text,
+        } satisfies AiPromptDialogData,
         width: '480px',
       })
       .afterClosed()
@@ -270,12 +282,16 @@ export class App {
         if (!prompt) return;
 
         try {
-          const generatedCode = await this.aiService.generateCode(prompt);
+          const finalPrompt = isFixMode
+            ? `Fix/Modify the following code according to this instruction: "${prompt}"\n\nCode to modify:\n\`\`\`python\n${currentSelection?.text}\n\`\`\``
+            : prompt;
+
+          const generatedCode = await this.aiService.generateCode(finalPrompt);
           this.editorRef().insertText(generatedCode);
         } catch (err) {
           this.dialog.open(ConfirmDialogComponent, {
             data: {
-              title: 'AI Insertion Failed',
+              title: isFixMode ? 'AI Fix Failed' : 'AI Insertion Failed',
               message: err instanceof Error ? err.message : 'An unknown error occurred',
               confirmLabel: 'OK',
             },
@@ -311,7 +327,7 @@ export class App {
       this.openFile();
     } else if (e.key === '\\') {
       e.preventDefault();
-      this.insertAiCode();
+      this.openAiPrompt();
     } else if (e.key === '?') {
       e.preventDefault();
       // Ctrl+? (Ctrl+Shift+/ on US keyboards): show the Docs tab and keep editor focus.
