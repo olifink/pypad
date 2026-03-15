@@ -28,7 +28,12 @@
     });
   </script>
   <script type="mpy">
-      import js, sys, io, json
+      import js, sys, io, json, builtins
+
+      def _input(prompt=''):
+          return js.window.prompt(prompt) or ''
+
+      builtins.input = _input
 
       def _pypad_run(code):
           output = []

@@ -38,7 +38,12 @@ interface MicroPythonInterpreter {
  * Must stay in sync with the equivalent block in index.html.
  */
 const PYPAD_RUN_SETUP = `
-import js
+import js, builtins
+
+def _input(prompt=''):
+    return js.window.prompt(prompt) or ''
+
+builtins.input = _input
 
 def _pypad_run(code):
     output = []
@@ -74,6 +79,7 @@ declare global {
     pypad_interpreter?: MicroPythonInterpreter;
     pypad_io?: {
       stdout: ((data: Uint8Array) => void) | null;
+      stderr: ((data: Uint8Array) => void) | null;
     };
   }
 }
@@ -161,12 +167,14 @@ export class ReplService {
     terminal.focus();
     this.terminal = terminal;
 
-    // Route MicroPython stdout → terminal (convert bare LF to CRLF).
+    // Route MicroPython stdout/stderr → terminal (convert bare LF to CRLF).
     const cr = new Uint8Array([13]);
-    io.stdout = (data: Uint8Array) => {
+    const ioHandler = (data: Uint8Array) => {
       if (data[0] === 10) terminal.write(cr);
       terminal.write(data);
     };
+    io.stdout = ioHandler;
+    io.stderr = ioHandler;
 
     // Start the MicroPython REPL state machine.
     this._interpreter = interpreter;
@@ -243,12 +251,15 @@ export class ReplService {
       loadMicroPython: (options: LoadMicroPythonOptions) => Promise<MicroPythonInterpreter>;
     };
     const cr = new Uint8Array([13]);
+    const ioHandler = (data: Uint8Array) => {
+      if (data[0] === 10) terminal.write(cr);
+      terminal.write(data);
+    };
+
     return loadMicroPython({
       linebuffer: false,
-      stdout: (data: Uint8Array) => {
-        if (data[0] === 10) terminal.write(cr);
-        terminal.write(data);
-      },
+      stdout: ioHandler,
+      stderr: ioHandler,
     });
   }
 
