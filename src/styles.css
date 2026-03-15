@@ -37,15 +37,28 @@ body {
 .cdk-global-overlay-wrapper {
   /* Use keyboard-inset-height for modern browsers (PWA mode), otherwise 0. */
   padding-bottom: env(keyboard-inset-height, 0px);
+  /* Ensure padding doesn't increase the total height. */
+  box-sizing: border-box !important;
+  /* Ensure the wrapper remains a flex container for centering. */
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Material 3 dialog containers should be centered in the remaining viewport. */
 .mat-mdc-dialog-container {
-  max-height: calc(90dvh - env(keyboard-inset-height, 0px)) !important;
+  max-height: calc(98dvh - env(keyboard-inset-height, 0px)) !important;
+}
+
+.mat-mdc-dialog-container .mdc-dialog__surface {
+  display: flex;
+  flex-direction: column;
+  max-height: inherit;
 }
 
 .mat-mdc-dialog-content {
   /* Ensure content remains scrollable if the keyboard takes up too much space. */
-  max-height: none !important;
   flex: 1;
+  overflow-y: auto !important;
+  max-height: none !important;
 }
