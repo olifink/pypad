@@ -74,18 +74,6 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
-    },
-    {
-      "src": "icons/icon-monochrome-512x512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable monochrome"
-    },
-    {
-      "src": "icons/icon-monochrome-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "monochrome"
     }
   ]
 }
