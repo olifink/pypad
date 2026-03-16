@@ -78,8 +78,7 @@ const PANEL_IDS: PanelId[] = ['output', 'repl', 'docs'];
     EditorComponent,
     ConsoleComponent,
     ReplComponent,
-    DocumentationComponent,
-    PackagesComponent,
+    DocumentationComponent
   ],
   templateUrl: './app.html',
   styleUrl: './app.css',
