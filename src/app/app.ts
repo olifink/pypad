@@ -59,6 +59,9 @@ function parseErrorLine(errorLines: string[]): number | null {
 }
 
 export type LayoutMode = 'editor' | 'both' | 'panel';
+export type PanelId = 'output' | 'repl' | 'docs';
+
+const PANEL_IDS: PanelId[] = ['output', 'repl', 'docs'];
 
 @Component({
   selector: 'app-root',
@@ -117,7 +120,8 @@ export class App {
   protected readonly outputLines = signal<OutputLine[]>([]);
   protected readonly splitRatio = signal(0.65);
   protected readonly layout = signal<LayoutMode>('both');
-  protected readonly activePanelTab = signal(0);
+  protected readonly activePanelId = signal<PanelId>('output');
+  protected readonly activePanelTabIndex = computed(() => PANEL_IDS.indexOf(this.activePanelId()));
   protected readonly cursorInfo = signal<CursorInfo | null>(null);
   protected readonly selection = signal<SelectionInfo | null>(null);
   private readonly currentCode = signal(this.initialCode);
@@ -166,18 +170,22 @@ export class App {
     this.selection.set(selection.text.trim() ? selection : null);
   }
 
+  protected onPanelTabChange(index: number): void {
+    this.activePanelId.set(PANEL_IDS[index] ?? 'output');
+  }
+
   protected runCode(): void {
     this.storage.flush();
     this.editorRef().clearErrorHighlight();
     // When the REPL tab is active, run inside the REPL so variables are inspectable.
-    if (this.activePanelTab() === 2) {
+    if (this.activePanelId() === 'repl') {
       if (this.layout() === 'editor') this.setLayout('both');
       this.replService.runInRepl(this.currentCode());
       return;
     }
     const lines = this.runner.run(this.currentCode());
     this.outputLines.set(lines);
-    this.activePanelTab.set(0);
+    this.activePanelId.set('output');
     // Switch to 'both' so the user sees the output.
     if (this.layout() === 'editor') this.setLayout('both');
     // Highlight the error line in the editor if the output contains a traceback.
@@ -338,7 +346,7 @@ export class App {
     } else if (e.key === '?') {
       e.preventDefault();
       // Ctrl+? (Ctrl+Shift+/ on US keyboards): show the Docs tab and keep editor focus.
-      this.activePanelTab.set(1);
+      this.activePanelId.set('docs');
       if (this.layout() === 'editor') this.setLayout('both');
       this.editorRef().focus();
     }
