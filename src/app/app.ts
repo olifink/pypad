@@ -182,16 +182,29 @@ export class App {
       this.replService.runInRepl(this.currentCode());
       return;
     }
-    const lines = this.runner.run(this.currentCode());
-    this.outputLines.set(lines);
+
+    this.outputLines.set([]);
     this.activePanelId.set('output');
-    // Switch to 'both' so the user sees the output.
     if (this.layout() === 'editor') this.setLayout('both');
-    // Highlight the error line in the editor if the output contains a traceback.
-    const errorLine = parseErrorLine(lines.filter((l) => l.isError).map((l) => l.text));
-    if (errorLine !== null) {
-      this.editorRef().goToLine(errorLine);
-    }
+
+    const accumulated: OutputLine[] = [];
+    this.runner.run(this.currentCode()).subscribe({
+      next: (line) => {
+        accumulated.push(line);
+        this.outputLines.update((lines) => [...lines, line]);
+      },
+      complete: () => {
+        if (accumulated.length === 0) {
+          this.outputLines.set([{ text: '(no output)', isError: false }]);
+        }
+        const errorLine = parseErrorLine(accumulated.filter((l) => l.isError).map((l) => l.text));
+        if (errorLine !== null) this.editorRef().goToLine(errorLine);
+      },
+    });
+  }
+
+  protected stopCode(): void {
+    this.runner.stop();
   }
 
   protected clearOutput(): void {
@@ -335,7 +348,8 @@ export class App {
       this.storage.flush();
     } else if (e.key === 'r') {
       e.preventDefault();
-      if (this.runner.isReady()) this.runCode();
+      if (this.runner.isRunning()) this.stopCode();
+      else if (this.runner.isReady()) this.runCode();
     } else if (e.key === 'o') {
       e.preventDefault();
       this.openFile();

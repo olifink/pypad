@@ -1,7 +1,5 @@
 import { Injectable, signal, DOCUMENT, DestroyRef, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { interval } from 'rxjs';
-import { filter, take } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
 
 /** A single line of output from a Python run, tagged as normal output or error. */
 export interface OutputLine {
@@ -9,67 +7,105 @@ export interface OutputLine {
   isError: boolean;
 }
 
-/** Exposed by the inline MicroPython script in index.html once PyScript has initialised. */
-declare global {
-  interface Window {
-    pypad_run?: (code: string) => string;
-  }
+export interface InstallResult {
+  success: boolean;
+  log: string;
 }
+
+type WorkerOutMsg =
+  | { type: 'ready' }
+  | { type: 'line'; text: string; isError: boolean }
+  | { type: 'done' }
+  | { type: 'install_result'; id: string; success: boolean; log: string };
 
 @Injectable({ providedIn: 'root' })
 export class RunnerService {
   private readonly doc = inject(DOCUMENT);
   private readonly destroyRef = inject(DestroyRef);
 
-  /** True once the MicroPython runtime has initialised and pypad_run is available. */
+  /** True once the worker's MicroPython runtime has initialised. */
   readonly isReady = signal(false);
 
+  /** True while a `run()` is in progress. */
+  readonly isRunning = signal(false);
+
+  private worker!: Worker;
+  private runSubject: Subject<OutputLine> | null = null;
+  private readonly pendingInstalls = new Map<string, (r: InstallResult) => void>();
+  private installIdCounter = 0;
+
   constructor() {
-    const win = this.doc.defaultView;
-    if (win?.pypad_run) {
-      this.isReady.set(true);
-    } else {
-      // Poll every 200ms — avoids missing the py:ready event due to load-order races.
-      interval(200)
-        .pipe(
-          filter(() => !!win?.pypad_run),
-          take(1),
-          takeUntilDestroyed(this.destroyRef),
-        )
-        .subscribe(() => this.isReady.set(true));
-    }
+    this._initWorker();
+    this.destroyRef.onDestroy(() => this.worker?.terminate());
   }
 
   /**
-   * Executes the given Python code string via MicroPython (synchronous, main thread).
-   * Returns captured stdout and stderr split into tagged output lines.
+   * Executes the given Python code in the worker.
+   * Returns an Observable that emits output lines and completes when done.
    */
-  run(code: string): OutputLine[] {
-    const pyRun = this.doc.defaultView?.pypad_run;
-    if (!pyRun) {
-      return [
-        {
-          text: 'PyScript runtime is not ready yet. Please wait a moment and try again.',
-          isError: true,
-        },
-      ];
+  run(code: string): Observable<OutputLine> {
+    this.isRunning.set(true);
+    this.runSubject = new Subject<OutputLine>();
+    this.worker.postMessage({ type: 'run', code });
+    return this.runSubject.asObservable();
+  }
+
+  /**
+   * Terminates the worker (killing any running script), then starts a fresh one.
+   */
+  stop(): void {
+    this.worker?.terminate();
+    if (this.runSubject) {
+      this.runSubject.next({ text: 'Execution stopped.', isError: false });
+      this.runSubject.complete();
+      this.runSubject = null;
     }
+    this.isRunning.set(false);
+    this.isReady.set(false);
+    this._initWorker();
+  }
 
-    const result = JSON.parse(pyRun(code)) as { out: string; err: string };
-    const lines: OutputLine[] = [];
+  /**
+   * Installs a package via `mip.install()` in the runner worker.
+   */
+  install(name: string): Promise<InstallResult> {
+    return new Promise<InstallResult>((resolve) => {
+      const id = String(this.installIdCounter++);
+      this.pendingInstalls.set(id, resolve);
+      this.worker.postMessage({ type: 'install', name, id });
+    });
+  }
 
-    if (result.out) {
-      const outLines = result.out.split('\n');
-      if (outLines.at(-1) === '') outLines.pop();
-      outLines.forEach((text) => lines.push({ text, isError: false }));
+  private _initWorker(): void {
+    this.worker = new Worker(new URL('./runner.worker', import.meta.url), { type: 'module' });
+    this.worker.addEventListener('message', (e: MessageEvent<WorkerOutMsg>) =>
+      this._handleMessage(e),
+    );
+    this.worker.postMessage({ type: 'init', baseUrl: this.doc.baseURI });
+  }
+
+  private _handleMessage(e: MessageEvent<WorkerOutMsg>): void {
+    const msg = e.data;
+    switch (msg.type) {
+      case 'ready':
+        this.isReady.set(true);
+        break;
+      case 'line':
+        this.runSubject?.next({ text: msg.text, isError: msg.isError });
+        break;
+      case 'done':
+        this.isRunning.set(false);
+        this.runSubject?.complete();
+        this.runSubject = null;
+        break;
+      case 'install_result': {
+        const resolve = this.pendingInstalls.get(msg.id);
+        if (resolve) {
+          this.pendingInstalls.delete(msg.id);
+          resolve({ success: msg.success, log: msg.log });
+        }
+        break;
+      }
     }
-
-    if (result.err) {
-      const errLines = result.err.split('\n');
-      if (errLines.at(-1) === '') errLines.pop();
-      errLines.forEach((text) => lines.push({ text, isError: true }));
-    }
-
-    return lines.length > 0 ? lines : [{ text: '(no output)', isError: false }];
   }
 }

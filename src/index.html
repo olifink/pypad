@@ -27,34 +27,11 @@
       });
     });
   </script>
+  <!-- Minimal MicroPython script to trigger PyScript initialisation so that
+       hooks.main.onReady fires and the REPL can capture the interpreter. -->
   <script type="mpy">
-      import js, sys, io, json, builtins
-
-      def _input(prompt=''):
-          return js.window.prompt(prompt) or ''
-
-      builtins.input = _input
-
-      def _pypad_run(code):
-          output = []
-          error = ''
-
-          def _print(*args, **kwargs):
-              sep = kwargs.get('sep', ' ')
-              end = kwargs.get('end', '\n')
-              output.append(sep.join(str(a) for a in args) + end)
-
-          try:
-              exec(code, {'__name__': '__main__', 'print': _print})
-          except Exception as e:
-              buf = io.StringIO()
-              sys.print_exception(e, buf)
-              error = buf.getvalue()
-
-          return json.dumps({'out': ''.join(output), 'err': error})
-
-      js.globalThis.pypad_run = _pypad_run
-    </script>
+    pass
+  </script>
   <link rel="manifest" href="manifest.webmanifest" />
   <meta name="theme-color" content="#3776AB" />
   <meta name="apple-mobile-web-app-capable" content="yes" />

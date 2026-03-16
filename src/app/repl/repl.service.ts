@@ -33,39 +33,6 @@ interface MicroPythonInterpreter {
   runPython(code: string): string;
 }
 
-/**
- * Python code that re-registers `window.pypad_run` on a fresh interpreter.
- * Must stay in sync with the equivalent block in index.html.
- */
-const PYPAD_RUN_SETUP = `
-import js, builtins, json, sys, io
-
-def _input(prompt=''):
-    return js.window.prompt(prompt) or ''
-
-builtins.input = _input
-
-def _pypad_run(code):
-    output = []
-    error = ''
-
-    def _print(*args, **kwargs):
-        sep = kwargs.get('sep', ' ')
-        end = kwargs.get('end', '\\n')
-        output.append(sep.join(str(a) for a in args) + end)
-
-    try:
-        exec(code, {'__name__': '__main__', 'print': _print})
-    except Exception as e:
-        buf = io.StringIO()
-        sys.print_exception(e, buf)
-        error = buf.getvalue()
-
-    return json.dumps({'out': ''.join(output), 'err': error})
-
-js.globalThis.pypad_run = _pypad_run
-`.trim();
-
 /** Options accepted by `loadMicroPython` from `micropython.mjs`. */
 interface LoadMicroPythonOptions {
   stdout?: (data: Uint8Array) => void;
@@ -211,8 +178,6 @@ export class ReplService {
     const newInterpreter = await this._createFreshInterpreter(this.terminal);
     this._interpreter = newInterpreter;
     (this.doc.defaultView as Window).pypad_interpreter = newInterpreter;
-    // Re-register pypad_run on the new WASM instance so the Output tab keeps working.
-    newInterpreter.runPython(PYPAD_RUN_SETUP);
     // Re-install any packages the user had added this session.
     await this.packages.reinstallAll();
     this.terminal.reset();
