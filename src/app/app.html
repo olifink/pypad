@@ -33,7 +33,7 @@
       <mat-divider />
 
       <div class="sidenav-section">
-        <div class="sidenav-section-label">AI</div>
+        <div class="sidenav-section-label">Settings</div>
         <button mat-button class="sidenav-action" (click)="openAiSettings()">
           <mat-icon>smart_toy</mat-icon>
           AI Settings
@@ -43,12 +43,8 @@
       <div class="sidenav-section sidenav-section--bottom">
         <mat-divider />
         <div class="sidenav-section-label">Appearance</div>
-        <mat-button-toggle-group
-          class="sidenav-toggle-group"
-          [value]="theme.mode()"
-          (change)="theme.setMode($event.value)"
-          hideSingleSelectionIndicator
-          aria-label="Theme">
+        <mat-button-toggle-group class="sidenav-toggle-group" [value]="theme.mode()"
+          (change)="theme.setMode($event.value)" hideSingleSelectionIndicator aria-label="Theme">
           <mat-button-toggle value="light" aria-label="Light mode">
             <mat-icon>light_mode</mat-icon>
             <span class="toggle-label">Light</span>
@@ -78,9 +74,11 @@
           <span class="toolbar-spacer"></span>
 
           @if (aiService.hasApiKey()) {
-            <button mat-icon-button (click)="openAiPrompt()" [matTooltip]="selection() ? 'AI Fix (Ctrl+\\)' : 'AI Insert (Ctrl+\\)'" [attr.aria-label]="selection() ? 'AI Fix' : 'AI Insert'">
-              <mat-icon>auto_awesome</mat-icon>
-            </button>
+          <button mat-icon-button (click)="openAiPrompt()"
+            [matTooltip]="selection() ? 'AI Fix (Ctrl+\\)' : 'AI Insert (Ctrl+\\)'"
+            [attr.aria-label]="selection() ? 'AI Fix' : 'AI Insert'">
+            <mat-icon>auto_awesome</mat-icon>
+          </button>
           }
 
           <mat-button-toggle-group class="layout-toggle" [value]="layout()" (change)="setLayout($event.value)"
@@ -100,15 +98,16 @@
 
       <main class="app-workspace" [style.--split-ratio]="splitRatio()" #workspace>
         <section class="editor-pane" [style.flex]="splitRatio()" aria-label="Code editor">
-          <app-editor [initialCode]="initialCode" [isDark]="theme.effectiveIsDark()" (codeChange)="onCodeChange($event)" (cursorChange)="onCursorChange($event)" (selectionChange)="onSelectionChange($event)" />
+          <app-editor [initialCode]="initialCode" [isDark]="theme.effectiveIsDark()" (codeChange)="onCodeChange($event)"
+            (cursorChange)="onCursorChange($event)" (selectionChange)="onSelectionChange($event)" />
         </section>
 
         <div class="pane-divider" role="separator" aria-orientation="horizontal" aria-label="Resize panels"
           (pointerdown)="onDividerPointerDown($event)"></div>
 
         <section class="console-pane" [style.flex]="1 - splitRatio()" aria-label="Output panel">
-          <mat-tab-group class="panel-tabs" animationDuration="150ms"
-            [selectedIndex]="activePanelTab()" (selectedIndexChange)="activePanelTab.set($event)">
+          <mat-tab-group class="panel-tabs" animationDuration="150ms" [selectedIndex]="activePanelTab()"
+            (selectedIndexChange)="activePanelTab.set($event)">
             <mat-tab label="Output">
               <app-console [lines]="outputLines()" (clear)="clearOutput()" />
             </mat-tab>
@@ -126,8 +125,10 @@
       </main>
 
       <button mat-fab class="run-fab" (click)="runCode()" [disabled]="!runner.isReady() || aiService.isGenerating()"
-        [matTooltip]="aiService.isGenerating() ? 'AI is generating code...' : (runner.isReady() ? 'Run (Ctrl+R)' : 'Loading MicroPython…')" aria-label="Run Python code">
-        <mat-icon aria-hidden="true">{{ aiService.isGenerating() ? 'auto_awesome' : (runner.isReady() ? 'play_arrow' : 'hourglass_empty') }}</mat-icon>
+        [matTooltip]="aiService.isGenerating() ? 'AI is generating code...' : (runner.isReady() ? 'Run (Ctrl+R)' : 'Loading MicroPython…')"
+        aria-label="Run Python code">
+        <mat-icon aria-hidden="true">{{ aiService.isGenerating() ? 'auto_awesome' : (runner.isReady() ? 'play_arrow' :
+          'hourglass_empty') }}</mat-icon>
       </button>
     </div>
   </mat-sidenav-content>
