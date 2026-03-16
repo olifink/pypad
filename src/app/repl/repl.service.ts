@@ -38,7 +38,7 @@ interface MicroPythonInterpreter {
  * Must stay in sync with the equivalent block in index.html.
  */
 const PYPAD_RUN_SETUP = `
-import js, builtins
+import js, builtins, json, sys, io
 
 def _input(prompt=''):
     return js.window.prompt(prompt) or ''
@@ -47,6 +47,7 @@ builtins.input = _input
 
 def _pypad_run(code):
     output = []
+    error = ''
 
     def _print(*args, **kwargs):
         sep = kwargs.get('sep', ' ')
@@ -56,9 +57,11 @@ def _pypad_run(code):
     try:
         exec(code, {'__name__': '__main__', 'print': _print})
     except Exception as e:
-        output.append(type(e).__name__ + ': ' + str(e) + '\\n')
+        buf = io.StringIO()
+        sys.print_exception(e, buf)
+        error = buf.getvalue()
 
-    return ''.join(output)
+    return json.dumps({'out': ''.join(output), 'err': error})
 
 js.globalThis.pypad_run = _pypad_run
 `.trim();
