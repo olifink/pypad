@@ -1,21 +1,13 @@
-import { Injectable, DOCUMENT, inject, signal } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
+import { RunnerService } from '../runner/runner.service';
 
 export interface InstalledPackage {
   name: string;
 }
 
-/**
- * Builds a minimal Python script that installs `name` via mip.
- * Errors propagate as JS exceptions from runPython(), caught by the caller.
- */
-function buildInstallScript(name: string): string {
-  const pyName = JSON.stringify(name);
-  return `import mip\nmip.install(${pyName})`;
-}
-
 @Injectable({ providedIn: 'root' })
 export class PackagesService {
-  private readonly doc = inject(DOCUMENT);
+  private readonly runner = inject(RunnerService);
 
   /** Packages installed in the current session (lost on page reload). */
   readonly installedPackages = signal<InstalledPackage[]>([]);
@@ -27,40 +19,24 @@ export class PackagesService {
   readonly lastLog = signal<string | null>(null);
 
   /**
-   * Installs `name` via `mip.install()` on the current interpreter.
+   * Installs `name` via `mip.install()` in the runner worker.
    *
    * @param silent - When true, suppresses updates to `isInstalling` / `lastLog`.
    *                 Used during REPL reset to reinstall silently in the background.
    */
   async install(name: string, silent = false): Promise<{ success: boolean; log: string }> {
-    const win = this.doc.defaultView as Window;
-    const interpreter = win.pypad_interpreter;
-    if (!interpreter) {
-      const msg = 'Interpreter not ready.';
-      if (!silent) this.lastLog.set(msg);
-      return { success: false, log: msg };
-    }
-
     if (!silent) this.isInstalling.set(true);
     try {
-      // Yield to let Angular render the loading state before runPython() blocks.
-      await new Promise<void>((resolve) => setTimeout(resolve, 0));
-
-      try {
-        interpreter.runPython(buildInstallScript(name));
-      } catch (e) {
-        // Python raised an exception — runPython re-throws it as a JS error.
-        const msg = e instanceof Error ? e.message : String(e);
-        if (!silent) this.lastLog.set(msg);
-        return { success: false, log: msg };
+      const result = await this.runner.install(name);
+      if (!result.success) {
+        if (!silent) this.lastLog.set(result.log);
+        return result;
       }
-
-      // If runPython didn't throw, the install succeeded.
       if (!silent) this.lastLog.set(`Installed ${name}.`);
       if (!this.installedPackages().some((p) => p.name === name)) {
         this.installedPackages.update((pkgs) => [...pkgs, { name }]);
       }
-      return { success: true, log: '' };
+      return result;
     } finally {
       if (!silent) this.isInstalling.set(false);
     }
