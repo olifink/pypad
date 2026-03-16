@@ -33,17 +33,16 @@
   <form class="install-form" (submit)="$event.preventDefault(); installPackage()">
     <mat-form-field appearance="outline" class="install-field" subscriptSizing="dynamic">
       <mat-label>Package name</mat-label>
-      <input matInput [formControl]="nameCtrl" placeholder="e.g. datetime, umqtt.simple" autocomplete="off"
+      <input matInput [formControl]="nameCtrl" placeholder="e.g. datetime" autocomplete="off"
         spellcheck="false" aria-label="Package name to install" />
     </mat-form-field>
-    <button mat-flat-button type="submit" class="install-btn" [disabled]="!nameCtrl.value.trim() || pkg.isInstalling()"
-      aria-label="Install package">
+    <button mat-icon-button type="submit" class="install-btn" color="primary" [disabled]="!nameCtrl.value.trim() || pkg.isInstalling()"
+      matTooltip="Install package">
       @if (pkg.isInstalling()) {
-      <mat-spinner diameter="18" aria-hidden="true" />
+      <mat-spinner diameter="20" aria-hidden="true" />
       } @else {
       <mat-icon aria-hidden="true">download</mat-icon>
       }
-      {{ pkg.isInstalling() ? 'Installing…' : 'Install' }}
     </button>
   </form>
 

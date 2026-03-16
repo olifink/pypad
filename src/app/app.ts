@@ -35,6 +35,7 @@ import { ShareDialogComponent } from './share/share-dialog';
 import type { ShareDialogData } from './share/share-dialog';
 import { PackagesComponent } from './packages/packages';
 import { PackagesService } from './packages/packages.service';
+import { PackagesDialogComponent } from './packages/packages-dialog';
 import { AiSettingsDialogComponent } from './ai-settings-dialog/ai-settings-dialog';
 import { AiService } from './ai/ai.service';
 import { NewFileDialogComponent } from './new-file-dialog/new-file-dialog';
@@ -131,9 +132,8 @@ export class App {
       if (this.runner.isReady() && this._sharedPackages.length > 0) {
         const pkgs = this._sharedPackages.splice(0);
         void Promise.all(pkgs.map((p) => this.packagesService.install(p)));
-        // Switch to Packages tab so the user sees install progress.
-        this.activePanelTab.set(3);
-        if (this.layout() === 'editor') this.setLayout('both');
+        // Open the Packages dialog so the user sees installation progress.
+        this.openPackages();
       }
     });
   }
@@ -257,6 +257,13 @@ export class App {
     this.sidenavOpen.set(false);
     this.dialog.open(AiSettingsDialogComponent, {
       width: '440px',
+    });
+  }
+
+  protected openPackages(): void {
+    this.sidenavOpen.set(false);
+    this.dialog.open(PackagesDialogComponent, {
+      width: '480px',
     });
   }
 
