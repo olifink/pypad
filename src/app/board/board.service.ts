@@ -115,6 +115,77 @@ export class BoardService {
     void this._writeBytes(new Uint8Array([0x04]));
   }
 
+  /**
+   * Writes `content` to `filename` on the board's filesystem via raw REPL.
+   * Content is base64-encoded in the browser and decoded with `ubinascii` on
+   * the board, so any text (including quotes, backslashes, Unicode) is safe.
+   */
+  async uploadFile(filename: string, content: string): Promise<void> {
+    // Encode content as base64 in 60-char chunks.
+    const bytes = new TextEncoder().encode(content);
+    let binary = '';
+    for (const b of bytes) binary += String.fromCharCode(b);
+    const b64 = btoa(binary);
+    const chunks: string[] = [];
+    for (let i = 0; i < b64.length; i += 60) chunks.push(b64.slice(i, i + 60));
+
+    const writes = chunks.map((c) => `__f.write(__b('${c}'))`).join('\n');
+    const code = [
+      `from ubinascii import a2b_base64 as __b`,
+      `__f = open(${JSON.stringify(filename)}, 'wb')`,
+      writes,
+      `__f.close()`,
+      `del __f, __b`,
+    ].join('\n');
+
+    const errors: string[] = [];
+    await new Promise<void>((resolve, reject) => {
+      this.run(code).subscribe({
+        next: (l) => { if (l.isError) errors.push(l.text); },
+        error: reject,
+        complete: () => errors.length ? reject(new Error(errors.join('\n'))) : resolve(),
+      });
+    });
+  }
+
+  /**
+   * Reads `filename` from the board's filesystem and returns its content.
+   * The board encodes the file as base64 (via `ubinascii`) and the browser
+   * decodes it, so binary-safe round-trips work correctly.
+   */
+  async downloadFile(filename: string): Promise<string> {
+    const code =
+      `import ubinascii\n` +
+      `print(ubinascii.b2a_base64(open(${JSON.stringify(filename)},'rb').read()).decode(),end='')`;
+
+    let b64 = '';
+    const errors: string[] = [];
+    await new Promise<void>((resolve, reject) => {
+      this.run(code).subscribe({
+        next: (l) => { if (l.isError) errors.push(l.text); else b64 += l.text; },
+        error: reject,
+        complete: () => errors.length ? reject(new Error(errors.join('\n'))) : resolve(),
+      });
+    });
+
+    const binary = atob(b64.trim());
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    return new TextDecoder().decode(bytes);
+  }
+
+  /** Truncates `filename` to zero bytes on the board's filesystem. */
+  async clearFile(filename: string): Promise<void> {
+    const errors: string[] = [];
+    await new Promise<void>((resolve, reject) => {
+      this.run(`open(${JSON.stringify(filename)},'w').close()`).subscribe({
+        next: (l) => { if (l.isError) errors.push(l.text); },
+        error: reject,
+        complete: () => errors.length ? reject(new Error(errors.join('\n'))) : resolve(),
+      });
+    });
+  }
+
   /** Runs `mip.install(name)` on the board and returns the result. */
   async install(name: string): Promise<InstallResult> {
     const lines: OutputLine[] = [];
