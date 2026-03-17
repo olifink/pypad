@@ -105,11 +105,10 @@
           }
 
           @if (hasWebSerial) {
-          <button mat-icon-button (click)="connectBoard()"
-            [class.board-connected]="board.isConnected()"
+          <button mat-icon-button (click)="connectBoard()" [class.board-connected]="board.isConnected()"
             [matTooltip]="board.isConnected() ? ('Connected: ' + board.portLabel()) : 'Connect Pico'"
             [attr.aria-label]="board.isConnected() ? 'Disconnect Pico' : 'Connect Pico'">
-            <mat-icon>usb</mat-icon>
+            <mat-icon>developer_board</mat-icon>
           </button>
           }
 
@@ -154,17 +153,16 @@
       </main>
 
       @if (runner.isRunning()) {
-        <button mat-fab class="run-fab" (click)="stopCode()"
-          matTooltip="Stop (Ctrl+R)" aria-label="Stop execution">
-          <mat-icon aria-hidden="true">stop</mat-icon>
-        </button>
+      <button mat-fab class="run-fab" (click)="stopCode()" matTooltip="Stop (Ctrl+R)" aria-label="Stop execution">
+        <mat-icon aria-hidden="true">stop</mat-icon>
+      </button>
       } @else {
-        <button mat-fab class="run-fab" (click)="runCode()"
-          [disabled]="!runner.isReady() || aiService.isGenerating()"
-          [matTooltip]="aiService.isGenerating() ? 'AI is generating code...' : (runner.isReady() ? 'Run (Ctrl+R)' : 'Loading MicroPython…')"
-          aria-label="Run Python code">
-          <mat-icon aria-hidden="true">{{ aiService.isGenerating() ? 'auto_awesome' : (runner.isReady() ? 'play_arrow' : 'hourglass_empty') }}</mat-icon>
-        </button>
+      <button mat-fab class="run-fab" (click)="runCode()" [disabled]="!runner.isReady() || aiService.isGenerating()"
+        [matTooltip]="aiService.isGenerating() ? 'AI is generating code...' : (runner.isReady() ? 'Run (Ctrl+R)' : 'Loading MicroPython…')"
+        aria-label="Run Python code">
+        <mat-icon aria-hidden="true">{{ aiService.isGenerating() ? 'auto_awesome' : (runner.isReady() ? 'play_arrow' :
+          'hourglass_empty') }}</mat-icon>
+      </button>
       }
     </div>
   </mat-sidenav-content>
