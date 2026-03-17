@@ -89,6 +89,10 @@ export class BoardService {
   run(code: string): Observable<OutputLine> {
     const subject = new Subject<OutputLine>();
     void (async () => {
+      // Save the active handler (e.g. the REPL terminal handler) so it can be
+      // restored after raw-REPL operations finish. Without this, every Run /
+      // Upload / Download wipes _rxHandler and the REPL goes silent.
+      const savedHandler = this._rxHandler;
       try {
         await this._enterRaw();
         await this._execRaw(code, subject);
@@ -96,6 +100,7 @@ export class BoardService {
       } catch (e) {
         subject.next({ text: String(e), isError: true });
       } finally {
+        this._rxHandler = savedHandler;
         subject.complete();
       }
     })();
