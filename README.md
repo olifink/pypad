@@ -52,32 +52,34 @@ To provide a zero-install, offline-capable Python editor that feels like a nativ
 * [x] **Dependency Management (`mip`):** Packages tab to install libraries from `micropython-lib` via `mip.install()`. Installed packages survive REPL resets (automatically re-installed on each new interpreter instance). Package list is tracked in `PackagesService`.
 * [x] **Package Bundling:** Share URLs include a list of required packages (`{ v:1, c:code, p?:packages[] }` JSON payload, LZ-compressed). Opening a shared URL auto-installs its packages once the interpreter is ready and switches to the Packages tab. Backward-compatible with old plain-string share URLs.
 
-### Phase 5: AI Coding Support
+### Phase 5: AI Coding Support ✅
 
-* [ ] **API Key:** Encode with Web Crypto API and save to localStorage.
-* [ ] **Gemini Service:** An Angular service that initializes the GoogleGenerativeAI client using the stored key.
-* [ ] **AI Prompt**: Prompt AI generate and insert code at cursor or refactor code if selected.
+* [x] **API Key:** Stored in `localStorage`; managed via the AI Settings dialog.
+* [x] **AI Service:** Angular service wrapping the Claude API; streams generated code into the editor.
+* [x] **AI Prompt:** `Ctrl+\` opens a prompt dialog. With no selection: generates and inserts code at the cursor. With a selection: sends the selected code + instruction to fix/modify it.
 
-### Phase 6: Web Host Interaction
+### Phase 6: Hardware Integration ✅
 
-* [ ] **JS Bridge:** Allowing Python code to manipulate the DOM or call Web APIs (GPS, Camera) via PyScript's FFI.
+* [x] **Web Serial Backend (`BoardService`):** Connect to a Raspberry Pi Pico (or any MicroPython board) over USB via the Web Serial API (Chrome/Chromium). The `usb` toolbar button opens the browser's port picker; turns primary-colour when connected. Hidden on browsers without Web Serial support.
+* [x] **Hardware Run:** When a board is connected, the Run button executes code on the real MicroPython interpreter via the raw REPL protocol (`Ctrl+A` / code + `\x04` / read stdout+stderr / `Ctrl+B`). Output streams line-by-line to the Output tab.
+* [x] **Hardware REPL:** The REPL tab auto-switches between WASM and board mode as the connection state changes. xterm.js is wired directly to the board's serial streams; the WASM interpreter is paused. Disconnecting restores the WASM REPL with a fresh interpreter.
+* [x] **Soft Reset:** The Clear Output button sends a MicroPython soft reset (`Ctrl+D`) to the board when connected, restarting the interpreter without dropping the USB connection.
+* [x] **File Operations (Pico section in settings):** When a board is connected a "Pico" section appears in the sidebar with three actions:
+  * **Upload as main.py** — writes the current editor content to `main.py` on the board's flash (base64-encoded for safety) then soft-resets the board.
+  * **Download main.py** — reads `main.py` from the board's flash and loads it into the editor (with a confirmation dialog).
+  * **Clear main.py** — truncates `main.py` to zero bytes then soft-resets the board.
 
-### Phase 7: Hardware Integration
-- [ ] **Web Serial Bridge:** Connect to physical MicroPython boards (Pico, ESP32).
-- [ ] **Flash to Board:** Upload `main.py` directly from the browser to the board's flash memory.
-- [ ] **Hardware REPL:** Toggle the console to interact with the physical device's output.
+### Phase 7: Web Development
+
+* [ ] **Web Page:** HTML/PyScript/JS-bridge editing with `iframe` output panel
+* [ ] **Page Sharing:** Option to share as a page (app) instead of an editor
+* [ ] **Flask Server:** Build server code with flask? maybe
+* [ ] **:** 
 
 ### Parking lot
 
 * [ ] **Sticky Accessory Bar:** Touch-friendly Python symbol bar above virtual keyboard.
 * [ ] **Multi-file Support:** Tabbed interface for managing multiple `.py` snippets/files.
-
-### Deferred
-
-* [ ] **Live Autocomplete:** Bridge between CodeMirror and MicroPython's `dir()` for real-time object inspection.
-* [ ] **Visual State Inspector:** Instead of a full `break` debugger, implement a "Snapshot" tool that runs `globals()` after execution and displays variables/types in an M3 Data Table.
-* [ ] **Exception Mapping:** Write a parser that takes MicroPython stack traces and uses the **CodeMirror 6 `EditorView**` to highlight the exact line of code where the error occurred with an M3 "Error" gutter icon.
-
 
 ---
 
@@ -91,8 +93,9 @@ To provide a zero-install, offline-capable Python editor that feels like a nativ
 | `ConsoleComponent` | `src/app/console/` | Scrollable monospace output panel; accepts `lines: string[]` input; auto-scrolls to bottom; clear button. |
 | `ReplComponent` | `src/app/repl/` | Hosts the xterm.js terminal for the interactive REPL tab; lazy-inits on first render; `ResizeObserver` keeps the terminal sized to its container. |
 | `DocumentationComponent` | `src/app/docs/` | Docs tab; debounces cursor position and looks up the symbol under the caret in `DocumentationService`; shows signature, description, and a deep-link to the official docs. |
-| `RunnerService` | `src/app/runner/` | Polls for `window.pypad_run`; exposes `isReady` signal and `run(code)`. |
-| `ReplService` | `src/app/repl/` | Polls for `window.pypad_interpreter`; `startRepl(el, isDark)` dynamically imports xterm.js from PyScript's local bundle, wires `io.stdout` → terminal and terminal keystrokes → `replProcessChar`; `resetRepl()` loads a fresh WASM instance, re-registers `pypad_run`, and reinstalls tracked packages; `setTheme(isDark)` for live theme switching. |
+| `BoardService` | `src/app/board/` | Web Serial connection to a MicroPython board. Manages port open/close, a single background read loop, and raw REPL protocol (`_enterRaw` / `_execRaw` / `_exitRaw`). Exposes `run()`, `stop()`, `softReset()`, `uploadFile()`, `downloadFile()`, `clearFile()`, and `setReplHandler()` for xterm.js wiring. `isConnected` and `portLabel` signals drive the UI. |
+| `RunnerService` | `src/app/runner/` | `isReady` is a `computed()` signal — true when the WASM worker is initialised *or* a board is connected. `run()`, `stop()`, and `install()` delegate to `BoardService` when connected, otherwise to the WASM worker. |
+| `ReplService` | `src/app/repl/` | `startRepl(el, isDark)` wires xterm.js to the board (`setReplHandler` / `writeBytes`) or to the WASM interpreter (`io.stdout` + `replProcessChar`). An `effect()` re-wires automatically when `board.isConnected()` changes while the terminal is open, disposing the previous `onData` subscription before installing the new one. `resetRepl()` and `runInRepl()` branch for board vs WASM. |
 | `PackagesService` | `src/app/packages/` | Installs packages via `mip.install()` using `interpreter.runPython()`; tracks `installedPackages` signal; `reinstallAll()` re-installs all packages on a fresh interpreter after a REPL reset. |
 | `DocumentationService` | `src/app/docs/` | Loads `assets/docs.json` (scraped MicroPython + CPython builtins); merges with a static `KEYWORD_DOCS` map covering ~36 Python keywords; exposes `lookup(fqn)`. |
 | `EditorContextService` | `src/app/docs/` | Resolves the symbol or keyword at the current cursor position using the lezer syntax tree. |
