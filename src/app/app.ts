@@ -213,6 +213,7 @@ export class App {
   protected clearOutput(): void {
     this.outputLines.set([]);
     this.editorRef().clearErrorHighlight();
+    if (this.board.isConnected()) this.board.softReset();
   }
 
   protected newFile(): void {

@@ -39,6 +39,7 @@ export class BoardService {
   readonly portLabel = signal<string | null>(null);
 
   private _port: SerialPort | null = null;
+  private _reader: ReadableStreamDefaultReader<Uint8Array> | null = null;
   private _writer: WritableStreamDefaultWriter<Uint8Array> | null = null;
   /** Single read loop dispatches incoming bytes to this handler. */
   private _rxHandler: ((data: Uint8Array) => void) | null = null;
@@ -72,10 +73,13 @@ export class BoardService {
     this.isConnected.set(false);
     this.portLabel.set(null);
     this._rxHandler = null;
-    try { await this._writer?.close(); } catch { /* ignore */ }
+    // Cancel the reader first — port.close() throws if the readable stream is locked.
+    try { await this._reader?.cancel(); } catch { /* ignore */ }
+    this._reader = null;
+    try { this._writer?.releaseLock(); } catch { /* ignore */ }
+    this._writer = null;
     try { await this._port?.close(); } catch { /* ignore */ }
     this._port = null;
-    this._writer = null;
   }
 
   /**
@@ -101,6 +105,14 @@ export class BoardService {
   /** Sends Ctrl+C × 2 to interrupt any running script on the board. */
   stop(): void {
     void this._writeBytes(new Uint8Array([0x03, 0x03]));
+  }
+
+  /**
+   * Soft-resets the board (Ctrl+D in normal REPL mode). The MicroPython
+   * interpreter restarts while the USB connection stays open.
+   */
+  softReset(): void {
+    void this._writeBytes(new Uint8Array([0x04]));
   }
 
   /** Runs `mip.install(name)` on the board and returns the result. */
@@ -142,15 +154,16 @@ export class BoardService {
   private _startReadLoop(): void {
     void (async () => {
       if (!this._port?.readable) return;
-      const reader = this._port.readable.getReader();
+      this._reader = this._port.readable.getReader();
       try {
         while (true) {
-          const { value, done } = await reader.read();
+          const { value, done } = await this._reader.read();
           if (done) break;
           if (value) this._rxHandler?.(value);
         }
       } catch { /* disconnected or cancelled */ } finally {
-        try { reader.releaseLock(); } catch { /* ignore */ }
+        try { this._reader?.releaseLock(); } catch { /* ignore */ }
+        this._reader = null;
         if (this.isConnected()) void this.disconnect();
       }
     })();
