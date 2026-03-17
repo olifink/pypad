@@ -41,6 +41,7 @@ import { AiService } from './ai/ai.service';
 import { NewFileDialogComponent } from './new-file-dialog/new-file-dialog';
 import { AiPromptDialogComponent } from './ai-prompt-dialog/ai-prompt-dialog';
 import type { AiPromptDialogData } from './ai-prompt-dialog/ai-prompt-dialog';
+import { BoardService } from './board/board.service';
 
 const DEFAULT_CODE = `# Welcome to PyPad!
 print("Hello, PyPad!")
@@ -96,6 +97,8 @@ export class App {
   protected readonly theme = inject(ThemeService);
   protected readonly packagesService = inject(PackagesService);
   protected readonly aiService = inject(AiService);
+  protected readonly board = inject(BoardService);
+  protected readonly hasWebSerial = 'serial' in navigator;
   private readonly _vk = inject(VirtualKeyboardService);
 
   private readonly workspaceRef = viewChild.required<ElementRef<HTMLElement>>('workspace');
@@ -362,6 +365,14 @@ export class App {
       this.activePanelId.set('docs');
       if (this.layout() === 'editor') this.setLayout('both');
       this.editorRef().focus();
+    }
+  }
+
+  protected async connectBoard(): Promise<void> {
+    if (this.board.isConnected()) {
+      await this.board.disconnect();
+    } else {
+      await this.board.connect();
     }
   }
 

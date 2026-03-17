@@ -5,7 +5,8 @@
       "WebSearch",
       "WebFetch(domain:docs.micropython.org)",
       "WebFetch(domain:github.com)",
-      "WebFetch(domain:docs.circuitpython.org)"
+      "WebFetch(domain:docs.circuitpython.org)",
+      "Bash(cd:*)"
     ]
   }
 }

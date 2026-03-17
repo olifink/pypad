@@ -85,6 +85,15 @@
           </button>
           }
 
+          @if (hasWebSerial) {
+          <button mat-icon-button (click)="connectBoard()"
+            [class.board-connected]="board.isConnected()"
+            [matTooltip]="board.isConnected() ? ('Connected: ' + board.portLabel()) : 'Connect Pico'"
+            [attr.aria-label]="board.isConnected() ? 'Disconnect Pico' : 'Connect Pico'">
+            <mat-icon>usb</mat-icon>
+          </button>
+          }
+
           <mat-button-toggle-group class="layout-toggle" [value]="layout()" (change)="setLayout($event.value)"
             hideSingleSelectionIndicator aria-label="Layout mode">
             <mat-button-toggle value="editor" matTooltip="Editor only" aria-label="Editor only">
