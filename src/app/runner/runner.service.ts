@@ -1,5 +1,6 @@
-import { Injectable, signal, DOCUMENT, DestroyRef, inject } from '@angular/core';
+import { Injectable, signal, computed, DOCUMENT, DestroyRef, inject } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
+import { BoardService } from '../board/board.service';
 
 /** A single line of output from a Python run, tagged as normal output or error. */
 export interface OutputLine {
@@ -22,9 +23,12 @@ type WorkerOutMsg =
 export class RunnerService {
   private readonly doc = inject(DOCUMENT);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly board = inject(BoardService);
 
-  /** True once the worker's MicroPython runtime has initialised. */
-  readonly isReady = signal(false);
+  private readonly _workerReady = signal(false);
+
+  /** True once the WASM worker is initialised, or a board is connected. */
+  readonly isReady = computed(() => this._workerReady() || this.board.isConnected());
 
   /** True while a `run()` is in progress. */
   readonly isRunning = signal(false);
@@ -40,20 +44,46 @@ export class RunnerService {
   }
 
   /**
-   * Executes the given Python code in the worker.
-   * Returns an Observable that emits output lines and completes when done.
+   * Executes the given Python code — on the board if connected, otherwise in
+   * the WASM worker. Returns an Observable that emits output lines and
+   * completes when execution finishes.
    */
   run(code: string): Observable<OutputLine> {
     this.isRunning.set(true);
+    const src = this.board.isConnected() ? this.board.run(code) : this._workerRun(code);
+    return new Observable((observer) => {
+      const sub = src.subscribe({
+        next: (v) => observer.next(v),
+        error: (e) => { this.isRunning.set(false); observer.error(e); },
+        complete: () => { this.isRunning.set(false); observer.complete(); },
+      });
+      return () => sub.unsubscribe();
+    });
+  }
+
+  /** Stops any running script (interrupts the board or terminates the worker). */
+  stop(): void {
+    if (this.board.isConnected()) {
+      this.board.stop();
+    } else {
+      this._stopWorker();
+    }
+  }
+
+  /** Installs a package via `mip.install()` on the board or in the WASM worker. */
+  install(name: string): Promise<InstallResult> {
+    return this.board.isConnected()
+      ? this.board.install(name)
+      : this._workerInstall(name);
+  }
+
+  private _workerRun(code: string): Observable<OutputLine> {
     this.runSubject = new Subject<OutputLine>();
     this.worker.postMessage({ type: 'run', code });
     return this.runSubject.asObservable();
   }
 
-  /**
-   * Terminates the worker (killing any running script), then starts a fresh one.
-   */
-  stop(): void {
+  private _stopWorker(): void {
     this.worker?.terminate();
     if (this.runSubject) {
       this.runSubject.next({ text: 'Execution stopped.', isError: false });
@@ -61,14 +91,11 @@ export class RunnerService {
       this.runSubject = null;
     }
     this.isRunning.set(false);
-    this.isReady.set(false);
+    this._workerReady.set(false);
     this._initWorker();
   }
 
-  /**
-   * Installs a package via `mip.install()` in the runner worker.
-   */
-  install(name: string): Promise<InstallResult> {
+  private _workerInstall(name: string): Promise<InstallResult> {
     return new Promise<InstallResult>((resolve) => {
       const id = String(this.installIdCounter++);
       this.pendingInstalls.set(id, resolve);
@@ -88,13 +115,12 @@ export class RunnerService {
     const msg = e.data;
     switch (msg.type) {
       case 'ready':
-        this.isReady.set(true);
+        this._workerReady.set(true);
         break;
       case 'line':
         this.runSubject?.next({ text: msg.text, isError: msg.isError });
         break;
       case 'done':
-        this.isRunning.set(false);
         this.runSubject?.complete();
         this.runSubject = null;
         break;

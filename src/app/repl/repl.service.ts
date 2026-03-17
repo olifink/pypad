@@ -1,12 +1,13 @@
-import { Injectable, DOCUMENT, DestroyRef, inject, signal } from '@angular/core';
+import { Injectable, DOCUMENT, DestroyRef, inject, signal, computed, effect } from '@angular/core';
 import { PackagesService } from '../packages/packages.service';
+import { BoardService } from '../board/board.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { interval } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
 
 /** Minimal typings for the xterm.js Terminal (bundled inside public/pyscript/). */
 interface XTerminal {
-  onData(handler: (data: string) => void): void;
+  onData(handler: (data: string) => void): { dispose(): void };
   write(data: string | Uint8Array): void;
   clear(): void;
   reset(): void;
@@ -58,11 +59,13 @@ declare global {
 export class ReplService {
   private readonly doc = inject(DOCUMENT);
   private readonly destroyRef = inject(DestroyRef);
-
-  /** True once `window.pypad_interpreter` is available. */
-  readonly isReady = signal(false);
-
   private readonly packages = inject(PackagesService);
+  private readonly board = inject(BoardService);
+
+  private readonly _wasmReady = signal(false);
+
+  /** True once the REPL can be started (WASM ready or board connected). */
+  readonly isReady = computed(() => this._wasmReady() || this.board.isConnected());
 
   /** The xterm FitAddon instance, available after `startRepl()` resolves. */
   fitAddon: FitAddon | null = null;
@@ -71,11 +74,13 @@ export class ReplService {
   private readonly _encoder = new TextEncoder();
   /** The active MicroPython interpreter. Updated on every reset. */
   private _interpreter: MicroPythonInterpreter | null = null;
+  /** Disposable for the active terminal onData subscription. */
+  private _onDataDisposable: { dispose(): void } | null = null;
 
   constructor() {
     const win = this.doc.defaultView as Window;
     if (win.pypad_interpreter) {
-      this.isReady.set(true);
+      this._wasmReady.set(true);
     } else {
       interval(200)
         .pipe(
@@ -83,19 +88,38 @@ export class ReplService {
           take(1),
           takeUntilDestroyed(this.destroyRef),
         )
-        .subscribe(() => this.isReady.set(true));
+        .subscribe(() => this._wasmReady.set(true));
     }
+
+    // Re-wire the terminal whenever board connection state changes.
+    // If the terminal hasn't been opened yet, startRepl() will handle it.
+    effect(() => {
+      const connected = this.board.isConnected();
+      if (!this.terminal) return;
+      if (connected) {
+        this._clearWasmIo();
+        this._wireBoardToTerminal();
+        this.terminal?.reset();
+        void this.board.writeBytes(new Uint8Array([0x0d]));
+      } else {
+        this.board.setReplHandler(null);
+        void this._reinitWasmRepl();
+      }
+    });
   }
 
   /**
-   * Initialises an xterm.js terminal inside `hostEl` and connects it to the
-   * MicroPython REPL. Safe to call only once. Resolves after the terminal is ready.
+   * Initialises an xterm.js terminal inside `hostEl` and connects it either
+   * to the board (if connected) or to the MicroPython WASM REPL.
+   * Safe to call only once. Resolves after the terminal is ready.
    */
   async startRepl(hostEl: HTMLElement, isDark: boolean): Promise<void> {
-    const win = this.doc.defaultView as Window;
-    const interpreter = win.pypad_interpreter;
-    const io = win.pypad_io;
-    if (!interpreter || !io) return;
+    const usingBoard = this.board.isConnected();
+
+    if (!usingBoard) {
+      const win = this.doc.defaultView as Window;
+      if (!win.pypad_interpreter || !win.pypad_io) return;
+    }
 
     // Inject xterm.css once.
     const cssHref = './pyscript/xterm.css';
@@ -106,8 +130,6 @@ export class ReplService {
       this.doc.head.appendChild(link);
     }
 
-    // Resolve pyscript files relative to the document's base URL so that
-    // sub-path deployments (e.g. GitHub Pages /pypad/) are handled correctly.
     const baseUrl = new URL('pyscript/', this.doc.baseURI).href;
     const xtermFiles = this._resolveXtermFiles(baseUrl);
 
@@ -137,27 +159,12 @@ export class ReplService {
     terminal.focus();
     this.terminal = terminal;
 
-    // Route MicroPython stdout/stderr → terminal (convert bare LF to CRLF).
-    const cr = new Uint8Array([13]);
-    const ioHandler = (data: Uint8Array) => {
-      if (data[0] === 10) terminal.write(cr);
-      terminal.write(data);
-    };
-    io.stdout = ioHandler;
-    io.stderr = ioHandler;
-
-    // Start the MicroPython REPL state machine.
-    this._interpreter = interpreter;
-    interpreter.replInit();
-
-    // Route terminal keystrokes → current interpreter (read via this._interpreter
-    // so resets transparently swap to a new instance).
-    terminal.onData((chars: string) => {
-      const bytes = this._encoder.encode(chars);
-      for (const byte of bytes) {
-        this._interpreter?.replProcessChar(byte);
-      }
-    });
+    if (usingBoard) {
+      this._wireBoardToTerminal();
+    } else {
+      this._wireWasmToTerminal();
+      (this.doc.defaultView as Window).pypad_interpreter!.replInit();
+    }
   }
 
   /** Updates the terminal colour scheme without restarting the REPL. */
@@ -168,45 +175,113 @@ export class ReplService {
   }
 
   /**
-   * Creates a brand-new MicroPython WASM interpreter instance, swaps it in,
-   * and clears the terminal. All previously defined Python globals are gone
-   * because the entire heap is discarded with the old instance.
-   * Safe to call at any time after `startRepl()` has resolved.
+   * Resets the REPL. For board: clears terminal and sends Ctrl+C+B.
+   * For WASM: creates a fresh interpreter and reinstalls packages.
    */
   async resetRepl(): Promise<void> {
     if (!this.terminal) return;
+
+    if (this.board.isConnected()) {
+      this.terminal.reset();
+      await this.board.writeBytes(new Uint8Array([0x03, 0x03, 0x02]));
+      this.terminal.focus();
+    } else {
+      await this._reinitWasmRepl();
+    }
+  }
+
+  /**
+   * Resets the REPL then executes `code`. For board: uses MicroPython paste
+   * mode (Ctrl+E … code … Ctrl+D). For WASM: uses the WASM paste mode.
+   *
+   * No-op if the terminal has not been started yet.
+   */
+  async runInRepl(code: string): Promise<void> {
+    if (!this.terminal) return;
+
+    if (this.board.isConnected()) {
+      this.terminal.reset();
+      const codeBytes = this._encoder.encode(code);
+      const packet = new Uint8Array(codeBytes.length + 2);
+      packet[0] = 0x05; // Ctrl+E — enter paste mode
+      packet.set(codeBytes, 1);
+      packet[packet.length - 1] = 0x04; // Ctrl+D — execute
+      await this.board.writeBytes(packet);
+    } else {
+      await this.resetRepl();
+      const interpreter = this._interpreter;
+      if (!interpreter) return;
+      interpreter.replProcessChar(0x05); // Ctrl+E
+      const bytes = this._encoder.encode(code);
+      for (const byte of bytes) {
+        interpreter.replProcessChar(byte);
+      }
+      interpreter.replProcessChar(0x04); // Ctrl+D
+    }
+  }
+
+  /** Wires the board's serial byte stream to xterm.js. */
+  private _wireBoardToTerminal(): void {
+    const terminal = this.terminal!;
+    const cr = new Uint8Array([13]);
+    this.board.setReplHandler((data: Uint8Array) => {
+      if (data[0] === 10) terminal.write(cr);
+      terminal.write(data);
+    });
+    this._onDataDisposable?.dispose();
+    this._onDataDisposable = terminal.onData((chars: string) => {
+      void this.board.writeBytes(this._encoder.encode(chars));
+    });
+  }
+
+  /** Wires the WASM interpreter's io and keystrokes to xterm.js. Does not call replInit(). */
+  private _wireWasmToTerminal(): void {
+    const terminal = this.terminal!;
+    const win = this.doc.defaultView as Window;
+    const interpreter = win.pypad_interpreter!;
+    const io = win.pypad_io!;
+
+    const cr = new Uint8Array([13]);
+    const ioHandler = (data: Uint8Array) => {
+      if (data[0] === 10) terminal.write(cr);
+      terminal.write(data);
+    };
+    io.stdout = ioHandler;
+    io.stderr = ioHandler;
+
+    this._interpreter = interpreter;
+
+    this._onDataDisposable?.dispose();
+    this._onDataDisposable = terminal.onData((chars: string) => {
+      const bytes = this._encoder.encode(chars);
+      for (const byte of bytes) {
+        this._interpreter?.replProcessChar(byte);
+      }
+    });
+  }
+
+  /** Clears WASM io handlers so the WASM interpreter stops writing to the terminal. */
+  private _clearWasmIo(): void {
+    const win = this.doc.defaultView as Window;
+    if (win.pypad_io) {
+      win.pypad_io.stdout = null;
+      win.pypad_io.stderr = null;
+    }
+    this._interpreter = null;
+  }
+
+  /** Creates a fresh WASM interpreter, re-wires it to the terminal, reinstalls packages. */
+  private async _reinitWasmRepl(): Promise<void> {
+    if (!this.terminal) return;
     const newInterpreter = await this._createFreshInterpreter(this.terminal);
     this._interpreter = newInterpreter;
-    (this.doc.defaultView as Window).pypad_interpreter = newInterpreter;
-    // Re-install any packages the user had added this session.
+    const win = this.doc.defaultView as Window;
+    win.pypad_interpreter = newInterpreter;
+    this._wireWasmToTerminal();
     await this.packages.reinstallAll();
     this.terminal.reset();
     newInterpreter.replInit();
     this.terminal.focus();
-  }
-
-  /**
-   * Resets the REPL (fresh interpreter) then executes `code` via MicroPython
-   * paste mode (Ctrl+E … bytes … Ctrl+D) so that the new run's variables
-   * remain inspectable afterward.
-   *
-   * If the terminal has not been started yet (user has never opened the REPL
-   * tab), this is a no-op — the caller should switch to the REPL tab first so
-   * that `ngAfterViewInit` triggers `startRepl()`, then try again.
-   */
-  async runInRepl(code: string): Promise<void> {
-    if (!this.terminal) return;
-    await this.resetRepl();
-    const interpreter = this._interpreter;
-    if (!interpreter) return;
-
-    // Enter paste mode, send the code, then execute.
-    interpreter.replProcessChar(0x05); // Ctrl+E
-    const bytes = this._encoder.encode(code);
-    for (const byte of bytes) {
-      interpreter.replProcessChar(byte);
-    }
-    interpreter.replProcessChar(0x04); // Ctrl+D
   }
 
   /**

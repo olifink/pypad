@@ -186,6 +186,10 @@
   font-size: 0.875rem;
 }
 
+.board-connected {
+  color: var(--mat-sys-primary);
+}
+
 .run-fab {
   position: fixed;
   bottom: calc(1.5rem + env(keyboard-inset-height, 0px));

@@ -29,6 +29,7 @@ import type { OutputLine } from './runner/runner.service';
 import { ThemeService } from './theme/theme.service';
 import { VirtualKeyboardService } from './virtual-keyboard/virtual-keyboard.service';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog';
+import type { ConfirmDialogData } from './confirm-dialog/confirm-dialog';
 import { ReplService } from './repl/repl.service';
 import { ShareService } from './share/share.service';
 import { ShareDialogComponent } from './share/share-dialog';
@@ -41,6 +42,7 @@ import { AiService } from './ai/ai.service';
 import { NewFileDialogComponent } from './new-file-dialog/new-file-dialog';
 import { AiPromptDialogComponent } from './ai-prompt-dialog/ai-prompt-dialog';
 import type { AiPromptDialogData } from './ai-prompt-dialog/ai-prompt-dialog';
+import { BoardService } from './board/board.service';
 
 const DEFAULT_CODE = `# Welcome to PyPad!
 print("Hello, PyPad!")
@@ -96,6 +98,8 @@ export class App {
   protected readonly theme = inject(ThemeService);
   protected readonly packagesService = inject(PackagesService);
   protected readonly aiService = inject(AiService);
+  protected readonly board = inject(BoardService);
+  protected readonly hasWebSerial = 'serial' in navigator;
   private readonly _vk = inject(VirtualKeyboardService);
 
   private readonly workspaceRef = viewChild.required<ElementRef<HTMLElement>>('workspace');
@@ -210,6 +214,7 @@ export class App {
   protected clearOutput(): void {
     this.outputLines.set([]);
     this.editorRef().clearErrorHighlight();
+    if (this.board.isConnected()) this.board.softReset();
   }
 
   protected newFile(): void {
@@ -362,6 +367,68 @@ export class App {
       this.activePanelId.set('docs');
       if (this.layout() === 'editor') this.setLayout('both');
       this.editorRef().focus();
+    }
+  }
+
+  protected async uploadToBoard(): Promise<void> {
+    this.sidenavOpen.set(false);
+    this.storage.flush();
+    this.outputLines.set([]);
+    this.activePanelId.set('output');
+    if (this.layout() === 'editor') this.setLayout('both');
+    try {
+      await this.board.uploadFile('main.py', this.currentCode());
+      this.board.softReset();
+      this.outputLines.set([{ text: 'Uploaded main.py to Pico.', isError: false }]);
+    } catch (e) {
+      this.outputLines.set([{ text: String(e), isError: true }]);
+    }
+  }
+
+  protected downloadFromBoard(): void {
+    this.sidenavOpen.set(false);
+    this.dialog
+      .open(ConfirmDialogComponent, {
+        data: {
+          title: 'Download main.py',
+          message: 'Your current editor content will be replaced with main.py from the Pico.',
+          confirmLabel: 'Download',
+        } satisfies ConfirmDialogData,
+        width: '480px',
+      })
+      .afterClosed()
+      .subscribe(async (confirmed: boolean | undefined) => {
+        if (!confirmed) return;
+        try {
+          const content = await this.board.downloadFile('main.py');
+          this.editorRef().setContent(content);
+        } catch (e) {
+          this.outputLines.set([{ text: String(e), isError: true }]);
+          this.activePanelId.set('output');
+          if (this.layout() === 'editor') this.setLayout('both');
+        }
+      });
+  }
+
+  protected async clearBoardFile(): Promise<void> {
+    this.sidenavOpen.set(false);
+    this.outputLines.set([]);
+    this.activePanelId.set('output');
+    if (this.layout() === 'editor') this.setLayout('both');
+    try {
+      await this.board.clearFile('main.py');
+      this.board.softReset();
+      this.outputLines.set([{ text: 'Cleared main.py on Pico.', isError: false }]);
+    } catch (e) {
+      this.outputLines.set([{ text: String(e), isError: true }]);
+    }
+  }
+
+  protected async connectBoard(): Promise<void> {
+    if (this.board.isConnected()) {
+      await this.board.disconnect();
+    } else {
+      await this.board.connect();
     }
   }
 
