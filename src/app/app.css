@@ -65,6 +65,13 @@
   color: var(--mat-sys-on-surface-variant);
 }
 
+.sidenav-subsection-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--mat-sys-on-surface-variant);
+  margin-top: 4px;
+}
+
 .sidenav-toggle-group {
   align-self: flex-start;
 }
@@ -78,6 +85,29 @@
   justify-content: flex-start;
   width: 100%;
   padding-left: 0;
+}
+
+.sidenav-action--selected {
+  color: var(--mat-sys-primary);
+}
+
+.project-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--mat-sys-surface-container);
+}
+
+.project-name {
+  font-weight: 500;
+  color: var(--mat-sys-on-surface);
+}
+
+.project-meta {
+  font-size: 0.875rem;
+  color: var(--mat-sys-on-surface-variant);
 }
 
 .visually-hidden {
@@ -99,6 +129,16 @@
   font-size: 1.25rem;
   font-weight: 500;
   margin-left: 4px;
+}
+
+.app-subtitle {
+  margin-left: 12px;
+  font-size: 0.875rem;
+  color: var(--mat-sys-on-surface-variant);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 40vw;
 }
 
 .toolbar-spacer {

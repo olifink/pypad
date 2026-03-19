@@ -10,6 +10,9 @@ import { AiService } from '../ai/ai.service';
 export interface NewFileDialogData {
   title: string;
   message: string;
+  requireName?: boolean;
+  initialName?: string;
+  nameHint?: string;
 }
 
 @Component({
@@ -27,7 +30,21 @@ export interface NewFileDialogData {
     <h2 mat-dialog-title>{{ data.title }}</h2>
     <mat-dialog-content>
       <p>{{ data.message }}</p>
-      
+
+      @if (data.requireName) {
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>File name</mat-label>
+          <input
+            matInput
+            [ngModel]="name()"
+            (ngModelChange)="name.set($event)"
+            placeholder="main.py" />
+          @if (data.nameHint) {
+            <mat-hint>{{ data.nameHint }}</mat-hint>
+          }
+        </mat-form-field>
+      }
+
       @if (aiService.hasApiKey()) {
         <div class="ai-section">
           <mat-form-field appearance="outline" class="full-width">
@@ -44,12 +61,16 @@ export interface NewFileDialogData {
         </div>
       }
     </mat-dialog-content>
-    <mat-dialog-actions align="end">
-      <button mat-button (click)="onCancel()">Cancel</button>
-      <button mat-flat-button color="primary" (click)="onConfirm()">
-        {{ prompt().trim() ? 'Generate and Create' : 'Create Blank' }}
-      </button>
-    </mat-dialog-actions>
+      <mat-dialog-actions align="end">
+        <button mat-button (click)="onCancel()">Cancel</button>
+        <button
+          mat-flat-button
+          color="primary"
+          (click)="onConfirm()"
+          [disabled]="data.requireName && !name().trim()">
+          {{ prompt().trim() ? 'Generate and Create' : 'Create Blank' }}
+        </button>
+      </mat-dialog-actions>
   `,
   styles: `
     .full-width {
@@ -70,14 +91,17 @@ export class NewFileDialogComponent {
   protected readonly data = inject<NewFileDialogData>(MAT_DIALOG_DATA);
   protected readonly aiService = inject(AiService);
   protected readonly prompt = signal('');
+  protected readonly name = signal(this.data.initialName ?? '');
 
   protected onCancel(): void {
     this.dialogRef.close();
   }
 
   protected onConfirm(): void {
+    if (this.data.requireName && !this.name().trim()) return;
     this.dialogRef.close({
       confirmed: true,
+      name: this.name().trim(),
       prompt: this.prompt().trim(),
     });
   }

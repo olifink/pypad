@@ -19,7 +19,7 @@
           "options": {
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
-            "allowedCommonJsDependencies": ["lz-string", "qrcode"],
+            "allowedCommonJsDependencies": ["@isomorphic-git/lightning-fs", "lz-string", "qrcode"],
             "assets": [
               {
                 "glob": "**/*",
