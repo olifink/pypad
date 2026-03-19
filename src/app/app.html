@@ -15,7 +15,17 @@
 
         @if (isProjectOpen()) {
           <div class="project-summary">
-            <div class="project-name">{{ activeProjectName() }}</div>
+            <div class="project-summary-header">
+              <div class="project-name">{{ activeProjectName() }}</div>
+              <button
+                mat-icon-button
+                class="project-delete-button"
+                (click)="deleteProject()"
+                [attr.aria-label]="'Delete project ' + activeProjectName()"
+                [matTooltip]="'Delete project ' + activeProjectName()">
+                <mat-icon>delete_outline</mat-icon>
+              </button>
+            </div>
             <div class="project-meta">{{ projectFiles().length }} file(s)</div>
           </div>
 
@@ -38,14 +48,24 @@
 
           <div class="sidenav-subsection-label">Files</div>
           @for (fileName of projectFiles(); track fileName) {
-            <button
-              mat-button
-              class="sidenav-action"
-              [class.sidenav-action--selected]="fileName === activeFileName()"
-              (click)="openProjectFile(fileName)">
-              <mat-icon>{{ fileName === activeFileName() ? 'description' : 'insert_drive_file' }}</mat-icon>
-              {{ fileName }}
-            </button>
+            <div class="project-file-row">
+              <button
+                mat-button
+                class="sidenav-action project-file-button"
+                [class.sidenav-action--selected]="fileName === activeFileName()"
+                (click)="openProjectFile(fileName)">
+                <mat-icon>{{ fileName === activeFileName() ? 'description' : 'insert_drive_file' }}</mat-icon>
+                <span class="project-file-name">{{ fileName }}</span>
+              </button>
+              <button
+                mat-icon-button
+                class="project-file-delete"
+                (click)="deleteProjectFile(fileName)"
+                [attr.aria-label]="'Delete ' + fileName"
+                [matTooltip]="'Delete ' + fileName">
+                <mat-icon>delete_outline</mat-icon>
+              </button>
+            </div>
           }
 
           @if (otherProjects().length > 0) {

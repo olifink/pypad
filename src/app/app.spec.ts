@@ -29,11 +29,18 @@ class FakeProjectService {
   readonly createProject = vi.fn();
   readonly openProject = vi.fn();
   readonly closeProject = vi.fn(async () => {});
+  readonly deleteActiveProject = vi.fn(async () => 'demo-project');
   readonly renameActiveProject = vi.fn();
   readonly createFile = vi.fn();
   readonly openFile = vi.fn();
   readonly writeImportedFile = vi.fn();
   readonly renameActiveFile = vi.fn();
+  readonly deleteFile = vi.fn(async (fileName: string) => ({
+    projectName: 'demo-project',
+    fileName: fileName === 'app.py' ? 'utils.py' : 'app.py',
+    files: ['app.py', 'utils.py'].filter((name) => name !== fileName),
+    code: '# next file',
+  }));
 }
 
 describe('App', () => {
@@ -131,9 +138,28 @@ describe('App', () => {
 
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('.project-name')?.textContent).toContain('demo-project');
+    expect(compiled.querySelector('.project-delete-button')?.getAttribute('aria-label')).toContain(
+      'Delete project demo-project',
+    );
     expect(compiled.querySelector('.app-subtitle')?.textContent).toContain('demo-project / app.py');
     expect(compiled.textContent).toContain('Rename current file');
     expect(compiled.textContent).toContain('utils.py');
     expect(compiled.textContent).toContain('other-project');
+  });
+
+  it('should render delete controls for project files', async () => {
+    projectService.availableProjects.set(['demo-project']);
+    projectService.activeProjectName.set('demo-project');
+    projectService.activeFileName.set('app.py');
+    projectService.projectFiles.set(['app.py', 'utils.py']);
+
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const deleteButtons = compiled.querySelectorAll('.project-file-delete');
+    expect(deleteButtons.length).toBe(2);
+    expect(deleteButtons[0]?.getAttribute('aria-label')).toContain('Delete');
   });
 });

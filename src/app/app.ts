@@ -303,6 +303,38 @@ export class App {
     void this.closeProjectInternal();
   }
 
+  protected deleteProject(): void {
+    const activeProjectName = this.activeProjectName();
+    if (!activeProjectName) return;
+
+    this.dialog
+      .open(ConfirmDialogComponent, {
+        data: {
+          title: `Delete ${activeProjectName}?`,
+          message: `Delete the project "${activeProjectName}" and all of its browser-local files? This cannot be undone.`,
+          confirmLabel: 'Delete',
+        } satisfies ConfirmDialogData,
+        width: '480px',
+      })
+      .afterClosed()
+      .subscribe(async (confirmed: boolean | undefined) => {
+        if (!confirmed) return;
+
+        try {
+          const deletedProjectName = await this.projects.deleteActiveProject();
+          const code = this.storage.load() ?? DEFAULT_CODE;
+          this.editorRef().setContent(code);
+          this.currentCode.set(code);
+          this.sidenavOpen.set(false);
+          this.outputLines.set([
+            { text: `Deleted project ${deletedProjectName}.`, isError: false },
+          ]);
+        } catch (error) {
+          this.showErrorDialog('Delete Project Failed', error);
+        }
+      });
+  }
+
   protected renameProject(): void {
     const activeProjectName = this.activeProjectName();
     if (!activeProjectName) return;
@@ -333,6 +365,42 @@ export class App {
 
   protected openProjectFile(fileName: string): void {
     void this.loadProjectFile(fileName);
+  }
+
+  protected deleteProjectFile(fileName: string): void {
+    const isLastFile = this.projectFiles().length === 1;
+
+    this.dialog
+      .open(ConfirmDialogComponent, {
+        data: {
+          title: `Delete ${fileName}?`,
+          message: isLastFile
+            ? `Delete ${fileName}? Because it is the last file in the project, PyPad will create a new empty main.py so the project stays usable.`
+            : `Delete ${fileName} from this project?`,
+          confirmLabel: 'Delete',
+        } satisfies ConfirmDialogData,
+        width: '480px',
+      })
+      .afterClosed()
+      .subscribe(async (confirmed: boolean | undefined) => {
+        if (!confirmed) return;
+
+        try {
+          const snapshot = await this.projects.deleteFile(fileName);
+          this.editorRef().setContent(snapshot.code);
+          this.currentCode.set(snapshot.code);
+          this.outputLines.set([
+            {
+              text: isLastFile
+                ? `Deleted ${fileName}. Created a new empty ${snapshot.fileName}.`
+                : `Deleted ${fileName}.`,
+              isError: false,
+            },
+          ]);
+        } catch (error) {
+          this.showErrorDialog('Delete File Failed', error);
+        }
+      });
   }
 
   protected renameProjectFile(): void {

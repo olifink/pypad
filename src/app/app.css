@@ -91,6 +91,27 @@
   color: var(--mat-sys-primary);
 }
 
+.project-file-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.project-file-button {
+  flex: 1;
+  min-width: 0;
+}
+
+.project-file-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.project-file-delete {
+  flex-shrink: 0;
+}
+
 .project-summary {
   display: flex;
   flex-direction: column;
@@ -100,14 +121,29 @@
   background: var(--mat-sys-surface-container);
 }
 
+.project-summary-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .project-name {
+  flex: 1;
+  min-width: 0;
   font-weight: 500;
   color: var(--mat-sys-on-surface);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .project-meta {
   font-size: 0.875rem;
   color: var(--mat-sys-on-surface-variant);
+}
+
+.project-delete-button {
+  flex-shrink: 0;
 }
 
 .visually-hidden {

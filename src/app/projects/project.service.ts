@@ -168,6 +168,31 @@ export class ProjectService {
     this.persistState();
   }
 
+  async deleteActiveProject(): Promise<string> {
+    const projectName = this.requireActiveProject();
+
+    await this.flush();
+
+    this.currentFsProjectName = null;
+    this.fs.init(this.toFsName(projectName), { wipe: true });
+    await this.fs.promises.stat('/');
+
+    const nextProjects = this.availableProjects().filter((name) => name !== projectName);
+
+    delete this.state.activeFileByProject[projectName];
+    this.state.projects = nextProjects;
+    this.state.activeProjectName = null;
+
+    this.availableProjects.set(nextProjects);
+    this.activeProjectName.set(null);
+    this.activeFileName.set(null);
+    this.projectFiles.set([]);
+    this.currentFsProjectName = null;
+    this.persistState();
+
+    return projectName;
+  }
+
   async createFile(fileName: string, code = ''): Promise<ProjectSnapshot> {
     const projectName = this.requireActiveProject();
     const normalizedFileName = this.validateFileName(fileName);
@@ -249,6 +274,47 @@ export class ProjectService {
     this.persistState();
 
     return normalizedFileName;
+  }
+
+  async deleteFile(fileName: string): Promise<ProjectSnapshot> {
+    const projectName = this.requireActiveProject();
+    const normalizedFileName = this.validateKnownFile(fileName);
+    const currentActiveFileName = this.requireActiveFile();
+
+    await this.flush();
+
+    const fs = this.useProject(projectName);
+    await fs.unlink(this.toFilePath(normalizedFileName));
+
+    let files = await this.readProjectFiles(fs);
+    if (files.length === 0) {
+      await fs.writeFile(this.toFilePath(DEFAULT_PROJECT_FILE), '', 'utf8');
+      await fs.flush();
+      files = [DEFAULT_PROJECT_FILE];
+    } else {
+      await fs.flush();
+    }
+
+    const nextActiveFileName =
+      currentActiveFileName === normalizedFileName
+        ? files[0]
+        : files.includes(currentActiveFileName)
+          ? currentActiveFileName
+          : files[0];
+
+    const code = await this.readFile(fs, nextActiveFileName);
+
+    this.projectFiles.set(files);
+    this.activeFileName.set(nextActiveFileName);
+    this.state.activeFileByProject[projectName] = nextActiveFileName;
+    this.persistState();
+
+    return {
+      projectName,
+      fileName: nextActiveFileName,
+      files,
+      code,
+    };
   }
 
   async renameActiveProject(nextProjectName: string): Promise<string> {
