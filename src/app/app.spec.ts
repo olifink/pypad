@@ -1,8 +1,10 @@
 import { computed, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { EMPTY } from 'rxjs';
 import { vi } from 'vitest';
 import { App } from './app';
 import { ProjectService } from './projects/project.service';
+import { RunnerService } from './runner/runner.service';
 
 class FakeWorker implements Worker {
   onerror: ((this: AbstractWorker, ev: ErrorEvent) => unknown) | null = null;
@@ -33,6 +35,7 @@ class FakeProjectService {
   readonly renameActiveProject = vi.fn();
   readonly createFile = vi.fn();
   readonly openFile = vi.fn();
+  readonly readActiveProjectModules = vi.fn(async () => ({ main: 'print("main")', utils: 'VALUE = 1' }));
   readonly writeImportedFile = vi.fn();
   readonly renameActiveFile = vi.fn();
   readonly deleteFile = vi.fn(async (fileName: string) => ({
@@ -43,8 +46,16 @@ class FakeProjectService {
   }));
 }
 
+class FakeRunnerService {
+  readonly isReady = signal(true);
+  readonly isRunning = signal(false);
+  readonly run = vi.fn(() => EMPTY);
+  readonly stop = vi.fn();
+}
+
 describe('App', () => {
   let projectService: FakeProjectService;
+  let runnerService: FakeRunnerService;
   let storageState: Record<string, string>;
 
   beforeAll(() => {
@@ -93,10 +104,14 @@ describe('App', () => {
     storageState = {};
     localStorage.clear();
     projectService = new FakeProjectService();
+    runnerService = new FakeRunnerService();
 
     await TestBed.configureTestingModule({
       imports: [App],
-      providers: [{ provide: ProjectService, useValue: projectService }],
+      providers: [
+        { provide: ProjectService, useValue: projectService },
+        { provide: RunnerService, useValue: runnerService },
+      ],
     }).compileComponents();
   });
 
@@ -161,5 +176,26 @@ describe('App', () => {
     const deleteButtons = compiled.querySelectorAll('.project-file-delete');
     expect(deleteButtons.length).toBe(2);
     expect(deleteButtons[0]?.getAttribute('aria-label')).toContain('Delete');
+  });
+
+  it('should pass project modules to the runner when executing a project file', async () => {
+    projectService.activeProjectName.set('demo-project');
+    projectService.activeFileName.set('main.py');
+    projectService.projectFiles.set(['main.py', 'utils.py']);
+
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    await (fixture.componentInstance as App & { runCode(): Promise<void> }).runCode();
+
+    expect(projectService.flush).toHaveBeenCalled();
+    expect(projectService.readActiveProjectModules).toHaveBeenCalled();
+    expect(runnerService.run).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        projectModules: { main: 'print("main")', utils: 'VALUE = 1' },
+      }),
+    );
   });
 });

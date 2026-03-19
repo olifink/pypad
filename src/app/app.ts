@@ -241,9 +241,10 @@ export class App {
     this.outputLines.set([]);
     this.activePanelId.set('output');
     if (this.layout() === 'editor') this.setLayout('both');
+    const projectModules = this.isProjectOpen() ? await this.projects.readActiveProjectModules() : undefined;
 
     const accumulated: OutputLine[] = [];
-    this.runner.run(this.currentCode()).subscribe({
+    this.runner.run(this.currentCode(), { projectModules }).subscribe({
       next: (line) => {
         accumulated.push(line);
         this.outputLines.update((lines) => [...lines, line]);

@@ -1,8 +1,10 @@
 /// <reference lib="webworker" />
 
+import type { ProjectModuleMap } from '../projects/project.service';
+
 type InMsg =
   | { type: 'init'; baseUrl: string }
-  | { type: 'run'; code: string }
+  | { type: 'run'; code: string; projectModules?: ProjectModuleMap }
   | { type: 'install'; name: string; id: string };
 
 type OutMsg =
@@ -37,8 +39,70 @@ def _input(prompt=''):
     raise OSError("input() is not supported in the Output tab. Use the REPL tab for interactive programs.")
 
 builtins.input = _input
+_original_import = builtins.__import__
+_project_modules = {}
 
-def _pypad_run(code):
+class _ProjectModule:
+    pass
+
+def _clear_project_modules():
+    global _project_modules
+    for name in list(_project_modules):
+        if name in sys.modules:
+            del sys.modules[name]
+    _project_modules = {}
+
+def _set_project_modules(modules):
+    _clear_project_modules()
+    _project_modules.update(modules)
+
+def _load_project_module(name):
+    cached = sys.modules.get(name)
+    if cached is not None:
+        if getattr(cached, '__pypad_loading__', False):
+            raise ImportError("Circular project imports are not supported: " + name)
+        return cached
+
+    code = _project_modules.get(name)
+    if code is None:
+        raise ImportError("No module named '" + name + "'")
+
+    module = _ProjectModule()
+    module.__name__ = name
+    module.__file__ = name + '.py'
+    module.__package__ = ''
+    module.__pypad_loading__ = True
+    sys.modules[name] = module
+    module_globals = {
+        '__name__': name,
+        '__file__': name + '.py',
+        '__package__': '',
+    }
+
+    try:
+        exec(code, module_globals)
+        for attr_name in module_globals:
+            setattr(module, attr_name, module_globals[attr_name])
+        del module.__pypad_loading__
+        return module
+    except Exception:
+        if name in sys.modules:
+            del sys.modules[name]
+        raise
+
+def _project_import(name, globals=None, locals=None, fromlist=(), level=0):
+    if level != 0:
+        return _original_import(name, globals, locals, fromlist, level)
+
+    root_name = name.split('.', 1)[0]
+    if root_name not in _project_modules:
+        return _original_import(name, globals, locals, fromlist, level)
+
+    return _load_project_module(root_name)
+
+builtins.__import__ = _project_import
+
+def _pypad_run(code, project_modules):
     def _print(*args, **kwargs):
         sep = kwargs.get('sep', ' ')
         end = kwargs.get('end', '\\n')
@@ -49,14 +113,21 @@ def _pypad_run(code):
         for line in lines:
             js.globalThis._pypadLine(line, False)
 
+    original_print = builtins.print
+    builtins.print = _print
+    _set_project_modules(project_modules)
+
     try:
-        exec(code, {'__name__': '__main__', 'print': _print})
+        exec(code, {'__name__': '__main__', '__file__': '__main__.py'})
     except Exception as e:
         buf = io.StringIO()
         sys.print_exception(e, buf)
         err_text = buf.getvalue()
         for line in err_text.strip().split('\\n'):
             js.globalThis._pypadLine(line, True)
+    finally:
+        builtins.print = original_print
+        _clear_project_modules()
 
     js.globalThis._pypadDone()
 `.trim();
@@ -102,7 +173,9 @@ let interpreter: MicroPythonInterpreter | null = null;
       return;
     }
     try {
-      interpreter.runPython(`_pypad_run(${JSON.stringify(msg.code)})`);
+      interpreter.runPython(
+        `_pypad_run(${JSON.stringify(msg.code)}, ${JSON.stringify(msg.projectModules ?? {})})`,
+      );
     } catch (err) {
       // Safety net: JS-level exceptions (shouldn't normally happen as Python catches them).
       self.postMessage({

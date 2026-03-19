@@ -19,6 +19,8 @@ interface QueuedProjectSave {
   code: string;
 }
 
+export type ProjectModuleMap = Record<string, string>;
+
 export interface ProjectSnapshot {
   projectName: string;
   fileName: string;
@@ -44,6 +46,11 @@ function isObject(value: unknown): value is Record<string, unknown> {
 
 function getErrorCode(error: unknown): string | undefined {
   return isObject(error) && typeof error['code'] === 'string' ? error['code'] : undefined;
+}
+
+function toModuleName(fileName: string): string | null {
+  const match = fileName.match(/^([A-Za-z_][A-Za-z0-9_]*)\.py$/);
+  return match?.[1] ?? null;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -231,6 +238,27 @@ export class ProjectService {
     this.persistState();
 
     return { projectName, fileName: normalizedFileName, files, code };
+  }
+
+  async readActiveProjectModules(): Promise<ProjectModuleMap> {
+    const projectName = this.requireActiveProject();
+    const fs = this.useProject(projectName);
+    const files = await this.readProjectFiles(fs);
+    const pythonFiles = files
+      .map((fileName) => ({ fileName, moduleName: toModuleName(fileName) }))
+      .filter((file): file is { fileName: string; moduleName: string } => file.moduleName !== null);
+
+    const modules = await Promise.all(
+      pythonFiles.map(async ({ fileName, moduleName }) => ({
+        moduleName,
+        code: await this.readFile(fs, fileName),
+      })),
+    );
+
+    return modules.reduce<ProjectModuleMap>((acc, { moduleName, code }) => {
+      acc[moduleName] = code;
+      return acc;
+    }, {});
   }
 
   async writeImportedFile(fileName: string, code: string): Promise<ProjectSnapshot> {
