@@ -27,6 +27,7 @@
     "@fsegurai/codemirror-theme-material-light": "^6.2.3",
     "@isomorphic-git/lightning-fs": "^4.6.2",
     "codemirror": "^6.0.2",
+    "jszip": "^3.10.1",
     "lz-string": "^1.5.0",
     "marked": "^17.0.4",
     "qrcode": "^1.5.4",

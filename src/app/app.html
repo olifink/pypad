@@ -66,6 +66,10 @@
           <mat-icon>folder_off</mat-icon>
           Close project
         </button>
+        <button mat-button class="sidenav-action" (click)="downloadProjectZip()">
+          <mat-icon>folder_zip</mat-icon>
+          Download project (.zip)
+        </button>
 
         <div class="sidenav-subsection-label">Files</div>
         @for (fileName of projectFiles(); track fileName) {

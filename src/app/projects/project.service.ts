@@ -21,6 +21,11 @@ interface QueuedProjectSave {
 
 export type ProjectModuleMap = Record<string, string>;
 
+export interface ProjectFileEntry {
+  fileName: string;
+  code: string;
+}
+
 export interface ProjectSnapshot {
   projectName: string;
   fileName: string;
@@ -259,6 +264,19 @@ export class ProjectService {
       acc[moduleName] = code;
       return acc;
     }, {});
+  }
+
+  async readActiveProjectFiles(): Promise<ProjectFileEntry[]> {
+    const projectName = this.requireActiveProject();
+    const fs = this.useProject(projectName);
+    const files = await this.readProjectFiles(fs);
+
+    return Promise.all(
+      files.map(async (fileName) => ({
+        fileName,
+        code: await this.readFile(fs, fileName),
+      })),
+    );
   }
 
   async writeImportedFile(fileName: string, code: string): Promise<ProjectSnapshot> {

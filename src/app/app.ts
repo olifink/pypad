@@ -19,6 +19,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
+import JSZip from 'jszip';
 import { EditorComponent, type SelectionInfo, type CursorInfo } from './editor/editor';
 import { ConsoleComponent } from './console/console';
 import { ReplComponent } from './repl/repl';
@@ -231,18 +232,17 @@ export class App {
   protected async runCode(): Promise<void> {
     await this.flushActiveDocument();
     this.editorRef().clearErrorHighlight();
+    const projectModules = this.isProjectOpen() ? await this.projects.readActiveProjectModules() : undefined;
     // When the REPL tab is active, run inside the REPL so variables are inspectable.
     if (this.activePanelId() === 'repl') {
       if (this.layout() === 'editor') this.setLayout('both');
-      this.replService.runInRepl(this.currentCode());
+      this.replService.runInRepl(this.currentCode(), { projectModules });
       return;
     }
 
     this.outputLines.set([]);
     this.activePanelId.set('output');
     if (this.layout() === 'editor') this.setLayout('both');
-    const projectModules = this.isProjectOpen() ? await this.projects.readActiveProjectModules() : undefined;
-
     const accumulated: OutputLine[] = [];
     this.runner.run(this.currentCode(), { projectModules }).subscribe({
       next: (line) => {
@@ -480,13 +480,24 @@ export class App {
   }
 
   protected downloadCode(): void {
-    const blob = new Blob([this.currentCode()], { type: 'text/x-python' });
-    const url = URL.createObjectURL(blob);
-    const a = this.document.createElement('a');
-    a.href = url;
-    a.download = this.activeFileName();
-    a.click();
-    URL.revokeObjectURL(url);
+    this.downloadBlob(new Blob([this.currentCode()], { type: 'text/x-python' }), this.activeFileName());
+  }
+
+  protected async downloadProjectZip(): Promise<void> {
+    await this.flushActiveDocument();
+    const projectName = this.activeProjectName();
+    if (!projectName) return;
+
+    const projectFiles = await this.projects.readActiveProjectFiles();
+    const zip = new JSZip();
+
+    for (const { fileName, code } of projectFiles) {
+      zip.file(fileName, code);
+    }
+
+    const blob = await zip.generateAsync({ type: 'blob' });
+    this.downloadBlob(blob, `${projectName}.zip`);
+    this.sidenavOpen.set(false);
   }
 
   protected shareCode(): void {
@@ -556,6 +567,15 @@ export class App {
           });
         }
       });
+  }
+
+  private downloadBlob(blob: Blob, fileName: string): void {
+    const url = URL.createObjectURL(blob);
+    const a = this.document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    a.click();
+    URL.revokeObjectURL(url);
   }
 
   private async loadProject(projectName: string): Promise<void> {
