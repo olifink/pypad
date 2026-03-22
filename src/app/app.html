@@ -35,66 +35,76 @@
 
       <mat-divider />
       <div class="sidenav-section">
-        <div class="sidenav-section-label">Projects</div>
+        <div class="sidenav-section-label" [class.sidenav-section-label--project-open]="isProjectOpen()">
+          {{ isProjectOpen() ? activeProjectName() : 'Projects' }}
+        </div>
 
         @if (isProjectOpen()) {
-        <div class="project-summary">
-          <div class="project-summary-header">
-            <div class="project-name">{{ activeProjectName() }}</div>
-            <button mat-icon-button class="project-delete-button" (click)="deleteProject()"
-              [attr.aria-label]="'Delete project ' + activeProjectName()"
-              [matTooltip]="'Delete project ' + activeProjectName()">
-              <mat-icon>delete_outline</mat-icon>
-            </button>
+        <details class="project-subsection" open>
+          <summary class="project-subsection-summary">
+            <span>Files</span>
+            <span class="project-subsection-meta">{{ projectFiles().length }} file(s)</span>
+          </summary>
+
+          <div class="project-subsection-content">
+            @for (fileName of projectFiles(); track fileName) {
+            <div class="project-file-row">
+              <button mat-button class="sidenav-action project-file-button"
+                [class.sidenav-action--selected]="fileName === activeFileName()" (click)="openProjectFile(fileName)">
+                <mat-icon>{{ fileName === activeFileName() ? 'description' : 'insert_drive_file' }}</mat-icon>
+                <span class="project-file-name">{{ fileName }}</span>
+              </button>
+              <button mat-icon-button class="project-file-delete" (click)="deleteProjectFile(fileName)"
+                [attr.aria-label]="'Delete ' + fileName" [matTooltip]="'Delete ' + fileName">
+                <mat-icon>delete_outline</mat-icon>
+              </button>
+            </div>
+            }
           </div>
-          <div class="project-meta">{{ projectFiles().length }} file(s)</div>
-        </div>
+        </details>
 
-        <button mat-button class="sidenav-action" (click)="newFile()">
-          <mat-icon>note_add</mat-icon>
-          New project file
-        </button>
-        <button mat-button class="sidenav-action" (click)="renameProjectFile()">
-          <mat-icon>drive_file_rename_outline</mat-icon>
-          Rename current file
-        </button>
-        <button mat-button class="sidenav-action" (click)="renameProject()">
-          <mat-icon>edit</mat-icon>
-          Rename project
-        </button>
-        <button mat-button class="sidenav-action" (click)="closeProject()">
-          <mat-icon>folder_off</mat-icon>
-          Close project
-        </button>
-        <button mat-button class="sidenav-action" (click)="downloadProjectZip()">
-          <mat-icon>folder_zip</mat-icon>
-          Download project (.zip)
-        </button>
+        <details class="project-subsection">
+          <summary class="project-subsection-summary">Options</summary>
 
-        <div class="sidenav-subsection-label">Files</div>
-        @for (fileName of projectFiles(); track fileName) {
-        <div class="project-file-row">
-          <button mat-button class="sidenav-action project-file-button"
-            [class.sidenav-action--selected]="fileName === activeFileName()" (click)="openProjectFile(fileName)">
-            <mat-icon>{{ fileName === activeFileName() ? 'description' : 'insert_drive_file' }}</mat-icon>
-            <span class="project-file-name">{{ fileName }}</span>
-          </button>
-          <button mat-icon-button class="project-file-delete" (click)="deleteProjectFile(fileName)"
-            [attr.aria-label]="'Delete ' + fileName" [matTooltip]="'Delete ' + fileName">
-            <mat-icon>delete_outline</mat-icon>
-          </button>
-        </div>
-        }
+          <div class="project-subsection-content">
+            <button mat-button class="sidenav-action" (click)="newFile()">
+              <mat-icon>note_add</mat-icon>
+              New project file
+            </button>
+            <button mat-button class="sidenav-action" (click)="renameProjectFile()">
+              <mat-icon>drive_file_rename_outline</mat-icon>
+              Rename current file
+            </button>
+            <button mat-button class="sidenav-action" (click)="renameProject()">
+              <mat-icon>edit</mat-icon>
+              Rename project
+            </button>
+            <button mat-button class="sidenav-action" (click)="closeProject()">
+              <mat-icon>folder_off</mat-icon>
+              Close project
+            </button>
+            <button mat-button class="sidenav-action" (click)="downloadProjectZip()">
+              <mat-icon>folder_zip</mat-icon>
+              Download project (.zip)
+            </button>
+            <button mat-button class="sidenav-action" (click)="deleteProject()"
+              [matTooltip]="'Delete project ' + activeProjectName()"
+              [attr.aria-label]="'Delete project ' + activeProjectName()">
+              <mat-icon>delete_outline</mat-icon>
+              Delete project
+            </button>
 
-        @if (otherProjects().length > 0) {
-        <div class="sidenav-subsection-label">Switch project</div>
-        @for (projectName of otherProjects(); track projectName) {
-        <button mat-button class="sidenav-action" (click)="openProject(projectName)">
-          <mat-icon>folder_open</mat-icon>
-          {{ projectName }}
-        </button>
-        }
-        }
+            @if (otherProjects().length > 0) {
+            <div class="sidenav-subsection-label">Switch project</div>
+            @for (projectName of otherProjects(); track projectName) {
+            <button mat-button class="sidenav-action" (click)="openProject(projectName)">
+              <mat-icon>folder_open</mat-icon>
+              {{ projectName }}
+            </button>
+            }
+            }
+          </div>
+        </details>
         } @else {
         <button mat-button class="sidenav-action" (click)="createProject()">
           <mat-icon>create_new_folder</mat-icon>

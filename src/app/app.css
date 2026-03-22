@@ -65,6 +65,16 @@
   color: var(--mat-sys-on-surface-variant);
 }
 
+.sidenav-section-label--project-open {
+  font-size: 0.875rem;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--mat-sys-on-surface);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .sidenav-subsection-label {
   font-size: 0.75rem;
   font-weight: 500;
@@ -110,6 +120,61 @@
 
 .project-file-delete {
   flex-shrink: 0;
+}
+
+.project-subsection {
+  border-radius: 12px;
+  background: var(--mat-sys-surface-container);
+}
+
+.project-subsection+.project-subsection {
+  margin-top: 4px;
+}
+
+.project-subsection-summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+  padding: 10px 12px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.project-subsection-summary::-webkit-details-marker {
+  display: none;
+}
+
+.project-subsection-summary::after {
+  content: 'expand_more';
+  font-family: 'Material Icons';
+  font-size: 1.125rem;
+  line-height: 1;
+  color: var(--mat-sys-on-surface-variant);
+  transition: transform 0.15s ease;
+}
+
+.project-subsection[open]>.project-subsection-summary::after {
+  transform: rotate(180deg);
+}
+
+.project-subsection-meta {
+  margin-left: auto;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.project-subsection-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0 8px 8px;
 }
 
 .project-summary {
