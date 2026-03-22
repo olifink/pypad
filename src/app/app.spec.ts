@@ -1,9 +1,11 @@
 import { computed, signal } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { TestBed } from '@angular/core/testing';
 import JSZip from 'jszip';
-import { EMPTY } from 'rxjs';
+import { EMPTY, of } from 'rxjs';
 import { vi } from 'vitest';
 import { App } from './app';
+import { BoardService } from './board/board.service';
 import { ProjectService } from './projects/project.service';
 import { ReplService } from './repl/repl.service';
 import { RunnerService } from './runner/runner.service';
@@ -80,7 +82,26 @@ class FakeReplService {
   readonly resetRepl = vi.fn(async () => {});
 }
 
+class FakeBoardService {
+  readonly isConnected = signal(false);
+  readonly portLabel = signal<string | null>(null);
+  readonly downloadFile = vi.fn(async () => 'print("From Pico")\n');
+  readonly uploadFile = vi.fn(async () => {});
+  readonly clearFile = vi.fn(async () => {});
+  readonly softReset = vi.fn();
+  readonly connect = vi.fn(async () => {});
+  readonly disconnect = vi.fn(async () => {});
+}
+
+class FakeMatDialog {
+  readonly open = vi.fn(() => ({
+    afterClosed: () => of(undefined as boolean | undefined),
+  }));
+}
+
 describe('App', () => {
+  let boardService: FakeBoardService;
+  let dialog: FakeMatDialog;
   let projectService: FakeProjectService;
   let replService: FakeReplService;
   let runnerService: FakeRunnerService;
@@ -146,6 +167,8 @@ describe('App', () => {
     storageState = {};
     objectUrlCalls = [];
     localStorage.clear();
+    boardService = new FakeBoardService();
+    dialog = new FakeMatDialog();
     projectService = new FakeProjectService();
     replService = new FakeReplService();
     runnerService = new FakeRunnerService();
@@ -153,6 +176,8 @@ describe('App', () => {
     await TestBed.configureTestingModule({
       imports: [App],
       providers: [
+        { provide: BoardService, useValue: boardService },
+        { provide: MatDialog, useValue: dialog },
         { provide: ProjectService, useValue: projectService },
         { provide: ReplService, useValue: replService },
         { provide: RunnerService, useValue: runnerService },
@@ -303,5 +328,32 @@ describe('App', () => {
     expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:mock-url');
 
     clickSpy.mockRestore();
+  });
+
+  it('should show a success message after downloading from Pico', async () => {
+    projectService.activeFileName.set('main.py');
+
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const component = fixture.componentInstance as App & {
+      downloadFromBoard(): void;
+      outputLines(): { text: string; isError: boolean }[];
+      activePanelId(): 'output' | 'repl' | 'docs';
+    };
+
+    dialog.open.mockReturnValueOnce({
+      afterClosed: () => of(true),
+    });
+
+    component.downloadFromBoard();
+    await fixture.whenStable();
+
+    expect(boardService.downloadFile).toHaveBeenCalledWith('main.py');
+    expect(component.outputLines()).toEqual([
+      { text: 'Downloaded main.py from Pico.', isError: false },
+    ]);
+    expect(component.activePanelId()).toBe('output');
   });
 });

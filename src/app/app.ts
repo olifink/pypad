@@ -701,6 +701,9 @@ export class App {
           const content = await this.board.downloadFile(fileName);
           this.editorRef().setContent(content);
           this.currentCode.set(content);
+          this.outputLines.set([{ text: `Downloaded ${fileName} from Pico.`, isError: false }]);
+          this.activePanelId.set('output');
+          if (this.layout() === 'editor') this.setLayout('both');
         } catch (e) {
           this.outputLines.set([{ text: String(e), isError: true }]);
           this.activePanelId.set('output');
