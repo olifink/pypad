@@ -26,33 +26,36 @@ export interface TextPromptDialogData {
     ReactiveFormsModule,
   ],
   template: `
-    <h2 mat-dialog-title>{{ data.title }}</h2>
+    <form (ngSubmit)="confirm()">
+      <h2 mat-dialog-title>{{ data.title }}</h2>
 
-    <mat-dialog-content>
-      @if (data.message) {
-        <p>{{ data.message }}</p>
-      }
-
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>{{ data.label }}</mat-label>
-        <input
-          matInput
-          [formControl]="value"
-          [placeholder]="data.placeholder ?? ''"
-          cdkFocusInitial
-        />
-        @if (data.hint) {
-          <mat-hint>{{ data.hint }}</mat-hint>
+      <mat-dialog-content>
+        @if (data.message) {
+          <p>{{ data.message }}</p>
         }
-      </mat-form-field>
-    </mat-dialog-content>
 
-    <mat-dialog-actions align="end">
-      <button mat-button [mat-dialog-close]="undefined">Cancel</button>
-      <button mat-flat-button color="primary" (click)="confirm()" [disabled]="value.invalid">
-        {{ data.confirmLabel }}
-      </button>
-    </mat-dialog-actions>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ data.label }}</mat-label>
+          <input
+            matInput
+            [formControl]="value"
+            [placeholder]="data.placeholder ?? ''"
+            (keydown.enter)="onEnter($event)"
+            cdkFocusInitial
+          />
+          @if (data.hint) {
+            <mat-hint>{{ data.hint }}</mat-hint>
+          }
+        </mat-form-field>
+      </mat-dialog-content>
+
+      <mat-dialog-actions align="end">
+        <button type="button" mat-button [mat-dialog-close]="undefined">Cancel</button>
+        <button type="submit" mat-flat-button color="primary" [disabled]="value.invalid">
+          {{ data.confirmLabel }}
+        </button>
+      </mat-dialog-actions>
+    </form>
   `,
   styles: `
     .full-width {
@@ -73,5 +76,14 @@ export class TextPromptDialogComponent {
   protected confirm(): void {
     if (this.value.invalid) return;
     this.dialogRef.close(this.value.value.trim());
+  }
+
+  protected onEnter(event: Event): void {
+    event.preventDefault();
+    const input = event.currentTarget;
+    if (input instanceof HTMLInputElement) {
+      this.value.setValue(input.value);
+    }
+    this.confirm();
   }
 }

@@ -31,18 +31,20 @@ export interface NewFileDialogData {
     <mat-dialog-content>
       <p>{{ data.message }}</p>
 
-      @if (data.requireName) {
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>File name</mat-label>
-          <input
-            matInput
-            [ngModel]="name()"
-            (ngModelChange)="name.set($event)"
-            placeholder="main.py" />
-          @if (data.nameHint) {
-            <mat-hint>{{ data.nameHint }}</mat-hint>
-          }
-        </mat-form-field>
+        @if (data.requireName) {
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>File name</mat-label>
+            <input
+              matInput
+              [ngModel]="name()"
+              (ngModelChange)="name.set($event)"
+              (keydown.enter)="onNameEnter($event)"
+              placeholder="main.py"
+              cdkFocusInitial />
+           @if (data.nameHint) {
+             <mat-hint>{{ data.nameHint }}</mat-hint>
+           }
+         </mat-form-field>
       }
 
       @if (aiService.hasApiKey()) {
@@ -95,6 +97,15 @@ export class NewFileDialogComponent {
 
   protected onCancel(): void {
     this.dialogRef.close();
+  }
+
+  protected onNameEnter(event: Event): void {
+    event.preventDefault();
+    const input = event.currentTarget;
+    if (input instanceof HTMLInputElement) {
+      this.name.set(input.value);
+    }
+    this.onConfirm();
   }
 
   protected onConfirm(): void {
