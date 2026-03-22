@@ -35,16 +35,30 @@
 
       <mat-divider />
       <div class="sidenav-section">
-        <div class="sidenav-section-label" [class.sidenav-section-label--project-open]="isProjectOpen()">
-          {{ isProjectOpen() ? activeProjectName() : 'Projects' }}
+        <div class="project-section-header">
+          <div class="sidenav-section-label" [class.sidenav-section-label--project-open]="isProjectOpen()">
+            {{ isProjectOpen() ? activeProjectName() : 'Projects' }}
+          </div>
+          @if (isProjectOpen()) {
+          <button mat-icon-button class="project-section-action" (click)="closeProject()"
+            [matTooltip]="'Close project ' + activeProjectName()"
+            [attr.aria-label]="'Close project ' + activeProjectName()">
+            <mat-icon>close</mat-icon>
+          </button>
+          }
         </div>
 
         @if (isProjectOpen()) {
-        <details class="project-subsection" open>
+        <details class="project-subsection project-subsection--files" open>
           <summary class="project-subsection-summary">
-            <span>Files</span>
+            <span class="project-subsection-summary-main">Files</span>
             <span class="project-subsection-meta">{{ projectFiles().length }} file(s)</span>
           </summary>
+
+          <button mat-icon-button class="project-subsection-header-action project-subsection-header-action--files"
+            (click)="newFile()" matTooltip="New project file" aria-label="New project file">
+            <mat-icon>add</mat-icon>
+          </button>
 
           <div class="project-subsection-content">
             @for (fileName of projectFiles(); track fileName) {
@@ -67,10 +81,6 @@
           <summary class="project-subsection-summary">Options</summary>
 
           <div class="project-subsection-content">
-            <button mat-button class="sidenav-action" (click)="newFile()">
-              <mat-icon>note_add</mat-icon>
-              New project file
-            </button>
             <button mat-button class="sidenav-action" (click)="renameProjectFile()">
               <mat-icon>drive_file_rename_outline</mat-icon>
               Rename current file
@@ -78,10 +88,6 @@
             <button mat-button class="sidenav-action" (click)="renameProject()">
               <mat-icon>edit</mat-icon>
               Rename project
-            </button>
-            <button mat-button class="sidenav-action" (click)="closeProject()">
-              <mat-icon>folder_off</mat-icon>
-              Close project
             </button>
             <button mat-button class="sidenav-action" (click)="downloadProjectZip()">
               <mat-icon>folder_zip</mat-icon>
@@ -111,14 +117,11 @@
           Create project
         </button>
 
-        @if (availableProjects().length > 0) {
-        <div class="sidenav-subsection-label">Open project</div>
         @for (projectName of availableProjects(); track projectName) {
         <button mat-button class="sidenav-action" (click)="openProject(projectName)">
           <mat-icon>folder_open</mat-icon>
           {{ projectName }}
         </button>
-        }
         }
         }
       </div>
