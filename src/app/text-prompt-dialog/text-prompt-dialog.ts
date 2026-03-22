@@ -26,36 +26,35 @@ export interface TextPromptDialogData {
     ReactiveFormsModule,
   ],
   template: `
-    <form (ngSubmit)="confirm()">
-      <h2 mat-dialog-title>{{ data.title }}</h2>
+    <h2 mat-dialog-title>{{ data.title }}</h2>
 
-      <mat-dialog-content>
-        @if (data.message) {
-          <p>{{ data.message }}</p>
+    <mat-dialog-content>
+      @if (data.message) {
+        <p>{{ data.message }}</p>
+      }
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>{{ data.label }}</mat-label>
+        <input
+          #valueInput
+          matInput
+          [formControl]="value"
+          [placeholder]="data.placeholder ?? ''"
+          (keydown.enter)="confirmFromEvent($event)"
+          cdkFocusInitial
+        />
+        @if (data.hint) {
+          <mat-hint>{{ data.hint }}</mat-hint>
         }
+      </mat-form-field>
+    </mat-dialog-content>
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>{{ data.label }}</mat-label>
-          <input
-            matInput
-            [formControl]="value"
-            [placeholder]="data.placeholder ?? ''"
-            (keydown.enter)="onEnter($event)"
-            cdkFocusInitial
-          />
-          @if (data.hint) {
-            <mat-hint>{{ data.hint }}</mat-hint>
-          }
-        </mat-form-field>
-      </mat-dialog-content>
-
-      <mat-dialog-actions align="end">
-        <button type="button" mat-button [mat-dialog-close]="undefined">Cancel</button>
-        <button type="submit" mat-flat-button color="primary" [disabled]="value.invalid">
-          {{ data.confirmLabel }}
-        </button>
-      </mat-dialog-actions>
-    </form>
+    <mat-dialog-actions align="end">
+      <button mat-button [mat-dialog-close]="undefined">Cancel</button>
+      <button mat-flat-button color="primary" (click)="confirm(valueInput.value)" [disabled]="value.invalid">
+        {{ data.confirmLabel }}
+      </button>
+    </mat-dialog-actions>
   `,
   styles: `
     .full-width {
@@ -73,16 +72,22 @@ export class TextPromptDialogComponent {
     validators: [Validators.required],
   });
 
-  protected confirm(): void {
-    if (this.value.invalid) return;
-    this.dialogRef.close(this.value.value.trim());
+  protected confirm(nextValue?: string): void {
+    if (typeof nextValue === 'string') {
+      this.value.setValue(nextValue);
+    }
+
+    const trimmedValue = this.value.value.trim();
+    if (!trimmedValue) return;
+    this.dialogRef.close(trimmedValue);
   }
 
-  protected onEnter(event: Event): void {
+  protected confirmFromEvent(event: Event): void {
     event.preventDefault();
     const input = event.currentTarget;
     if (input instanceof HTMLInputElement) {
-      this.value.setValue(input.value);
+      this.confirm(input.value);
+      return;
     }
     this.confirm();
   }

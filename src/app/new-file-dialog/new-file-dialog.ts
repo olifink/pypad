@@ -35,6 +35,7 @@ export interface NewFileDialogData {
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>File name</mat-label>
             <input
+              #nameInput
               matInput
               [ngModel]="name()"
               (ngModelChange)="name.set($event)"
@@ -103,12 +104,17 @@ export class NewFileDialogComponent {
     event.preventDefault();
     const input = event.currentTarget;
     if (input instanceof HTMLInputElement) {
-      this.name.set(input.value);
+      this.onConfirm(input.value);
+      return;
     }
     this.onConfirm();
   }
 
-  protected onConfirm(): void {
+  protected onConfirm(nextName?: string): void {
+    if (typeof nextName === 'string') {
+      this.name.set(nextName);
+    }
+
     if (this.data.requireName && !this.name().trim()) return;
     this.dialogRef.close({
       confirmed: true,
