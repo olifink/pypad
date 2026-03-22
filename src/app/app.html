@@ -126,20 +126,6 @@
         }
       </div>
 
-      <mat-divider />
-
-      <div class="sidenav-section">
-        <div class="sidenav-section-label">Settings</div>
-        <button mat-button class="sidenav-action" (click)="openPackages()">
-          <mat-icon>inventory_2</mat-icon>
-          Packages
-        </button>
-        <button mat-button class="sidenav-action" (click)="openAiSettings()">
-          <mat-icon>smart_toy</mat-icon>
-          AI
-        </button>
-      </div>
-
       @if (board.isConnected()) {
       <mat-divider />
       <div class="sidenav-section">
@@ -158,6 +144,21 @@
         </button>
       </div>
       }
+
+
+      <mat-divider />
+
+      <div class="sidenav-section">
+        <div class="sidenav-section-label">Settings</div>
+        <button mat-button class="sidenav-action" (click)="openPackages()">
+          <mat-icon>inventory_2</mat-icon>
+          Packages
+        </button>
+        <button mat-button class="sidenav-action" (click)="openAiSettings()">
+          <mat-icon>smart_toy</mat-icon>
+          AI
+        </button>
+      </div>
 
       <div class="sidenav-section sidenav-section--bottom">
         <mat-divider />
