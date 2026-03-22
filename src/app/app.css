@@ -164,17 +164,26 @@
 .app-title {
   font-size: 1.25rem;
   font-weight: 500;
+  margin: 0;
+}
+
+.app-title-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
   margin-left: 4px;
+  line-height: 1.1;
 }
 
 .app-subtitle {
-  margin-left: 12px;
-  font-size: 0.875rem;
+  margin-top: 2px;
+  font-size: 0.75rem;
   color: var(--mat-sys-on-surface-variant);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 40vw;
+  max-width: min(42vw, 280px);
 }
 
 .toolbar-spacer {

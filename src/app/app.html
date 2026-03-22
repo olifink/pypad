@@ -176,14 +176,14 @@
           <button mat-icon-button (click)="sidenavOpen.set(true)" aria-label="Open settings">
             <mat-icon>menu</mat-icon>
           </button>
-          <span class="app-title">PyPad</span>
-          <span class="app-subtitle">
+          <div class="app-title-block">
+            <span class="app-title">PyPad</span>
             @if (isProjectOpen()) {
-            {{ activeProjectName() }} / {{ activeFileName() }}
-            } @else {
-            {{ activeFileName() }}
+            <span class="app-subtitle" [matTooltip]="activeProjectName() + ' / ' + activeFileName()">
+              {{ activeFileName() }}
+            </span>
             }
-          </span>
+          </div>
           <span class="toolbar-spacer"></span>
 
           @if (aiService.hasApiKey()) {
