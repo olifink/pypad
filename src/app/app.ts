@@ -15,6 +15,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -83,6 +84,7 @@ const PANEL_IDS: PanelId[] = ['output', 'repl', 'docs'];
     MatButtonToggleModule,
     MatDividerModule,
     MatIconModule,
+    MatMenuModule,
     MatSidenavModule,
     MatTooltipModule,
     MatTabsModule,
@@ -314,6 +316,7 @@ export class App {
           title: `Delete ${activeProjectName}?`,
           message: `Delete the project "${activeProjectName}" and all of its browser-local files? This cannot be undone.`,
           confirmLabel: 'Delete',
+          destructive: true,
         } satisfies ConfirmDialogData,
         width: '480px',
       })
@@ -379,6 +382,7 @@ export class App {
             ? `Delete ${fileName}? Because it is the last file in the project, PyPad will create a new empty main.py so the project stays usable.`
             : `Delete ${fileName} from this project?`,
           confirmLabel: 'Delete',
+          destructive: true,
         } satisfies ConfirmDialogData,
         width: '480px',
       })
@@ -404,9 +408,9 @@ export class App {
       });
   }
 
-  protected renameProjectFile(): void {
-    const activeFileName = this.projects.activeFileName();
-    if (!activeFileName) return;
+  protected renameProjectFile(fileName?: string): void {
+    const currentFileName = fileName ?? this.projects.activeFileName();
+    if (!currentFileName) return;
 
     this.dialog
       .open(TextPromptDialogComponent, {
@@ -414,7 +418,7 @@ export class App {
           title: 'Rename file',
           label: 'File name',
           confirmLabel: 'Rename',
-          initialValue: activeFileName,
+          initialValue: currentFileName,
           hint: 'File names cannot contain slashes.',
         } satisfies TextPromptDialogData,
         width: '440px',
@@ -424,10 +428,9 @@ export class App {
         if (!nextFileName) return;
 
         try {
-          const renamedFileName = await this.projects.renameActiveFile(nextFileName);
-          this.currentCode.set(this.currentCode());
+          const renamedFileName = await this.projects.renameFile(currentFileName, nextFileName);
           this.sidenavOpen.set(false);
-          if (renamedFileName !== activeFileName) {
+          if (renamedFileName !== currentFileName) {
             this.outputLines.set([
               { text: `Renamed file to ${renamedFileName}.`, isError: false },
             ]);

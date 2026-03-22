@@ -6,6 +6,7 @@ export interface ConfirmDialogData {
   title: string;
   message: string;
   confirmLabel?: string;
+  destructive?: boolean;
 }
 
 @Component({
@@ -17,10 +18,16 @@ export interface ConfirmDialogData {
     <mat-dialog-content>{{ data.message }}</mat-dialog-content>
     <mat-dialog-actions align="end">
       <button mat-button [mat-dialog-close]="false">Cancel</button>
-      <button mat-button color="primary" [mat-dialog-close]="true" cdkFocusInitial>
+      <button mat-button [class.confirm-dialog-confirm--destructive]="data.destructive" [mat-dialog-close]="true"
+        cdkFocusInitial>
         {{ data.confirmLabel ?? 'Confirm' }}
       </button>
     </mat-dialog-actions>
+  `,
+  styles: `
+    .confirm-dialog-confirm--destructive {
+      color: var(--mat-sys-error);
+    }
   `,
 })
 export class ConfirmDialogComponent {

@@ -57,6 +57,7 @@ class FakeProjectService {
   ]);
   readonly readActiveProjectModules = vi.fn(async () => ({ main: 'print("main")', utils: 'VALUE = 1' }));
   readonly writeImportedFile = vi.fn();
+  readonly renameFile = vi.fn(async (_currentFileName: string, nextFileName: string) => nextFileName);
   readonly renameActiveFile = vi.fn();
   readonly deleteFile = vi.fn(async (fileName: string) => ({
     projectName: 'demo-project',
@@ -207,7 +208,6 @@ describe('App', () => {
 
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.textContent).toContain('Create project');
-    expect(compiled.textContent).toContain('Open project');
     expect(compiled.textContent).toContain('demo-project');
   });
 
@@ -222,17 +222,22 @@ describe('App', () => {
     await fixture.whenStable();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.project-name')?.textContent).toContain('demo-project');
-    expect(compiled.querySelector('.project-delete-button')?.getAttribute('aria-label')).toContain(
-      'Delete project demo-project',
+    expect(compiled.querySelector('.sidenav-section-label--project-open')?.textContent).toContain(
+      'demo-project',
     );
-    expect(compiled.querySelector('.app-subtitle')?.textContent).toContain('demo-project / app.py');
-    expect(compiled.textContent).toContain('Rename current file');
+    expect(compiled.querySelector('.project-section-menu-trigger')?.getAttribute('aria-label')).toContain(
+      'Project actions for demo-project',
+    );
+    expect(compiled.querySelector('.project-file-list')).toBeTruthy();
+    expect(compiled.querySelector('.project-subsection--files')).toBeNull();
+    expect(compiled.querySelector('.app-title')?.textContent).toContain('demo-project');
+    expect(compiled.querySelector('.app-subtitle')?.textContent).toContain('app.py');
     expect(compiled.textContent).toContain('utils.py');
+    expect(compiled.textContent).toContain('Switch project');
     expect(compiled.textContent).toContain('other-project');
   });
 
-  it('should render delete controls for project files', async () => {
+  it('should render overflow menu controls for project files', async () => {
     projectService.availableProjects.set(['demo-project']);
     projectService.activeProjectName.set('demo-project');
     projectService.activeFileName.set('app.py');
@@ -243,9 +248,9 @@ describe('App', () => {
     await fixture.whenStable();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    const deleteButtons = compiled.querySelectorAll('.project-file-delete');
-    expect(deleteButtons.length).toBe(2);
-    expect(deleteButtons[0]?.getAttribute('aria-label')).toContain('Delete');
+    const menuButtons = compiled.querySelectorAll('.project-file-menu-trigger');
+    expect(menuButtons.length).toBe(2);
+    expect(menuButtons[0]?.getAttribute('aria-label')).toContain('More actions for');
   });
 
   it('should pass project modules to the runner when executing a project file', async () => {

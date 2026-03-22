@@ -40,77 +40,77 @@
             {{ isProjectOpen() ? activeProjectName() : 'Projects' }}
           </div>
           @if (isProjectOpen()) {
-          <button mat-icon-button class="project-section-action" (click)="closeProject()"
-            [matTooltip]="'Close project ' + activeProjectName()"
-            [attr.aria-label]="'Close project ' + activeProjectName()">
-            <mat-icon>close</mat-icon>
+          <button mat-icon-button class="project-section-action project-section-menu-trigger"
+            [matMenuTriggerFor]="projectActionsMenu" [matTooltip]="'Project actions for ' + activeProjectName()"
+            [attr.aria-label]="'Project actions for ' + activeProjectName()">
+            <mat-icon>more_vert</mat-icon>
           </button>
+          <mat-menu #projectActionsMenu="matMenu">
+            <button mat-menu-item (click)="newFile()">
+              <mat-icon>add</mat-icon>
+              <span>New project file</span>
+            </button>
+            <button mat-menu-item (click)="renameProject()">
+              <mat-icon>edit</mat-icon>
+              <span>Rename project</span>
+            </button>
+            <button mat-menu-item (click)="downloadProjectZip()">
+              <mat-icon>folder_zip</mat-icon>
+              <span>Download project (.zip)</span>
+            </button>
+            <button mat-menu-item (click)="closeProject()">
+              <mat-icon>close</mat-icon>
+              <span>Close project</span>
+            </button>
+            <button mat-menu-item (click)="deleteProject()">
+              <mat-icon class="destructive-icon">delete_outline</mat-icon>
+              <span>Delete project</span>
+            </button>
+          </mat-menu>
           }
         </div>
 
         @if (isProjectOpen()) {
-        <details class="project-subsection project-subsection--files" open>
-          <summary class="project-subsection-summary">
-            <span class="project-subsection-summary-main">Files</span>
-            <span class="project-subsection-meta">{{ projectFiles().length }} file(s)</span>
-          </summary>
-
-          <button mat-icon-button class="project-subsection-header-action project-subsection-header-action--files"
-            (click)="newFile()" matTooltip="New project file" aria-label="New project file">
-            <mat-icon>add</mat-icon>
-          </button>
-
-          <div class="project-subsection-content">
-            @for (fileName of projectFiles(); track fileName) {
-            <div class="project-file-row">
-              <button mat-button class="sidenav-action project-file-button"
-                [class.sidenav-action--selected]="fileName === activeFileName()" (click)="openProjectFile(fileName)">
-                <mat-icon>{{ fileName === activeFileName() ? 'description' : 'insert_drive_file' }}</mat-icon>
-                <span class="project-file-name">{{ fileName }}</span>
+        <div class="project-file-list" [attr.aria-label]="'Files in ' + activeProjectName()">
+          @for (fileName of projectFiles(); track fileName) {
+          <div class="project-file-row">
+            <button mat-button class="sidenav-action project-file-button"
+              [class.sidenav-action--selected]="fileName === activeFileName()" (click)="openProjectFile(fileName)">
+              <mat-icon>{{ fileName === activeFileName() ? 'description' : 'insert_drive_file' }}</mat-icon>
+              <span class="project-file-name">{{ fileName }}</span>
+            </button>
+            <button mat-icon-button class="project-file-menu-trigger" [matMenuTriggerFor]="projectFileMenu"
+              [attr.aria-label]="'More actions for ' + fileName" [matTooltip]="'More actions for ' + fileName">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #projectFileMenu="matMenu">
+              <button mat-menu-item (click)="renameProjectFile(fileName)">
+                <mat-icon>drive_file_rename_outline</mat-icon>
+                <span>Rename</span>
               </button>
-              <button mat-icon-button class="project-file-delete" (click)="deleteProjectFile(fileName)"
-                [attr.aria-label]="'Delete ' + fileName" [matTooltip]="'Delete ' + fileName">
-                <mat-icon>delete_outline</mat-icon>
+              <button mat-menu-item (click)="deleteProjectFile(fileName)">
+                <mat-icon class="destructive-icon">delete_outline</mat-icon>
+                <span>Delete</span>
               </button>
-            </div>
-            }
+            </mat-menu>
           </div>
-        </details>
+          }
+        </div>
 
+        @if (otherProjects().length > 0) {
         <details class="project-subsection">
-          <summary class="project-subsection-summary">Options</summary>
+          <summary class="project-subsection-summary">Switch project</summary>
 
           <div class="project-subsection-content">
-            <button mat-button class="sidenav-action" (click)="renameProjectFile()">
-              <mat-icon>drive_file_rename_outline</mat-icon>
-              Rename current file
-            </button>
-            <button mat-button class="sidenav-action" (click)="renameProject()">
-              <mat-icon>edit</mat-icon>
-              Rename project
-            </button>
-            <button mat-button class="sidenav-action" (click)="downloadProjectZip()">
-              <mat-icon>folder_zip</mat-icon>
-              Download project (.zip)
-            </button>
-            <button mat-button class="sidenav-action" (click)="deleteProject()"
-              [matTooltip]="'Delete project ' + activeProjectName()"
-              [attr.aria-label]="'Delete project ' + activeProjectName()">
-              <mat-icon>delete_outline</mat-icon>
-              Delete project
-            </button>
-
-            @if (otherProjects().length > 0) {
-            <div class="sidenav-subsection-label">Switch project</div>
             @for (projectName of otherProjects(); track projectName) {
             <button mat-button class="sidenav-action" (click)="openProject(projectName)">
               <mat-icon>folder_open</mat-icon>
               {{ projectName }}
             </button>
             }
-            }
           </div>
         </details>
+        }
         } @else {
         <button mat-button class="sidenav-action" (click)="createProject()">
           <mat-icon>create_new_folder</mat-icon>
@@ -191,9 +191,9 @@
             <mat-icon>menu</mat-icon>
           </button>
           <div class="app-title-block">
-            <span class="app-title">PyPad</span>
+            <span class="app-title">{{ isProjectOpen() ? activeProjectName() : 'PyPad' }}</span>
             @if (isProjectOpen()) {
-            <span class="app-subtitle" [matTooltip]="activeProjectName() + ' / ' + activeFileName()">
+            <span class="app-subtitle" [matTooltip]="activeFileName()">
               {{ activeFileName() }}
             </span>
             }

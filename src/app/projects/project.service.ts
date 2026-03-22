@@ -298,9 +298,10 @@ export class ProjectService {
     return { projectName, fileName: normalizedFileName, files, code };
   }
 
-  async renameActiveFile(nextFileName: string): Promise<string> {
+  async renameFile(fileName: string, nextFileName: string): Promise<string> {
     const projectName = this.requireActiveProject();
-    const currentFileName = this.requireActiveFile();
+    const currentFileName = this.validateKnownFile(fileName);
+    const currentActiveFileName = this.requireActiveFile();
     const normalizedFileName = this.validateFileName(nextFileName);
     if (normalizedFileName === currentFileName) return currentFileName;
     if (this.projectFiles().includes(normalizedFileName)) {
@@ -314,12 +315,19 @@ export class ProjectService {
     await fs.flush();
 
     const files = await this.readProjectFiles(fs);
+    const nextActiveFileName =
+      currentActiveFileName === currentFileName ? normalizedFileName : currentActiveFileName;
+
     this.projectFiles.set(files);
-    this.activeFileName.set(normalizedFileName);
-    this.state.activeFileByProject[projectName] = normalizedFileName;
+    this.activeFileName.set(nextActiveFileName);
+    this.state.activeFileByProject[projectName] = nextActiveFileName;
     this.persistState();
 
     return normalizedFileName;
+  }
+
+  async renameActiveFile(nextFileName: string): Promise<string> {
+    return this.renameFile(this.requireActiveFile(), nextFileName);
   }
 
   async deleteFile(fileName: string): Promise<ProjectSnapshot> {
