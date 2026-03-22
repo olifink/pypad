@@ -47,14 +47,45 @@
 }
 
 .sidenav-section {
-  padding: 16px;
+  padding: 10px 16px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 6px;
 }
 
 .sidenav-section--bottom {
   margin-top: auto;
+}
+
+.project-section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.project-section-header .sidenav-section-label {
+  flex: 1;
+  min-width: 0;
+}
+
+.project-section-action {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.project-section-action,
+.project-subsection-header-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.project-section-action:hover,
+.project-subsection-header-action:hover {
+  color: var(--mat-sys-on-surface);
 }
 
 .sidenav-section-label {
@@ -63,6 +94,23 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--mat-sys-on-surface-variant);
+}
+
+.sidenav-section-label--project-open {
+  font-size: 0.875rem;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--mat-sys-on-surface);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidenav-subsection-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--mat-sys-on-surface-variant);
+  margin-top: 4px;
 }
 
 .sidenav-toggle-group {
@@ -78,6 +126,150 @@
   justify-content: flex-start;
   width: 100%;
   padding-left: 0;
+}
+
+.sidenav-action--selected {
+  color: var(--mat-sys-primary);
+}
+
+.project-file-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.project-file-button {
+  flex: 1;
+  min-width: 0;
+}
+
+.project-file-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.project-file-delete {
+  flex-shrink: 0;
+}
+
+.project-subsection {
+  position: relative;
+  border-radius: 12px;
+  background: var(--mat-sys-surface-container);
+}
+
+.project-subsection+.project-subsection {
+  margin-top: 4px;
+}
+
+.project-subsection-summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+  padding: 7px 12px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.project-subsection-summary-main {
+  min-width: 0;
+}
+
+.project-subsection-header-action {
+  position: absolute;
+  top: 6px;
+  right: 28px;
+  width: 28px;
+  height: 28px;
+}
+
+.project-subsection--files .project-subsection-summary-main {
+  padding-right: 24px;
+}
+
+.project-subsection-header-action--files {
+  left: 50px;
+  right: auto;
+}
+
+.project-section-action mat-icon,
+.project-subsection-header-action mat-icon {
+  width: 18px;
+  height: 18px;
+  line-height: 18px;
+  font-size: 18px;
+}
+
+.project-subsection-summary::-webkit-details-marker {
+  display: none;
+}
+
+.project-subsection-summary::after {
+  content: 'expand_more';
+  font-family: 'Material Icons';
+  font-size: 1.125rem;
+  line-height: 1;
+  color: var(--mat-sys-on-surface-variant);
+  transition: transform 0.15s ease;
+}
+
+.project-subsection[open]>.project-subsection-summary::after {
+  transform: rotate(180deg);
+}
+
+.project-subsection-meta {
+  margin-left: auto;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.project-subsection-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0 8px 6px;
+}
+
+.project-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--mat-sys-surface-container);
+}
+
+.project-summary-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.project-name {
+  flex: 1;
+  min-width: 0;
+  font-weight: 500;
+  color: var(--mat-sys-on-surface);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.project-meta {
+  font-size: 0.875rem;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.project-delete-button {
+  flex-shrink: 0;
 }
 
 .visually-hidden {
@@ -98,7 +290,26 @@
 .app-title {
   font-size: 1.25rem;
   font-weight: 500;
+  margin: 0;
+}
+
+.app-title-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
   margin-left: 4px;
+  line-height: 1.1;
+}
+
+.app-subtitle {
+  margin-top: 2px;
+  font-size: 0.75rem;
+  color: var(--mat-sys-on-surface-variant);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: min(42vw, 280px);
 }
 
 .toolbar-spacer {

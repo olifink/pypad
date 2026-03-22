@@ -1,8 +1,11 @@
 /// <reference lib="webworker" />
 
+import { PROJECT_MODULE_LOADER_PYTHON, buildSetProjectModulesPython } from '../python/project-modules';
+import type { ProjectModuleMap } from '../projects/project.service';
+
 type InMsg =
   | { type: 'init'; baseUrl: string }
-  | { type: 'run'; code: string }
+  | { type: 'run'; code: string; projectModules?: ProjectModuleMap }
   | { type: 'install'; name: string; id: string };
 
 type OutMsg =
@@ -37,8 +40,9 @@ def _input(prompt=''):
     raise OSError("input() is not supported in the Output tab. Use the REPL tab for interactive programs.")
 
 builtins.input = _input
+${PROJECT_MODULE_LOADER_PYTHON}
 
-def _pypad_run(code):
+def _pypad_run(code, project_modules):
     def _print(*args, **kwargs):
         sep = kwargs.get('sep', ' ')
         end = kwargs.get('end', '\\n')
@@ -49,14 +53,21 @@ def _pypad_run(code):
         for line in lines:
             js.globalThis._pypadLine(line, False)
 
+    original_print = builtins.print
+    builtins.print = _print
+    _set_project_modules(project_modules)
+
     try:
-        exec(code, {'__name__': '__main__', 'print': _print})
+        exec(code, {'__name__': '__main__', '__file__': '__main__.py'})
     except Exception as e:
         buf = io.StringIO()
         sys.print_exception(e, buf)
         err_text = buf.getvalue()
         for line in err_text.strip().split('\\n'):
             js.globalThis._pypadLine(line, True)
+    finally:
+        builtins.print = original_print
+        _clear_project_modules()
 
     js.globalThis._pypadDone()
 `.trim();
@@ -102,7 +113,7 @@ let interpreter: MicroPythonInterpreter | null = null;
       return;
     }
     try {
-      interpreter.runPython(`_pypad_run(${JSON.stringify(msg.code)})`);
+      interpreter.runPython(`_pypad_run(${JSON.stringify(msg.code)}, ${JSON.stringify(msg.projectModules ?? {})})`);
     } catch (err) {
       // Safety net: JS-level exceptions (shouldn't normally happen as Python catches them).
       self.postMessage({

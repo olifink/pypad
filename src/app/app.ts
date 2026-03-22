@@ -19,6 +19,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
+import JSZip from 'jszip';
 import { EditorComponent, type SelectionInfo, type CursorInfo } from './editor/editor';
 import { ConsoleComponent } from './console/console';
 import { ReplComponent } from './repl/repl';
@@ -43,6 +44,9 @@ import { NewFileDialogComponent } from './new-file-dialog/new-file-dialog';
 import { AiPromptDialogComponent } from './ai-prompt-dialog/ai-prompt-dialog';
 import type { AiPromptDialogData } from './ai-prompt-dialog/ai-prompt-dialog';
 import { BoardService } from './board/board.service';
+import { ProjectService } from './projects/project.service';
+import { TextPromptDialogComponent } from './text-prompt-dialog/text-prompt-dialog';
+import type { TextPromptDialogData } from './text-prompt-dialog/text-prompt-dialog';
 
 const DEFAULT_CODE = `# Welcome to PyPad!
 print("Hello, PyPad!")
@@ -62,6 +66,11 @@ function parseErrorLine(errorLines: string[]): number | null {
 
 export type LayoutMode = 'editor' | 'both' | 'panel';
 export type PanelId = 'output' | 'repl' | 'docs';
+interface NewFileDialogResult {
+  confirmed: boolean;
+  name?: string;
+  prompt: string;
+}
 
 const PANEL_IDS: PanelId[] = ['output', 'repl', 'docs'];
 
@@ -99,6 +108,7 @@ export class App {
   protected readonly packagesService = inject(PackagesService);
   protected readonly aiService = inject(AiService);
   protected readonly board = inject(BoardService);
+  protected readonly projects = inject(ProjectService);
   protected readonly hasWebSerial = 'serial' in navigator;
   private readonly _vk = inject(VirtualKeyboardService);
 
@@ -127,12 +137,19 @@ export class App {
   protected readonly activePanelTabIndex = computed(() => PANEL_IDS.indexOf(this.activePanelId()));
   protected readonly cursorInfo = signal<CursorInfo | null>(null);
   protected readonly selection = signal<SelectionInfo | null>(null);
+  protected readonly availableProjects = this.projects.availableProjects;
+  protected readonly projectFiles = this.projects.projectFiles;
+  protected readonly isProjectOpen = this.projects.isProjectOpen;
+  protected readonly activeProjectName = this.projects.activeProjectName;
+  protected readonly activeFileName = computed(() => this.projects.activeFileName() ?? 'main.py');
+  protected readonly otherProjects = computed(() =>
+    this.availableProjects().filter((projectName) => projectName !== this.activeProjectName()),
+  );
   private readonly currentCode = signal(this.initialCode);
 
   constructor() {
-    // Strip ?s= after Angular's router has completed its initial navigation,
-    // which may overwrite any earlier history.replaceState call.
     afterNextRender(() => this.shareService.stripShareParam());
+    afterNextRender(() => void this.restoreProjectDocument());
 
     // Auto-install packages bundled in a share URL once the interpreter is ready.
     effect(() => {
@@ -153,6 +170,37 @@ export class App {
   );
   protected readonly showDivider = computed(() => this.layout() === 'both');
 
+  private async restoreProjectDocument(): Promise<void> {
+    const snapshot = await this.projects.restoreActiveProject();
+    if (!snapshot) return;
+    this.editorRef().setContent(snapshot.code);
+    this.currentCode.set(snapshot.code);
+  }
+
+  private async flushActiveDocument(): Promise<void> {
+    this.storage.flush();
+    await this.projects.flush();
+  }
+
+  private showErrorDialog(title: string, error: unknown): void {
+    this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title,
+        message: error instanceof Error ? error.message : 'An unknown error occurred',
+        confirmLabel: 'OK',
+      },
+    });
+  }
+
+  private nextProjectFileName(): string {
+    const files = new Set(this.projectFiles());
+    if (!files.has('main.py')) return 'main.py';
+
+    let index = 1;
+    while (files.has(`untitled-${index}.py`)) index++;
+    return `untitled-${index}.py`;
+  }
+
   protected setLayout(mode: LayoutMode): void {
     this.layout.set(mode);
     if (mode === 'editor') this.splitRatio.set(1);
@@ -162,7 +210,11 @@ export class App {
 
   protected onCodeChange(code: string): void {
     this.currentCode.set(code);
-    this.storage.save(code);
+    if (this.isProjectOpen()) {
+      this.projects.queueSaveActiveFile(code);
+    } else {
+      this.storage.save(code);
+    }
   }
 
   protected onCursorChange(info: CursorInfo): void {
@@ -177,22 +229,22 @@ export class App {
     this.activePanelId.set(PANEL_IDS[index] ?? 'output');
   }
 
-  protected runCode(): void {
-    this.storage.flush();
+  protected async runCode(): Promise<void> {
+    await this.flushActiveDocument();
     this.editorRef().clearErrorHighlight();
+    const projectModules = this.isProjectOpen() ? await this.projects.readActiveProjectModules() : undefined;
     // When the REPL tab is active, run inside the REPL so variables are inspectable.
     if (this.activePanelId() === 'repl') {
       if (this.layout() === 'editor') this.setLayout('both');
-      this.replService.runInRepl(this.currentCode());
+      this.replService.runInRepl(this.currentCode(), { projectModules });
       return;
     }
 
     this.outputLines.set([]);
     this.activePanelId.set('output');
     if (this.layout() === 'editor') this.setLayout('both');
-
     const accumulated: OutputLine[] = [];
-    this.runner.run(this.currentCode()).subscribe({
+    this.runner.run(this.currentCode(), { projectModules }).subscribe({
       next: (line) => {
         accumulated.push(line);
         this.outputLines.update((lines) => [...lines, line]);
@@ -217,50 +269,235 @@ export class App {
     if (this.board.isConnected()) this.board.softReset();
   }
 
+  protected createProject(): void {
+    this.dialog
+      .open(TextPromptDialogComponent, {
+        data: {
+          title: 'Create project',
+          label: 'Project name',
+          confirmLabel: 'Create',
+          placeholder: 'my-project',
+          hint: 'Project names cannot contain slashes.',
+        } satisfies TextPromptDialogData,
+        width: '440px',
+      })
+      .afterClosed()
+      .subscribe(async (projectName: string | undefined) => {
+        if (!projectName) return;
+
+        try {
+          const snapshot = await this.projects.createProject(projectName, this.currentCode());
+          this.editorRef().setContent(snapshot.code);
+          this.currentCode.set(snapshot.code);
+          this.sidenavOpen.set(false);
+        } catch (error) {
+          this.showErrorDialog('Create Project Failed', error);
+        }
+      });
+  }
+
+  protected openProject(projectName: string): void {
+    void this.loadProject(projectName);
+  }
+
+  protected closeProject(): void {
+    void this.closeProjectInternal();
+  }
+
+  protected deleteProject(): void {
+    const activeProjectName = this.activeProjectName();
+    if (!activeProjectName) return;
+
+    this.dialog
+      .open(ConfirmDialogComponent, {
+        data: {
+          title: `Delete ${activeProjectName}?`,
+          message: `Delete the project "${activeProjectName}" and all of its browser-local files? This cannot be undone.`,
+          confirmLabel: 'Delete',
+        } satisfies ConfirmDialogData,
+        width: '480px',
+      })
+      .afterClosed()
+      .subscribe(async (confirmed: boolean | undefined) => {
+        if (!confirmed) return;
+
+        try {
+          const deletedProjectName = await this.projects.deleteActiveProject();
+          const code = this.storage.load() ?? DEFAULT_CODE;
+          this.editorRef().setContent(code);
+          this.currentCode.set(code);
+          this.sidenavOpen.set(false);
+          this.outputLines.set([
+            { text: `Deleted project ${deletedProjectName}.`, isError: false },
+          ]);
+        } catch (error) {
+          this.showErrorDialog('Delete Project Failed', error);
+        }
+      });
+  }
+
+  protected renameProject(): void {
+    const activeProjectName = this.activeProjectName();
+    if (!activeProjectName) return;
+
+    this.dialog
+      .open(TextPromptDialogComponent, {
+        data: {
+          title: 'Rename project',
+          label: 'Project name',
+          confirmLabel: 'Rename',
+          initialValue: activeProjectName,
+          hint: 'Project names cannot contain slashes.',
+        } satisfies TextPromptDialogData,
+        width: '440px',
+      })
+      .afterClosed()
+      .subscribe(async (nextProjectName: string | undefined) => {
+        if (!nextProjectName) return;
+
+        try {
+          await this.projects.renameActiveProject(nextProjectName);
+          this.sidenavOpen.set(false);
+        } catch (error) {
+          this.showErrorDialog('Rename Project Failed', error);
+        }
+      });
+  }
+
+  protected openProjectFile(fileName: string): void {
+    void this.loadProjectFile(fileName);
+  }
+
+  protected deleteProjectFile(fileName: string): void {
+    const isLastFile = this.projectFiles().length === 1;
+
+    this.dialog
+      .open(ConfirmDialogComponent, {
+        data: {
+          title: `Delete ${fileName}?`,
+          message: isLastFile
+            ? `Delete ${fileName}? Because it is the last file in the project, PyPad will create a new empty main.py so the project stays usable.`
+            : `Delete ${fileName} from this project?`,
+          confirmLabel: 'Delete',
+        } satisfies ConfirmDialogData,
+        width: '480px',
+      })
+      .afterClosed()
+      .subscribe(async (confirmed: boolean | undefined) => {
+        if (!confirmed) return;
+
+        try {
+          const snapshot = await this.projects.deleteFile(fileName);
+          this.editorRef().setContent(snapshot.code);
+          this.currentCode.set(snapshot.code);
+          this.outputLines.set([
+            {
+              text: isLastFile
+                ? `Deleted ${fileName}. Created a new empty ${snapshot.fileName}.`
+                : `Deleted ${fileName}.`,
+              isError: false,
+            },
+          ]);
+        } catch (error) {
+          this.showErrorDialog('Delete File Failed', error);
+        }
+      });
+  }
+
+  protected renameProjectFile(): void {
+    const activeFileName = this.projects.activeFileName();
+    if (!activeFileName) return;
+
+    this.dialog
+      .open(TextPromptDialogComponent, {
+        data: {
+          title: 'Rename file',
+          label: 'File name',
+          confirmLabel: 'Rename',
+          initialValue: activeFileName,
+          hint: 'File names cannot contain slashes.',
+        } satisfies TextPromptDialogData,
+        width: '440px',
+      })
+      .afterClosed()
+      .subscribe(async (nextFileName: string | undefined) => {
+        if (!nextFileName) return;
+
+        try {
+          const renamedFileName = await this.projects.renameActiveFile(nextFileName);
+          this.currentCode.set(this.currentCode());
+          this.sidenavOpen.set(false);
+          if (renamedFileName !== activeFileName) {
+            this.outputLines.set([
+              { text: `Renamed file to ${renamedFileName}.`, isError: false },
+            ]);
+          }
+        } catch (error) {
+          this.showErrorDialog('Rename File Failed', error);
+        }
+      });
+  }
+
   protected newFile(): void {
     this.dialog
       .open(NewFileDialogComponent, {
         data: {
           title: 'New file',
-          message: 'Your current code will be replaced.',
+          message: this.isProjectOpen()
+            ? 'Create a new file in the active project.'
+            : 'Your current code will be replaced.',
+          requireName: this.isProjectOpen(),
+          initialName: this.isProjectOpen() ? this.nextProjectFileName() : undefined,
+          nameHint: this.isProjectOpen() ? 'Files are stored in the active project.' : undefined,
         },
         width: '480px',
       })
       .afterClosed()
-      .subscribe(async (result: { confirmed: boolean; prompt: string } | undefined) => {
+      .subscribe(async (result: NewFileDialogResult | undefined) => {
         if (!result?.confirmed) return;
 
-        this.sidenavOpen.set(false);
+        try {
+          const code = result.prompt
+            ? await this.aiService.generateCode(result.prompt)
+            : this.isProjectOpen()
+              ? ''
+              : DEFAULT_CODE;
 
-        if (result.prompt) {
-          try {
-            // Temporarily show a loading state in the output if possible, 
-            // or just rely on the fact that it's an async operation.
-            const generatedCode = await this.aiService.generateCode(result.prompt);
-            this.editorRef().setContent(generatedCode);
-          } catch (err) {
-            this.dialog.open(ConfirmDialogComponent, {
-              data: {
-                title: 'AI Generation Failed',
-                message: err instanceof Error ? err.message : 'An unknown error occurred',
-                confirmLabel: 'OK',
-              },
-            });
+          if (this.isProjectOpen()) {
+            const snapshot = await this.projects.createFile(result.name ?? 'main.py', code);
+            this.editorRef().setContent(snapshot.code);
+            this.currentCode.set(snapshot.code);
+          } else {
+            this.editorRef().setContent(code);
+            this.currentCode.set(code);
           }
-        } else {
-          this.editorRef().setContent(DEFAULT_CODE);
+
+          this.sidenavOpen.set(false);
+        } catch (error) {
+          this.showErrorDialog('New File Failed', error);
         }
       });
   }
 
   protected downloadCode(): void {
-    const blob = new Blob([this.currentCode()], { type: 'text/x-python' });
-    const url = URL.createObjectURL(blob);
-    const a = this.document.createElement('a');
-    a.href = url;
-    a.download = 'main.py';
-    a.click();
-    URL.revokeObjectURL(url);
+    this.downloadBlob(new Blob([this.currentCode()], { type: 'text/x-python' }), this.activeFileName());
+  }
+
+  protected async downloadProjectZip(): Promise<void> {
+    await this.flushActiveDocument();
+    const projectName = this.activeProjectName();
+    if (!projectName) return;
+
+    const projectFiles = await this.projects.readActiveProjectFiles();
+    const zip = new JSZip();
+
+    for (const { fileName, code } of projectFiles) {
+      zip.file(fileName, code);
+    }
+
+    const blob = await zip.generateAsync({ type: 'blob' });
+    this.downloadBlob(blob, `${projectName}.zip`);
+    this.sidenavOpen.set(false);
   }
 
   protected shareCode(): void {
@@ -332,13 +569,72 @@ export class App {
       });
   }
 
+  private downloadBlob(blob: Blob, fileName: string): void {
+    const url = URL.createObjectURL(blob);
+    const a = this.document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  private async loadProject(projectName: string): Promise<void> {
+    try {
+      const snapshot = await this.projects.openProject(projectName);
+      this.editorRef().setContent(snapshot.code);
+      this.currentCode.set(snapshot.code);
+      this.sidenavOpen.set(false);
+    } catch (error) {
+      this.showErrorDialog('Open Project Failed', error);
+    }
+  }
+
+  private async closeProjectInternal(): Promise<void> {
+    try {
+      await this.projects.closeProject();
+      const code = this.storage.load() ?? DEFAULT_CODE;
+      this.editorRef().setContent(code);
+      this.currentCode.set(code);
+      this.sidenavOpen.set(false);
+    } catch (error) {
+      this.showErrorDialog('Close Project Failed', error);
+    }
+  }
+
+  private async loadProjectFile(fileName: string): Promise<void> {
+    try {
+      const snapshot = await this.projects.openFile(fileName);
+      this.editorRef().setContent(snapshot.code);
+      this.currentCode.set(snapshot.code);
+      this.sidenavOpen.set(false);
+    } catch (error) {
+      this.showErrorDialog('Open File Failed', error);
+    }
+  }
+
+  private async importFileIntoProject(fileName: string, code: string): Promise<void> {
+    try {
+      const snapshot = await this.projects.writeImportedFile(fileName, code);
+      this.editorRef().setContent(snapshot.code);
+      this.currentCode.set(snapshot.code);
+    } catch (error) {
+      this.showErrorDialog('Import File Failed', error);
+    }
+  }
+
   protected onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     if (!file) return;
     const reader = new FileReader();
     reader.onload = () => {
-      this.editorRef().setContent(reader.result as string);
+      const code = typeof reader.result === 'string' ? reader.result : '';
+      if (this.isProjectOpen()) {
+        void this.importFileIntoProject(file.name, code);
+      } else {
+        this.editorRef().setContent(code);
+        this.currentCode.set(code);
+      }
       input.value = '';
     };
     reader.readAsText(file);
@@ -350,7 +646,7 @@ export class App {
 
     if (e.key === 's') {
       e.preventDefault();
-      this.storage.flush();
+      void this.flushActiveDocument();
     } else if (e.key === 'r') {
       e.preventDefault();
       if (this.runner.isRunning()) this.stopCode();
@@ -372,14 +668,15 @@ export class App {
 
   protected async uploadToBoard(): Promise<void> {
     this.sidenavOpen.set(false);
-    this.storage.flush();
+    await this.flushActiveDocument();
     this.outputLines.set([]);
     this.activePanelId.set('output');
     if (this.layout() === 'editor') this.setLayout('both');
+    const fileName = this.activeFileName();
     try {
-      await this.board.uploadFile('main.py', this.currentCode());
+      await this.board.uploadFile(fileName, this.currentCode());
       this.board.softReset();
-      this.outputLines.set([{ text: 'Uploaded main.py to Pico.', isError: false }]);
+      this.outputLines.set([{ text: `Uploaded ${fileName} to Pico.`, isError: false }]);
     } catch (e) {
       this.outputLines.set([{ text: String(e), isError: true }]);
     }
@@ -390,8 +687,8 @@ export class App {
     this.dialog
       .open(ConfirmDialogComponent, {
         data: {
-          title: 'Download main.py',
-          message: 'Your current editor content will be replaced with main.py from the Pico.',
+          title: `Download ${this.activeFileName()}`,
+          message: `Your current editor content will be replaced with ${this.activeFileName()} from the Pico.`,
           confirmLabel: 'Download',
         } satisfies ConfirmDialogData,
         width: '480px',
@@ -399,9 +696,11 @@ export class App {
       .afterClosed()
       .subscribe(async (confirmed: boolean | undefined) => {
         if (!confirmed) return;
+        const fileName = this.activeFileName();
         try {
-          const content = await this.board.downloadFile('main.py');
+          const content = await this.board.downloadFile(fileName);
           this.editorRef().setContent(content);
+          this.currentCode.set(content);
         } catch (e) {
           this.outputLines.set([{ text: String(e), isError: true }]);
           this.activePanelId.set('output');
@@ -415,10 +714,11 @@ export class App {
     this.outputLines.set([]);
     this.activePanelId.set('output');
     if (this.layout() === 'editor') this.setLayout('both');
+    const fileName = this.activeFileName();
     try {
-      await this.board.clearFile('main.py');
+      await this.board.clearFile(fileName);
       this.board.softReset();
-      this.outputLines.set([{ text: 'Cleared main.py on Pico.', isError: false }]);
+      this.outputLines.set([{ text: `Cleared ${fileName} on Pico.`, isError: false }]);
     } catch (e) {
       this.outputLines.set([{ text: String(e), isError: true }]);
     }

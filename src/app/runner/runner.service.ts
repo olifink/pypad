@@ -1,6 +1,7 @@
 import { Injectable, signal, computed, DOCUMENT, DestroyRef, inject } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { BoardService } from '../board/board.service';
+import type { ProjectModuleMap } from '../projects/project.service';
 
 /** A single line of output from a Python run, tagged as normal output or error. */
 export interface OutputLine {
@@ -11,6 +12,10 @@ export interface OutputLine {
 export interface InstallResult {
   success: boolean;
   log: string;
+}
+
+export interface RunOptions {
+  projectModules?: ProjectModuleMap;
 }
 
 type WorkerOutMsg =
@@ -48,9 +53,9 @@ export class RunnerService {
    * the WASM worker. Returns an Observable that emits output lines and
    * completes when execution finishes.
    */
-  run(code: string): Observable<OutputLine> {
+  run(code: string, options?: RunOptions): Observable<OutputLine> {
     this.isRunning.set(true);
-    const src = this.board.isConnected() ? this.board.run(code) : this._workerRun(code);
+    const src = this.board.isConnected() ? this.board.run(code) : this._workerRun(code, options);
     return new Observable((observer) => {
       const sub = src.subscribe({
         next: (v) => observer.next(v),
@@ -77,9 +82,9 @@ export class RunnerService {
       : this._workerInstall(name);
   }
 
-  private _workerRun(code: string): Observable<OutputLine> {
+  private _workerRun(code: string, options?: RunOptions): Observable<OutputLine> {
     this.runSubject = new Subject<OutputLine>();
-    this.worker.postMessage({ type: 'run', code });
+    this.worker.postMessage({ type: 'run', code, projectModules: options?.projectModules });
     return this.runSubject.asObservable();
   }
 

@@ -69,7 +69,16 @@ To provide a zero-install, offline-capable Python editor that feels like a nativ
   * **Download main.py** — reads `main.py` from the board's flash and loads it into the editor (with a confirmation dialog).
   * **Clear main.py** — truncates `main.py` to zero bytes then soft-resets the board.
 
-### Phase 7: Web Development
+### Phase 7: Projects
+
+A Project is a collection of files stored in an IndexDB using [lightning-fs](https://github.com/isomorphic-git/lightning-fs). Each project has a name that is used for the IndexDB. When a project is active, file operations are named files and store and read to the given project. Only one file is active at a time, there is no tab-UI or multiple open files.
+
+* [ ] **Sidebar:** Project section added to sidebar to create or switch to a project when none is open. If a project is open, the file names are shown in the sidebar, and option to close the project.
+* [ ] **Files:** Files need to be named. Files outside a project are treated as `main.py`. Files save automatically, asking for a name when none is given yet. Files and Projects can also be renamed. Initially, there is no need for directories.
+* [ ] **Operations:** When a project is active, File and Pico operations reflect and work with the current fs file.
+
+
+### Phase 8: Web Development
 
 * [ ] **Web Page:** HTML/PyScript/JS-bridge editing with `iframe` output panel
 * [ ] **Page Sharing:** Option to share as a page (app) instead of an editor

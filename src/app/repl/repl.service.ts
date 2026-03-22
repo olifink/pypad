@@ -4,6 +4,8 @@ import { BoardService } from '../board/board.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { interval } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
+import { PROJECT_MODULE_LOADER_PYTHON, buildSetProjectModulesPython } from '../python/project-modules';
+import type { ProjectModuleMap } from '../projects/project.service';
 
 /** Minimal typings for the xterm.js Terminal (bundled inside public/pyscript/). */
 interface XTerminal {
@@ -44,6 +46,10 @@ interface LoadMicroPythonOptions {
   url?: string;
 }
 
+export interface ReplRunOptions {
+  projectModules?: ProjectModuleMap;
+}
+
 /** JS objects exposed by PyScript when the MicroPython WASM runtime is ready. */
 declare global {
   interface Window {
@@ -76,6 +82,7 @@ export class ReplService {
   private _interpreter: MicroPythonInterpreter | null = null;
   /** Disposable for the active terminal onData subscription. */
   private _onDataDisposable: { dispose(): void } | null = null;
+  private projectModuleLoaderInterpreter: MicroPythonInterpreter | null = null;
 
   constructor() {
     const win = this.doc.defaultView as Window;
@@ -115,9 +122,9 @@ export class ReplService {
    */
   async startRepl(hostEl: HTMLElement, isDark: boolean): Promise<void> {
     const usingBoard = this.board.isConnected();
+    const win = this.doc.defaultView as Window;
 
     if (!usingBoard) {
-      const win = this.doc.defaultView as Window;
       if (!win.pypad_interpreter || !win.pypad_io) return;
     }
 
@@ -163,7 +170,8 @@ export class ReplService {
       this._wireBoardToTerminal();
     } else {
       this._wireWasmToTerminal();
-      (this.doc.defaultView as Window).pypad_interpreter!.replInit();
+      this._ensureProjectModuleLoader(win.pypad_interpreter!);
+      win.pypad_interpreter!.replInit();
     }
   }
 
@@ -196,7 +204,7 @@ export class ReplService {
    *
    * No-op if the terminal has not been started yet.
    */
-  async runInRepl(code: string): Promise<void> {
+  async runInRepl(code: string, options?: ReplRunOptions): Promise<void> {
     if (!this.terminal) return;
 
     if (this.board.isConnected()) {
@@ -211,6 +219,7 @@ export class ReplService {
       await this.resetRepl();
       const interpreter = this._interpreter;
       if (!interpreter) return;
+      this._setProjectModules(interpreter, options?.projectModules ?? {});
       interpreter.replProcessChar(0x05); // Ctrl+E
       const bytes = this._encoder.encode(code);
       for (const byte of bytes) {
@@ -278,6 +287,7 @@ export class ReplService {
     const win = this.doc.defaultView as Window;
     win.pypad_interpreter = newInterpreter;
     this._wireWasmToTerminal();
+    this._ensureProjectModuleLoader(newInterpreter);
     await this.packages.reinstallAll();
     this.terminal.reset();
     newInterpreter.replInit();
@@ -304,6 +314,20 @@ export class ReplService {
       stdout: ioHandler,
       stderr: ioHandler,
     });
+  }
+
+  private _ensureProjectModuleLoader(interpreter: MicroPythonInterpreter): void {
+    if (this.projectModuleLoaderInterpreter === interpreter) return;
+    interpreter.runPython(`import sys, builtins\n${PROJECT_MODULE_LOADER_PYTHON}`);
+    this.projectModuleLoaderInterpreter = interpreter;
+  }
+
+  private _setProjectModules(
+    interpreter: MicroPythonInterpreter,
+    projectModules: ProjectModuleMap,
+  ): void {
+    this._ensureProjectModuleLoader(interpreter);
+    interpreter.runPython(buildSetProjectModulesPython(projectModules));
   }
 
   private _themeFor(isDark: boolean): Record<string, string> {
