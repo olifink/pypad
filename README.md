@@ -73,16 +73,21 @@ To provide a zero-install, offline-capable Python editor that feels like a nativ
 
 A Project is a collection of files stored in an IndexDB using [lightning-fs](https://github.com/isomorphic-git/lightning-fs). Each project has a name that is used for the IndexDB. When a project is active, file operations are named files and store and read to the given project. Only one file is active at a time, there is no tab-UI or multiple open files.
 
-* [ ] **Sidebar:** Project section added to sidebar to create or switch to a project when none is open. If a project is open, the file names are shown in the sidebar, and option to close the project.
-* [ ] **Files:** Files need to be named. Files outside a project are treated as `main.py`. Files save automatically, asking for a name when none is given yet. Files and Projects can also be renamed. Initially, there is no need for directories.
-* [ ] **Operations:** When a project is active, File and Pico operations reflect and work with the current fs file.
+* [x] **Sidebar:** Project section added to sidebar to create or switch to a project when none is open. If a project is open, the file names are shown in the sidebar, and option to close the project.
+* [x] **Files:** Files need to be named. Files outside a project are treated as `main.py`. Files save automatically, asking for a name when none is given yet. Files and Projects can also be renamed. Initially, there is no need for directories.
+* [x] **Operations:** When a project is active, File and Pico operations reflect and work with the current fs file.
+
+### Phase 8: MicroPython Board Manager
+
+* [ ] **Auto-Discovery Service:** On Serial connection, run a "Probe" script that captures Board ID, CPU freq, Memory stats, and `help('modules')`.
+* [ ] **Board-Specific Docs:** Automatically switch the `docs.json` context based on the detected `sys.platform`.
+* [ ] **Board Button:** Make the "Connect Pico" button a "Connect board" a menu to have connect, disconnect and a board manager entry
+* [ ] **Board Manager:** A overlay window/view/dialog that shows details about the board and provides basic file manager capabilities: list files on the board, delete, upload, download and sync project (if project is active)
 
 
-### Phase 8: Web Development
-
+### Phase 9: Basic PyScript Web Development
 * [ ] **Web Page:** HTML/PyScript/JS-bridge editing with `iframe` output panel
 * [ ] **Page Sharing:** Option to share as a page (app) instead of an editor
-* [ ] **Flask Server:** Build server code with flask? maybe
 * [ ] **:** 
 
 ### Parking lot
