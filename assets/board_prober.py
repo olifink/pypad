@@ -20,7 +20,7 @@ def probe():
     # Check for specific capabilities
     modules = []
     # This is a trick to get a list of built-in modules
-    import help
+    # Note: This may not work in all environments, but it's a common approach
     # We capture the output of help('modules') if possible, 
     # or use a common list to probe imports
     common_mods = ['network', 'bluetooth', 'neopixel', 'ssd1306', 'dht', 'onewire']
