@@ -34,6 +34,7 @@ import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog';
 import type { ConfirmDialogData } from './confirm-dialog/confirm-dialog';
 import { ReplService } from './repl/repl.service';
 import { ShareService } from './share/share.service';
+import { ShareTargetService } from './share/share-target.service';
 import { ShareDialogComponent } from './share/share-dialog';
 import type { ShareDialogData } from './share/share-dialog';
 import { PackagesComponent } from './packages/packages';
@@ -104,6 +105,7 @@ export class App {
   private readonly document = inject(DOCUMENT);
   private readonly dialog = inject(MatDialog);
   private readonly shareService = inject(ShareService);
+  private readonly shareTargetService = inject(ShareTargetService);
   protected readonly runner = inject(RunnerService);
   protected readonly replService = inject(ReplService);
   protected readonly theme = inject(ThemeService);
@@ -152,6 +154,7 @@ export class App {
   constructor() {
     afterNextRender(() => this.shareService.stripShareParam());
     afterNextRender(() => void this.restoreProjectDocument());
+    afterNextRender(() => void this.processShareTarget());
 
     // Auto-install packages bundled in a share URL once the interpreter is ready.
     effect(() => {
@@ -177,6 +180,15 @@ export class App {
     if (!snapshot) return;
     this.editorRef().setContent(snapshot.code);
     this.currentCode.set(snapshot.code);
+  }
+
+  private async processShareTarget(): Promise<void> {
+    const code = await this.shareTargetService.getAndConsumeSharedCode();
+    this.shareTargetService.stripSharePending();
+    if (!code) return;
+    this.editorRef().setContent(code);
+    this.currentCode.set(code);
+    this.storage.save(code);
   }
 
   private async flushActiveDocument(): Promise<void> {
