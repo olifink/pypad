@@ -2,8 +2,9 @@
  * build-docs.mjs
  *
  * Scrapes the MicroPython documentation from https://docs.micropython.org/en/latest/library/
- * and writes public/assets/docs.json — a flat map of fully-qualified symbol names to their
- * signature, one-line description, and deep-link URL.
+ * and writes:
+ *   public/assets/docs.json              — base docs (all boards)
+ *   public/assets/docs-<platform>.json   — platform-specific overlays (one per sys.platform value)
  *
  * Usage:  node scripts/build-docs.mjs
  * Deps:   none beyond Node 18+ (fetch built-in) and jsdom (already a devDep)
@@ -15,7 +16,8 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const OUT_PATH = join(__dirname, '..', 'public', 'assets', 'docs.json');
+const OUT_DIR = join(__dirname, '..', 'public', 'assets');
+const OUT_PATH = join(OUT_DIR, 'docs.json');
 
 const BASE = 'https://docs.micropython.org/en/latest/library/';
 
@@ -24,6 +26,20 @@ const SIMPLE_MODULES = ['math', 'sys', 'time', 'json', 'random'];
 
 /** Modules whose index page links to sub-pages we should also scrape. */
 const PAGED_MODULES = ['machine', 'network'];
+
+/**
+ * Platform-specific module overlays keyed by MicroPython sys.platform value.
+ * Each entry lists modules to scrape and emit as docs-<platform>.json.
+ * `simple` = single-page modules; `paged` = index + auto-discovered sub-pages.
+ */
+const PLATFORM_MODULES = {
+  rp2:     { simple: [],                paged: ['rp2'] },
+  esp32:   { simple: ['esp32', 'esp'],  paged: [] },
+  esp8266: { simple: ['esp'],           paged: [] },
+  stm32:   { simple: ['stm'],           paged: ['pyb'] },
+  pyboard: { simple: ['stm'],           paged: ['pyb'] },
+  mimxrt:  { simple: ['mimxrt'],        paged: [] },
+};
 
 /**
  * URL for the CPython built-in functions reference.
@@ -122,15 +138,67 @@ function discoverSubPages(doc, pattern) {
   return [...pages];
 }
 
-async function main() {
+/**
+ * Scrape a set of modules (simple + paged) and return a docs map.
+ * `pageCount` is mutated in-place for logging.
+ */
+async function scrapeModules(simple, paged, pageCount) {
   const docs = {};
-  let pageCount = 0;
+
+  for (const mod of simple) {
+    const file = `${mod}.html`;
+    console.log(`  Fetching ${file}…`);
+    try {
+      const doc = await fetchDoc(`${BASE}${file}`);
+      Object.assign(docs, extractFromPage(doc, file));
+      pageCount.n++;
+    } catch (err) {
+      console.warn(`  Warning: could not fetch ${file}: ${err.message}`);
+    }
+    await sleep(300);
+  }
+
+  for (const mod of paged) {
+    const indexFile = `${mod}.html`;
+    console.log(`  Fetching ${indexFile}…`);
+    try {
+      const indexDoc = await fetchDoc(`${BASE}${indexFile}`);
+      Object.assign(docs, extractFromPage(indexDoc, indexFile));
+      pageCount.n++;
+
+      const pattern = new RegExp(`^${mod}\\.[A-Z][\\w.]*\\.html$`);
+      const subPages = discoverSubPages(indexDoc, pattern);
+      console.log(`    Found ${subPages.length} sub-page(s): ${subPages.join(', ')}`);
+
+      for (const subFile of subPages) {
+        await sleep(300);
+        console.log(`    Fetching ${subFile}…`);
+        try {
+          const subDoc = await fetchDoc(`${BASE}${subFile}`);
+          Object.assign(docs, extractFromPage(subDoc, subFile));
+          pageCount.n++;
+        } catch (err) {
+          console.warn(`    Warning: could not fetch ${subFile}: ${err.message}`);
+        }
+      }
+    } catch (err) {
+      console.warn(`  Warning: could not fetch ${indexFile}: ${err.message}`);
+    }
+    await sleep(300);
+  }
+
+  return docs;
+}
+
+async function main() {
+  const pageCount = { n: 0 };
+  const docs = {};
 
   // --- Built-in functions: merge MicroPython stubs with CPython descriptions ---
   console.log('Fetching builtins.html (MicroPython)…');
   const mpyBuiltinsDoc = await fetchDoc(`${BASE}builtins.html`);
   const mpyBuiltins = extractFromPage(mpyBuiltinsDoc, 'builtins.html');
-  pageCount++;
+  pageCount.n++;
   await sleep(300);
 
   console.log('Fetching functions.html (CPython supplement)…');
@@ -151,52 +219,33 @@ async function main() {
       docs[key] = mpyEntry;
     }
   }
-  pageCount++;
+  pageCount.n++;
   await sleep(300);
 
-  // --- Simple single-page modules ---
-  for (const mod of SIMPLE_MODULES) {
-    const file = `${mod}.html`;
-    console.log(`Fetching ${file}…`);
-    const doc = await fetchDoc(`${BASE}${file}`);
-    Object.assign(docs, extractFromPage(doc, file));
-    pageCount++;
-    await sleep(300);
-  }
+  // --- Base modules (all boards) ---
+  console.log('\n— Base modules —');
+  Object.assign(docs, await scrapeModules(SIMPLE_MODULES, PAGED_MODULES, pageCount));
 
-  // --- Paged modules (index + auto-discovered sub-pages) ---
-  for (const mod of PAGED_MODULES) {
-    const indexFile = `${mod}.html`;
-    console.log(`Fetching ${indexFile}…`);
-    const indexDoc = await fetchDoc(`${BASE}${indexFile}`);
-    Object.assign(docs, extractFromPage(indexDoc, indexFile));
-    pageCount++;
+  // Write base docs
+  mkdirSync(OUT_DIR, { recursive: true });
+  writeFileSync(OUT_PATH, JSON.stringify(docs, null, 2), 'utf8');
+  console.log(`\n✓ Wrote ${Object.keys(docs).length} entries from ${pageCount.n} pages → ${OUT_PATH}`);
 
-    // Discover sub-pages, e.g. machine.Pin.html, network.WLAN.html
-    const pattern = new RegExp(`^${mod}\\.[A-Z][\\w.]*\\.html$`);
-    const subPages = discoverSubPages(indexDoc, pattern);
-    console.log(`  Found ${subPages.length} sub-page(s) for ${mod}: ${subPages.join(', ')}`);
-
-    for (const subFile of subPages) {
-      await sleep(300);
-      console.log(`  Fetching ${subFile}…`);
-      try {
-        const subDoc = await fetchDoc(`${BASE}${subFile}`);
-        Object.assign(docs, extractFromPage(subDoc, subFile));
-        pageCount++;
-      } catch (err) {
-        console.warn(`  Warning: could not fetch ${subFile}: ${err.message}`);
-      }
+  // --- Platform-specific overlays ---
+  console.log('\n— Platform overlays —');
+  for (const [platform, { simple, paged }] of Object.entries(PLATFORM_MODULES)) {
+    console.log(`\nPlatform: ${platform}`);
+    const overlay = await scrapeModules(simple, paged, pageCount);
+    if (Object.keys(overlay).length === 0) {
+      console.log(`  (no entries scraped — skipping)`);
+      continue;
     }
+    const outPath = join(OUT_DIR, `docs-${platform}.json`);
+    writeFileSync(outPath, JSON.stringify(overlay, null, 2), 'utf8');
+    console.log(`  ✓ Wrote ${Object.keys(overlay).length} entries → ${outPath}`);
   }
 
-  // Write output
-  mkdirSync(dirname(OUT_PATH), { recursive: true });
-  const json = JSON.stringify(docs, null, 2);
-  writeFileSync(OUT_PATH, json, 'utf8');
-
-  console.log(`\n✓ Wrote ${Object.keys(docs).length} entries from ${pageCount} pages`);
-  console.log(`  → ${OUT_PATH}`);
+  console.log(`\n✓ Done. Total pages fetched: ${pageCount.n}`);
 }
 
 main().catch((err) => {

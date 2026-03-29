@@ -1404,6 +1404,161 @@
     "description": "for initialising the I2S bus format to mono",
     "url": "https://docs.micropython.org/en/latest/library/machine.I2S.html#machine.I2S.MONO"
   },
+  "machine.CAN": {
+    "signature": "class machine.CAN(id, *args, **kwargs)",
+    "description": "Construct a CAN controller object of the given id:",
+    "url": "https://docs.micropython.org/en/latest/library/machine.CAN.html#machine.CAN"
+  },
+  "machine.CAN.init": {
+    "signature": "CAN.init(bitrate, mode=CAN.MODE_NORMAL, sample_point=75, sjw=1, tseg1=None, tseg2=None)",
+    "description": "Initialise the CAN bus with the given parameters:",
+    "url": "https://docs.micropython.org/en/latest/library/machine.CAN.html#machine.CAN.init"
+  },
+  "machine.CAN.set_filters": {
+    "signature": "CAN.set_filters(filters)",
+    "description": "Set receive filters in the CAN controller. filters can be:",
+    "url": "https://docs.micropython.org/en/latest/library/machine.CAN.html#machine.CAN.set_filters"
+  },
+  "machine.CAN.FILTERS_MAX": {
+    "signature": "CAN.FILTERS_MAX",
+    "description": "Constant value that reads the maximum number of supported receive filters for this hardware controller.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.CAN.html#machine.CAN.FILTERS_MAX"
+  },
+  "machine.CAN.send": {
+    "signature": "CAN.send(id, data, flags=0)",
+    "description": "Copy a new CAN message into the controller’s hardware transmit queue to be sent onto the bus. The transmit queue is a priority queue sorted on CAN identifier priority (lower numeric identifiers have higher priority).",
+    "url": "https://docs.micropython.org/en/latest/library/machine.CAN.html#machine.CAN.send"
+  },
+  "machine.CAN.recv": {
+    "signature": "CAN.recv(arg=None)",
+    "description": "Return a CAN message that has been received by the controller, according to filters set by CAN.set_filters().",
+    "url": "https://docs.micropython.org/en/latest/library/machine.CAN.html#machine.CAN.recv"
+  },
+  "machine.CAN.irq": {
+    "signature": "CAN.irq(handler=None, trigger=0, hard=False)",
+    "description": "Sets an interrupt handler function to be called when one or more of the events flagged in trigger has occurred.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.CAN.html#machine.CAN.irq"
+  },
+  "machine.CAN.cancel_send": {
+    "signature": "CAN.cancel_send(index)",
+    "description": "Request the CAN controller to cancel sending a message onto the bus.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.CAN.html#machine.CAN.cancel_send"
+  },
+  "machine.CAN.state": {
+    "signature": "CAN.state()",
+    "description": "Returns an integer value indicating the current state of the controller. The value will be one of the values defined in States.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.CAN.html#machine.CAN.state"
+  },
+  "machine.CAN.get_counters": {
+    "signature": "CAN.get_counters(list=None /)",
+    "description": "Returns controller’s error counter values. The result is a list of eight values. If the optional list parameter is specified then the provided list object is updated and returned as the result, to avoid an allocation.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.CAN.html#machine.CAN.get_counters"
+  },
+  "machine.CAN.get_timings": {
+    "signature": "CAN.get_timings(list=None /)",
+    "description": "Returns a list of elements indicating the current timings configured in the CAN controller. This can be used to verify timings for debugging purposes. The result is a list of six values. If the optional list parameter is specified then the provided list object is updated and returned as the result, to avoid an allocation.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.CAN.html#machine.CAN.get_timings"
+  },
+  "machine.CAN.restart": {
+    "signature": "CAN.restart()",
+    "description": "Causes the controller to exit STATE_BUS_OFF without clearing any other internal state. Also clears some of the error counters (always the number of times each error state has been entered, possibly TEC and REC depending on the controller.)",
+    "url": "https://docs.micropython.org/en/latest/library/machine.CAN.html#machine.CAN.restart"
+  },
+  "machine.CAN.deinit": {
+    "signature": "CAN.deinit()",
+    "description": "De-initialises a previously active CAN instance. All pending messages (transmit and receive) are dropped and the controller stops interacting on the bus. To use this instance again, call CAN.init().",
+    "url": "https://docs.micropython.org/en/latest/library/machine.CAN.html#machine.CAN.deinit"
+  },
+  "machine.CAN.TX_QUEUE_LEN": {
+    "signature": "CAN.TX_QUEUE_LEN",
+    "description": "Maximum number of CAN messages which can be queued in the outgoing hardware message queue of the controller. The “transmit buffer indexes” used by CAN.send(), CAN.cancel_send() and IRQ flags will be in this range.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.CAN.html#machine.CAN.TX_QUEUE_LEN"
+  },
+  "machine.CAN.MODE_NORMAL": {
+    "signature": "CAN.MODE_NORMAL",
+    "description": "The controller is active as a standard CAN network node (will acknowledge valid messages and may transmit errors depending on its current State).",
+    "url": "https://docs.micropython.org/en/latest/library/machine.CAN.html#machine.CAN.MODE_NORMAL"
+  },
+  "machine.CAN.MODE_SLEEP": {
+    "signature": "CAN.MODE_SLEEP",
+    "description": "CAN controller is asleep in a low power mode. Depending on the controller, this may support waking the controller and transitioning to CAN.MODE_NORMAL if CAN traffic is received.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.CAN.html#machine.CAN.MODE_SLEEP"
+  },
+  "machine.CAN.MODE_LOOPBACK": {
+    "signature": "CAN.MODE_LOOPBACK",
+    "description": "A testing mode. The CAN controller is still connected to the external bus, but will also receive its own transmitted messages and ignore any ACK errors.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.CAN.html#machine.CAN.MODE_LOOPBACK"
+  },
+  "machine.CAN.MODE_SILENT": {
+    "signature": "CAN.MODE_SILENT",
+    "description": "CAN controller receives messages but does not interact with the CAN bus (including sending ACKs, errors, etc.)",
+    "url": "https://docs.micropython.org/en/latest/library/machine.CAN.html#machine.CAN.MODE_SILENT"
+  },
+  "machine.CAN.MODE_SILENT_LOOPBACK": {
+    "signature": "CAN.MODE_SILENT_LOOPBACK",
+    "description": "A testing mode that does not require a CAN transceiver to be connected at all. The CAN controller receives its own transmitted messages without interacting with the CAN bus at all. The CAN TX and RX pins remain idle.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.CAN.html#machine.CAN.MODE_SILENT_LOOPBACK"
+  },
+  "machine.CAN.STATE_STOPPED": {
+    "signature": "CAN.STATE_STOPPED",
+    "description": "The controller has not been initialised.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.CAN.html#machine.CAN.STATE_STOPPED"
+  },
+  "machine.CAN.STATE_ACTIVE": {
+    "signature": "CAN.STATE_ACTIVE",
+    "description": "The controller is active and TEC and REC error counters are both below the warning threshold of 96. See CAN.get_counters().",
+    "url": "https://docs.micropython.org/en/latest/library/machine.CAN.html#machine.CAN.STATE_ACTIVE"
+  },
+  "machine.CAN.STATE_WARNING": {
+    "signature": "CAN.STATE_WARNING",
+    "description": "The controller is active but at last one of the TEC and REC error counters are between 96 and 127. See CAN.get_counters().",
+    "url": "https://docs.micropython.org/en/latest/library/machine.CAN.html#machine.CAN.STATE_WARNING"
+  },
+  "machine.CAN.STATE_PASSIVE": {
+    "signature": "CAN.STATE_PASSIVE",
+    "description": "The controller is in the “Error Passive” state meaning it no longer transmits active errors to the bus, but it is otherwise functional. This state is entered when at least one of the TEC and REC error counters is 128 or greater, but TEC is less than 255. See CAN.get_counters().",
+    "url": "https://docs.micropython.org/en/latest/library/machine.CAN.html#machine.CAN.STATE_PASSIVE"
+  },
+  "machine.CAN.STATE_BUS_OFF": {
+    "signature": "CAN.STATE_BUS_OFF",
+    "description": "The controller is in the Bus-Off state, meaning TEC error counter is greater than 255. The CAN controller will not interact with the bus in this state, and needs to be restarted via CAN.restart() to continue.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.CAN.html#machine.CAN.STATE_BUS_OFF"
+  },
+  "machine.CAN.FLAG_RTR": {
+    "signature": "CAN.FLAG_RTR",
+    "description": "Indicates a message is a remote transmission request.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.CAN.html#machine.CAN.FLAG_RTR"
+  },
+  "machine.CAN.FLAG_EXT_ID": {
+    "signature": "CAN.FLAG_EXT_ID",
+    "description": "If set, indicates a Message identifier is Extended (29-bit). If not set, indicates a message identifier is Standard (11-bit).",
+    "url": "https://docs.micropython.org/en/latest/library/machine.CAN.html#machine.CAN.FLAG_EXT_ID"
+  },
+  "machine.CAN.FLAG_UNORDERED": {
+    "signature": "CAN.FLAG_UNORDERED",
+    "description": "If set in the flags argument of CAN.send(), indicates that it’s OK if messages with the same CAN ID are sent in any order onto the bus.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.CAN.html#machine.CAN.FLAG_UNORDERED"
+  },
+  "machine.CAN.RECV_ERR_FULL": {
+    "signature": "CAN.RECV_ERR_FULL",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/machine.CAN.html#machine.CAN.RECV_ERR_FULL"
+  },
+  "machine.CAN.RECV_ERR_OVERRUN": {
+    "signature": "CAN.RECV_ERR_OVERRUN",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/machine.CAN.html#machine.CAN.RECV_ERR_OVERRUN"
+  },
+  "machine.CAN.IRQ_RX": {
+    "signature": "CAN.IRQ_RX",
+    "description": "IRQ event triggers. Used with CAN.irq() and IRQ flags.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.CAN.html#machine.CAN.IRQ_RX"
+  },
+  "machine.CAN.IRQ_TX_FAILED": {
+    "signature": "CAN.IRQ_TX_FAILED",
+    "description": "Additional IRQ event flags for CAN.IRQ_TX. See IRQ flags.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.CAN.html#machine.CAN.IRQ_TX_FAILED"
+  },
   "machine.RTC": {
     "signature": "class machine.RTC(id=0, ...)",
     "description": "Create an RTC object. See init for parameters of initialization.",
@@ -1499,15 +1654,30 @@
     "description": "Get, and optionally set, the counter value as a signed integer. Implementations must aim to do the get and set atomically (i.e. without leading to skipped counts).",
     "url": "https://docs.micropython.org/en/latest/library/machine.Counter.html#machine.Counter.value"
   },
+  "machine.Counter.cycles": {
+    "signature": "Counter.cycles([value])",
+    "description": "Get or set the current cycles counter of the counter as signed 16 bit integer. The value represents the overflow or underflow events of the count range. With no arguments the actual cycles counter value is returned. With a single value argument the cycles counter is set to that value. The base counter is not changed. The method returns the previous value. (Supported on MIMXRT)",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Counter.html#machine.Counter.cycles"
+  },
+  "machine.Counter.irq": {
+    "signature": "Counter.irq(handler=None, trigger=0, hard=False)",
+    "description": "Specifies, that the handler is called when the respective event happens.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Counter.html#machine.Counter.irq"
+  },
   "machine.Counter.RISING": {
     "signature": "Counter.RISING",
-    "description": "Select the pulse edge.",
+    "description": "Select the pulse edge. (Supported on ESP32)",
     "url": "https://docs.micropython.org/en/latest/library/machine.Counter.html#machine.Counter.RISING"
   },
   "machine.Counter.UP": {
     "signature": "Counter.UP",
     "description": "Select the counting direction.",
     "url": "https://docs.micropython.org/en/latest/library/machine.Counter.html#machine.Counter.UP"
+  },
+  "machine.Counter.IRQ_RESET": {
+    "signature": "Counter.IRQ_RESET",
+    "description": "Select the IRQ trigger event. (Supported on MIMXRT)",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Counter.html#machine.Counter.IRQ_RESET"
   },
   "machine.Encoder": {
     "signature": "class machine.Encoder(id, ...)",
@@ -1528,6 +1698,21 @@
     "signature": "Encoder.value([value])",
     "description": "Get, and optionally set, the encoder value as a signed integer. Implementations should aim to do the get and set atomically.",
     "url": "https://docs.micropython.org/en/latest/library/machine.Encoder.html#machine.Encoder.value"
+  },
+  "machine.Encoder.cycles": {
+    "signature": "Encoder.cycles([value])",
+    "description": "Get or set the current cycles counter of the counter as signed 16 bit integer. The value represents the overflow or underflow events of the count range. With no arguments the actual cycles counter value is returned. With a single value argument the cycles counter is set to that value. The base counter is not changed. The method returns the previous value. (Supported on MIMXRT)",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Encoder.html#machine.Encoder.cycles"
+  },
+  "machine.Encoder.irq": {
+    "signature": "Encoder.irq(handler=None, trigger=0, hard=False)",
+    "description": "Specifies, that the handler is called when the respective event happens.",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Encoder.html#machine.Encoder.irq"
+  },
+  "machine.Encoder.IRQ_RESET": {
+    "signature": "Encoder.IRQ_RESET",
+    "description": "Select the IRQ trigger event. (Supported on MIMXRT)",
+    "url": "https://docs.micropython.org/en/latest/library/machine.Encoder.html#machine.Encoder.IRQ_RESET"
   },
   "machine.WDT": {
     "signature": "class machine.WDT(id=0, timeout=5000)",

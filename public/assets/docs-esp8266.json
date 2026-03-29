@@ -1,0 +1,52 @@
+{
+  "esp.sleep_type": {
+    "signature": "esp.sleep_type([sleep_type])",
+    "description": "Note: ESP8266 only",
+    "url": "https://docs.micropython.org/en/latest/library/esp.html#esp.sleep_type"
+  },
+  "esp.deepsleep": {
+    "signature": "esp.deepsleep(time_us=0, /)",
+    "description": "Note: ESP8266 only - use machine.deepsleep() on ESP32",
+    "url": "https://docs.micropython.org/en/latest/library/esp.html#esp.deepsleep"
+  },
+  "esp.flash_id": {
+    "signature": "esp.flash_id()",
+    "description": "Note: ESP8266 only",
+    "url": "https://docs.micropython.org/en/latest/library/esp.html#esp.flash_id"
+  },
+  "esp.flash_size": {
+    "signature": "esp.flash_size()",
+    "description": "Read the total size of the flash memory.",
+    "url": "https://docs.micropython.org/en/latest/library/esp.html#esp.flash_size"
+  },
+  "esp.flash_user_start": {
+    "signature": "esp.flash_user_start()",
+    "description": "Read the memory offset at which the user flash space begins.",
+    "url": "https://docs.micropython.org/en/latest/library/esp.html#esp.flash_user_start"
+  },
+  "esp.flash_read": {
+    "signature": "esp.flash_read(byte_offset, length_or_buffer)",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/esp.html#esp.flash_read"
+  },
+  "esp.flash_write": {
+    "signature": "esp.flash_write(byte_offset, bytes)",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/esp.html#esp.flash_write"
+  },
+  "esp.flash_erase": {
+    "signature": "esp.flash_erase(sector_no)",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/esp.html#esp.flash_erase"
+  },
+  "esp.osdebug": {
+    "signature": "esp.osdebug(uart_no)",
+    "description": "Note",
+    "url": "https://docs.micropython.org/en/latest/library/esp.html#esp.osdebug"
+  },
+  "esp.set_native_code_location": {
+    "signature": "esp.set_native_code_location(start, length)",
+    "description": "Note: ESP8266 only",
+    "url": "https://docs.micropython.org/en/latest/library/esp.html#esp.set_native_code_location"
+  }
+}

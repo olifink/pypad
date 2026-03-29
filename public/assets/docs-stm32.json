@@ -1,0 +1,1077 @@
+{
+  "stm.mem8": {
+    "signature": "stm.mem8",
+    "description": "Read/write 8 bits of memory.",
+    "url": "https://docs.micropython.org/en/latest/library/stm.html#stm.mem8"
+  },
+  "stm.mem16": {
+    "signature": "stm.mem16",
+    "description": "Read/write 16 bits of memory.",
+    "url": "https://docs.micropython.org/en/latest/library/stm.html#stm.mem16"
+  },
+  "stm.mem32": {
+    "signature": "stm.mem32",
+    "description": "Read/write 32 bits of memory.",
+    "url": "https://docs.micropython.org/en/latest/library/stm.html#stm.mem32"
+  },
+  "stm.GPIOA": {
+    "signature": "stm.GPIOA",
+    "description": "Base address of the GPIOA peripheral.",
+    "url": "https://docs.micropython.org/en/latest/library/stm.html#stm.GPIOA"
+  },
+  "stm.GPIOB": {
+    "signature": "stm.GPIOB",
+    "description": "Base address of the GPIOB peripheral.",
+    "url": "https://docs.micropython.org/en/latest/library/stm.html#stm.GPIOB"
+  },
+  "stm.GPIO_BSRR": {
+    "signature": "stm.GPIO_BSRR",
+    "description": "Offset of the GPIO bit set/reset register.",
+    "url": "https://docs.micropython.org/en/latest/library/stm.html#stm.GPIO_BSRR"
+  },
+  "stm.GPIO_IDR": {
+    "signature": "stm.GPIO_IDR",
+    "description": "Offset of the GPIO input data register.",
+    "url": "https://docs.micropython.org/en/latest/library/stm.html#stm.GPIO_IDR"
+  },
+  "stm.GPIO_ODR": {
+    "signature": "stm.GPIO_ODR",
+    "description": "Offset of the GPIO output data register.",
+    "url": "https://docs.micropython.org/en/latest/library/stm.html#stm.GPIO_ODR"
+  },
+  "stm.rfcore_status": {
+    "signature": "stm.rfcore_status()",
+    "description": "Returns the status of the second CPU as an integer (the first word of device info table).",
+    "url": "https://docs.micropython.org/en/latest/library/stm.html#stm.rfcore_status"
+  },
+  "stm.rfcore_fw_version": {
+    "signature": "stm.rfcore_fw_version(id)",
+    "description": "Get the version of the firmware running on the second CPU. Pass in 0 for id to get the FUS version, and 1 to get the WS version.",
+    "url": "https://docs.micropython.org/en/latest/library/stm.html#stm.rfcore_fw_version"
+  },
+  "stm.rfcore_sys_hci": {
+    "signature": "stm.rfcore_sys_hci(ogf, ocf, data, timeout_ms=0)",
+    "description": "Execute a HCI command on the SYS channel. The execution is synchronous.",
+    "url": "https://docs.micropython.org/en/latest/library/stm.html#stm.rfcore_sys_hci"
+  },
+  "stm.subghz_cs": {
+    "signature": "stm.subghz_cs(level)",
+    "description": "Sets the internal SPI CS pin attached to the radio peripheral. The level argument is active-low: a truthy value means “CS pin high” and de-asserts the signal, a falsey value means “CS pin low” and asserts the signal.",
+    "url": "https://docs.micropython.org/en/latest/library/stm.html#stm.subghz_cs"
+  },
+  "stm.subghz_irq": {
+    "signature": "stm.subghz_irq(handler)",
+    "description": "Sets the internal SUBGHZ radio interrupt handler to the provided function. The handler function is called as a “hard” interrupt in response to radio peripheral interrupts. See Writing interrupt handlers for more information about interrupt handlers in MicroPython.",
+    "url": "https://docs.micropython.org/en/latest/library/stm.html#stm.subghz_irq"
+  },
+  "stm.subghz_is_busy": {
+    "signature": "stm.subghz_is_busy()",
+    "description": "Return a bool corresponding to the internal “RFBUSYS” signal from the radio peripheral. Before sending a new command to the radio over SPI then this function should be polled until it returns False, to confirm the busy signal is de-asserted.",
+    "url": "https://docs.micropython.org/en/latest/library/stm.html#stm.subghz_is_busy"
+  },
+  "pyb.delay": {
+    "signature": "pyb.delay(ms)",
+    "description": "Delay for the given number of milliseconds.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.html#pyb.delay"
+  },
+  "pyb.udelay": {
+    "signature": "pyb.udelay(us)",
+    "description": "Delay for the given number of microseconds.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.html#pyb.udelay"
+  },
+  "pyb.millis": {
+    "signature": "pyb.millis()",
+    "description": "Returns the number of milliseconds since the board was last reset.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.html#pyb.millis"
+  },
+  "pyb.micros": {
+    "signature": "pyb.micros()",
+    "description": "Returns the number of microseconds since the board was last reset.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.html#pyb.micros"
+  },
+  "pyb.elapsed_millis": {
+    "signature": "pyb.elapsed_millis(start)",
+    "description": "Returns the number of milliseconds which have elapsed since start.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.html#pyb.elapsed_millis"
+  },
+  "pyb.elapsed_micros": {
+    "signature": "pyb.elapsed_micros(start)",
+    "description": "Returns the number of microseconds which have elapsed since start.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.html#pyb.elapsed_micros"
+  },
+  "pyb.hard_reset": {
+    "signature": "pyb.hard_reset()",
+    "description": "Resets the pyboard in a manner similar to pushing the external RESET button.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.html#pyb.hard_reset"
+  },
+  "pyb.bootloader": {
+    "signature": "pyb.bootloader()",
+    "description": "Activate the bootloader without BOOT* pins.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.html#pyb.bootloader"
+  },
+  "pyb.fault_debug": {
+    "signature": "pyb.fault_debug(value)",
+    "description": "Enable or disable hard-fault debugging. A hard-fault is when there is a fatal error in the underlying system, like an invalid memory access.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.html#pyb.fault_debug"
+  },
+  "pyb.disable_irq": {
+    "signature": "pyb.disable_irq()",
+    "description": "Disable interrupt requests. Returns the previous IRQ state: False/True for disabled/enabled IRQs respectively. This return value can be passed to enable_irq to restore the IRQ to its original state.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.html#pyb.disable_irq"
+  },
+  "pyb.enable_irq": {
+    "signature": "pyb.enable_irq(state=True)",
+    "description": "Enable interrupt requests. If state is True (the default value) then IRQs are enabled. If state is False then IRQs are disabled. The most common use of this function is to pass it the value returned by disable_irq to exit a critical section.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.html#pyb.enable_irq"
+  },
+  "pyb.freq": {
+    "signature": "pyb.freq([sysclk[, hclk[, pclk1[, pclk2]]]])",
+    "description": "If given no arguments, returns a tuple of clock frequencies: (sysclk, hclk, pclk1, pclk2). These correspond to:",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.html#pyb.freq"
+  },
+  "pyb.wfi": {
+    "signature": "pyb.wfi()",
+    "description": "Wait for an internal or external interrupt.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.html#pyb.wfi"
+  },
+  "pyb.stop": {
+    "signature": "pyb.stop()",
+    "description": "Put the pyboard in a “sleeping” state.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.html#pyb.stop"
+  },
+  "pyb.standby": {
+    "signature": "pyb.standby()",
+    "description": "Put the pyboard into a “deep sleep” state.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.html#pyb.standby"
+  },
+  "pyb.have_cdc": {
+    "signature": "pyb.have_cdc()",
+    "description": "Return True if USB is connected as a serial device, False otherwise.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.html#pyb.have_cdc"
+  },
+  "pyb.hid": {
+    "signature": "pyb.hid((buttons, x, y, z))",
+    "description": "Takes a 4-tuple (or list) and sends it to the USB host (the PC) to signal a HID mouse-motion event.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.html#pyb.hid"
+  },
+  "pyb.info": {
+    "signature": "pyb.info([dump_alloc_table])",
+    "description": "Print out lots of information about the board.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.html#pyb.info"
+  },
+  "pyb.main": {
+    "signature": "pyb.main(filename)",
+    "description": "Set the filename of the main script to run after boot.py is finished. If this function is not called then the default file main.py will be executed.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.html#pyb.main"
+  },
+  "pyb.mount": {
+    "signature": "pyb.mount(device, mountpoint, *, readonly=False, mkfs=False)",
+    "description": "Note",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.html#pyb.mount"
+  },
+  "pyb.repl_uart": {
+    "signature": "pyb.repl_uart(uart)",
+    "description": "Get or set the UART object where the REPL is repeated on.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.html#pyb.repl_uart"
+  },
+  "pyb.rng": {
+    "signature": "pyb.rng()",
+    "description": "Return a 30-bit hardware generated random number.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.html#pyb.rng"
+  },
+  "pyb.sync": {
+    "signature": "pyb.sync()",
+    "description": "Sync all file systems.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.html#pyb.sync"
+  },
+  "pyb.unique_id": {
+    "signature": "pyb.unique_id()",
+    "description": "Returns a string of 12 bytes (96 bits), which is the unique ID of the MCU.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.html#pyb.unique_id"
+  },
+  "pyb.usb_mode": {
+    "signature": "pyb.usb_mode([modestr, ]port=-1, vid=0xf055, pid=-1, msc=(), hid=pyb.hid_mouse, high_speed=False)",
+    "description": "If called with no arguments, return the current USB mode as a string.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.html#pyb.usb_mode"
+  },
+  "pyb.pyb.hid_mouse": {
+    "signature": "pyb.hid_mouse",
+    "description": "A tuple of (subclass, protocol, max packet length, polling interval, report descriptor) to set appropriate values for a USB mouse or keyboard.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.html#pyb.pyb.hid_mouse"
+  },
+  "pyb.Accel": {
+    "signature": "class pyb.Accel",
+    "description": "Create and return an accelerometer object.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Accel.html#pyb.Accel"
+  },
+  "pyb.Accel.filtered_xyz": {
+    "signature": "Accel.filtered_xyz()",
+    "description": "Get a 3-tuple of filtered x, y and z values.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Accel.html#pyb.Accel.filtered_xyz"
+  },
+  "pyb.Accel.tilt": {
+    "signature": "Accel.tilt()",
+    "description": "Get the tilt register.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Accel.html#pyb.Accel.tilt"
+  },
+  "pyb.Accel.x": {
+    "signature": "Accel.x()",
+    "description": "Get the x-axis value.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Accel.html#pyb.Accel.x"
+  },
+  "pyb.Accel.y": {
+    "signature": "Accel.y()",
+    "description": "Get the y-axis value.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Accel.html#pyb.Accel.y"
+  },
+  "pyb.Accel.z": {
+    "signature": "Accel.z()",
+    "description": "Get the z-axis value.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Accel.html#pyb.Accel.z"
+  },
+  "pyb.ADC": {
+    "signature": "class pyb.ADC(pin)",
+    "description": "Create an ADC object associated with the given pin. This allows you to then read analog values on that pin.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.ADC.html#pyb.ADC"
+  },
+  "pyb.ADC.read": {
+    "signature": "ADC.read()",
+    "description": "Read the value on the analog pin and return it. The returned value will be between 0 and 4095.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.ADC.html#pyb.ADC.read"
+  },
+  "pyb.ADC.read_timed": {
+    "signature": "ADC.read_timed(buf, timer)",
+    "description": "Read analog values into buf at a rate set by the timer object.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.ADC.html#pyb.ADC.read_timed"
+  },
+  "pyb.ADC.read_timed_multi": {
+    "signature": "ADC.read_timed_multi((adcx, adcy, ...), (bufx, bufy, ...), timer)",
+    "description": "This is a static method. It can be used to extract relative timing or phase data from multiple ADC’s.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.ADC.html#pyb.ADC.read_timed_multi"
+  },
+  "pyb.CAN": {
+    "signature": "class pyb.CAN(bus, ...)",
+    "description": "Construct a CAN object on the given bus. bus can be 1-2, or 'YA' or 'YB'. With no additional parameters, the CAN object is created but not initialised (it has the settings from the last initialisation of the bus, if any). If extra arguments are given, the bus is initialised. See CAN.init() for parameters of initialisation.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.CAN.html#pyb.CAN"
+  },
+  "pyb.CAN.deinit": {
+    "signature": "CAN.deinit()",
+    "description": "Turn off the CAN bus.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.CAN.html#pyb.CAN.deinit"
+  },
+  "pyb.CAN.restart": {
+    "signature": "CAN.restart()",
+    "description": "Force a software restart of the CAN controller without resetting its configuration.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.CAN.html#pyb.CAN.restart"
+  },
+  "pyb.CAN.state": {
+    "signature": "CAN.state()",
+    "description": "Return the state of the controller. The return value can be one of:",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.CAN.html#pyb.CAN.state"
+  },
+  "pyb.CAN.info": {
+    "signature": "CAN.info([list])",
+    "description": "Get information about the controller’s error states and TX and RX buffers. If list is provided then it should be a list object with at least 8 entries, which will be filled in with the information. Otherwise a new list will be created and filled in. In both cases the return value of the method is the populated list.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.CAN.html#pyb.CAN.info"
+  },
+  "pyb.CAN.setfilter": {
+    "signature": "CAN.setfilter(bank, mode, fifo, params, *, rtr, extframe=False)",
+    "description": "Configure a filter bank:",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.CAN.html#pyb.CAN.setfilter"
+  },
+  "pyb.CAN.clearfilter": {
+    "signature": "CAN.clearfilter(bank, extframe=False)",
+    "description": "Clear and disables a filter bank:",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.CAN.html#pyb.CAN.clearfilter"
+  },
+  "pyb.CAN.any": {
+    "signature": "CAN.any(fifo)",
+    "description": "Return True if any message waiting on the FIFO, else False.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.CAN.html#pyb.CAN.any"
+  },
+  "pyb.CAN.recv": {
+    "signature": "CAN.recv(fifo, list=None, *, timeout=5000)",
+    "description": "Receive data on the bus:",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.CAN.html#pyb.CAN.recv"
+  },
+  "pyb.CAN.send": {
+    "signature": "CAN.send(data, id, *, timeout=0, rtr=False, extframe=False, fdf=False, brs=False)",
+    "description": "Send a message on the bus:",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.CAN.html#pyb.CAN.send"
+  },
+  "pyb.CAN.rxcallback": {
+    "signature": "CAN.rxcallback(fifo, fun)",
+    "description": "Register a function to be called when a message is accepted into a empty fifo:",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.CAN.html#pyb.CAN.rxcallback"
+  },
+  "pyb.CAN.NORMAL": {
+    "signature": "CAN.NORMAL",
+    "description": "The mode of the CAN bus used in init().",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.CAN.html#pyb.CAN.NORMAL"
+  },
+  "pyb.CAN.STOPPED": {
+    "signature": "CAN.STOPPED",
+    "description": "Possible states of the CAN controller returned from state().",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.CAN.html#pyb.CAN.STOPPED"
+  },
+  "pyb.CAN.LIST16": {
+    "signature": "CAN.LIST16",
+    "description": "The operation mode of a filter used in setfilter() for classic CAN.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.CAN.html#pyb.CAN.LIST16"
+  },
+  "pyb.CAN.DUAL": {
+    "signature": "CAN.DUAL",
+    "description": "The operation mode of a filter used in setfilter() for CAN FD.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.CAN.html#pyb.CAN.DUAL"
+  },
+  "pyb.DAC": {
+    "signature": "class pyb.DAC(port, bits=8, *, buffering=None)",
+    "description": "Construct a new DAC object.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.DAC.html#pyb.DAC"
+  },
+  "pyb.DAC.init": {
+    "signature": "DAC.init(bits=8, *, buffering=None)",
+    "description": "Reinitialise the DAC. bits can be 8 or 12. buffering can be None, False or True; see above constructor for the meaning of this parameter.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.DAC.html#pyb.DAC.init"
+  },
+  "pyb.DAC.deinit": {
+    "signature": "DAC.deinit()",
+    "description": "De-initialise the DAC making its pin available for other uses.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.DAC.html#pyb.DAC.deinit"
+  },
+  "pyb.DAC.noise": {
+    "signature": "DAC.noise(freq)",
+    "description": "Generate a pseudo-random noise signal. A new random sample is written to the DAC output at the given frequency.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.DAC.html#pyb.DAC.noise"
+  },
+  "pyb.DAC.triangle": {
+    "signature": "DAC.triangle(freq)",
+    "description": "Generate a triangle wave. The value on the DAC output changes at the given frequency and ramps through the full 12-bit range (up and down). Therefore the frequency of the repeating triangle wave itself is 8192 times smaller.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.DAC.html#pyb.DAC.triangle"
+  },
+  "pyb.DAC.write": {
+    "signature": "DAC.write(value)",
+    "description": "Direct access to the DAC output. The minimum value is 0. The maximum value is 2**``bits``-1, where bits is set when creating the DAC object or by using the init method.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.DAC.html#pyb.DAC.write"
+  },
+  "pyb.DAC.write_timed": {
+    "signature": "DAC.write_timed(data, freq, *, mode=DAC.NORMAL)",
+    "description": "Initiates a burst of RAM to DAC using a DMA transfer. The input data is treated as an array of bytes in 8-bit mode, and an array of unsigned half-words (array typecode ‘H’) in 12-bit mode.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.DAC.html#pyb.DAC.write_timed"
+  },
+  "pyb.DAC.NORMAL": {
+    "signature": "DAC.NORMAL",
+    "description": "NORMAL mode does a single transmission of the waveform in the data buffer,",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.DAC.html#pyb.DAC.NORMAL"
+  },
+  "pyb.DAC.CIRCULAR": {
+    "signature": "DAC.CIRCULAR",
+    "description": "CIRCULAR mode does a transmission of the waveform in the data buffer, and wraps around to the start of the data buffer every time it reaches the end of the table.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.DAC.html#pyb.DAC.CIRCULAR"
+  },
+  "pyb.ExtInt": {
+    "signature": "class pyb.ExtInt(pin, mode, pull, callback)",
+    "description": "Create an ExtInt object:",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.ExtInt.html#pyb.ExtInt"
+  },
+  "pyb.ExtInt.regs": {
+    "signature": "classmethod ExtInt.regs()",
+    "description": "Dump the values of the EXTI registers.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.ExtInt.html#pyb.ExtInt.regs"
+  },
+  "pyb.ExtInt.disable": {
+    "signature": "ExtInt.disable()",
+    "description": "Disable the interrupt associated with the ExtInt object. This could be useful for debouncing.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.ExtInt.html#pyb.ExtInt.disable"
+  },
+  "pyb.ExtInt.enable": {
+    "signature": "ExtInt.enable()",
+    "description": "Enable a disabled interrupt.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.ExtInt.html#pyb.ExtInt.enable"
+  },
+  "pyb.ExtInt.line": {
+    "signature": "ExtInt.line()",
+    "description": "Return the line number that the pin is mapped to.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.ExtInt.html#pyb.ExtInt.line"
+  },
+  "pyb.ExtInt.swint": {
+    "signature": "ExtInt.swint()",
+    "description": "Trigger the callback from software.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.ExtInt.html#pyb.ExtInt.swint"
+  },
+  "pyb.ExtInt.IRQ_FALLING": {
+    "signature": "ExtInt.IRQ_FALLING",
+    "description": "interrupt on a falling edge",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.ExtInt.html#pyb.ExtInt.IRQ_FALLING"
+  },
+  "pyb.ExtInt.IRQ_RISING": {
+    "signature": "ExtInt.IRQ_RISING",
+    "description": "interrupt on a rising edge",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.ExtInt.html#pyb.ExtInt.IRQ_RISING"
+  },
+  "pyb.ExtInt.IRQ_RISING_FALLING": {
+    "signature": "ExtInt.IRQ_RISING_FALLING",
+    "description": "interrupt on a rising or falling edge",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.ExtInt.html#pyb.ExtInt.IRQ_RISING_FALLING"
+  },
+  "pyb.Flash": {
+    "signature": "class pyb.Flash",
+    "description": "Create and return a block device that represents the flash device presented to the USB mass storage interface.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Flash.html#pyb.Flash"
+  },
+  "pyb.Flash.readblocks": {
+    "signature": "Flash.readblocks(block_num, buf)",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Flash.html#pyb.Flash.readblocks"
+  },
+  "pyb.Flash.writeblocks": {
+    "signature": "Flash.writeblocks(block_num, buf)",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Flash.html#pyb.Flash.writeblocks"
+  },
+  "pyb.Flash.ioctl": {
+    "signature": "Flash.ioctl(cmd, arg)",
+    "description": "These methods implement the simple and extended block protocol defined by vfs.AbstractBlockDev.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Flash.html#pyb.Flash.ioctl"
+  },
+  "pyb.I2C": {
+    "signature": "class pyb.I2C(bus, ...)",
+    "description": "Construct an I2C object on the given bus. bus can be 1 or 2, ‘X’ or ‘Y’. With no additional parameters, the I2C object is created but not initialised (it has the settings from the last initialisation of the bus, if any). If extra arguments are given, the bus is initialised. See init for parameters of initialisation.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.I2C.html#pyb.I2C"
+  },
+  "pyb.I2C.deinit": {
+    "signature": "I2C.deinit()",
+    "description": "Turn off the I2C bus.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.I2C.html#pyb.I2C.deinit"
+  },
+  "pyb.I2C.init": {
+    "signature": "I2C.init(mode, *, addr=0x12, baudrate=400000, gencall=False, dma=False)",
+    "description": "Initialise the I2C bus with the given parameters:",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.I2C.html#pyb.I2C.init"
+  },
+  "pyb.I2C.is_ready": {
+    "signature": "I2C.is_ready(addr)",
+    "description": "Check if an I2C device responds to the given address. Only valid when in controller mode.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.I2C.html#pyb.I2C.is_ready"
+  },
+  "pyb.I2C.mem_read": {
+    "signature": "I2C.mem_read(data, addr, memaddr, *, timeout=5000, addr_size=8)",
+    "description": "Read from the memory of an I2C device:",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.I2C.html#pyb.I2C.mem_read"
+  },
+  "pyb.I2C.mem_write": {
+    "signature": "I2C.mem_write(data, addr, memaddr, *, timeout=5000, addr_size=8)",
+    "description": "Write to the memory of an I2C device:",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.I2C.html#pyb.I2C.mem_write"
+  },
+  "pyb.I2C.recv": {
+    "signature": "I2C.recv(recv, addr=0x00, *, timeout=5000)",
+    "description": "Receive data on the bus:",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.I2C.html#pyb.I2C.recv"
+  },
+  "pyb.I2C.send": {
+    "signature": "I2C.send(send, addr=0x00, *, timeout=5000)",
+    "description": "Send data on the bus:",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.I2C.html#pyb.I2C.send"
+  },
+  "pyb.I2C.scan": {
+    "signature": "I2C.scan()",
+    "description": "Scan all I2C addresses from 0x01 to 0x7f and return a list of those that respond. Only valid when in controller mode.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.I2C.html#pyb.I2C.scan"
+  },
+  "pyb.I2C.CONTROLLER": {
+    "signature": "I2C.CONTROLLER",
+    "description": "for initialising the bus to controller mode",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.I2C.html#pyb.I2C.CONTROLLER"
+  },
+  "pyb.I2C.PERIPHERAL": {
+    "signature": "I2C.PERIPHERAL",
+    "description": "for initialising the bus to peripheral mode",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.I2C.html#pyb.I2C.PERIPHERAL"
+  },
+  "pyb.LCD": {
+    "signature": "class pyb.LCD(skin_position)",
+    "description": "Construct an LCD object in the given skin position. skin_position can be ‘X’ or ‘Y’, and should match the position where the LCD pyskin is plugged in.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.LCD.html#pyb.LCD"
+  },
+  "pyb.LCD.command": {
+    "signature": "LCD.command(instr_data, buf)",
+    "description": "Send an arbitrary command to the LCD. Pass 0 for instr_data to send an instruction, otherwise pass 1 to send data. buf is a buffer with the instructions/data to send.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.LCD.html#pyb.LCD.command"
+  },
+  "pyb.LCD.contrast": {
+    "signature": "LCD.contrast(value)",
+    "description": "Set the contrast of the LCD. Valid values are between 0 and 47.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.LCD.html#pyb.LCD.contrast"
+  },
+  "pyb.LCD.fill": {
+    "signature": "LCD.fill(colour)",
+    "description": "Fill the screen with the given colour (0 or 1 for white or black).",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.LCD.html#pyb.LCD.fill"
+  },
+  "pyb.LCD.get": {
+    "signature": "LCD.get(x, y)",
+    "description": "Get the pixel at the position (x, y). Returns 0 or 1.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.LCD.html#pyb.LCD.get"
+  },
+  "pyb.LCD.light": {
+    "signature": "LCD.light(value)",
+    "description": "Turn the backlight on/off. True or 1 turns it on, False or 0 turns it off.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.LCD.html#pyb.LCD.light"
+  },
+  "pyb.LCD.pixel": {
+    "signature": "LCD.pixel(x, y, colour)",
+    "description": "Set the pixel at (x, y) to the given colour (0 or 1).",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.LCD.html#pyb.LCD.pixel"
+  },
+  "pyb.LCD.show": {
+    "signature": "LCD.show()",
+    "description": "Show the hidden buffer on the screen.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.LCD.html#pyb.LCD.show"
+  },
+  "pyb.LCD.text": {
+    "signature": "LCD.text(str, x, y, colour)",
+    "description": "Draw the given text to the position (x, y) using the given colour (0 or 1).",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.LCD.html#pyb.LCD.text"
+  },
+  "pyb.LCD.write": {
+    "signature": "LCD.write(str)",
+    "description": "Write the string str to the screen. It will appear immediately.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.LCD.html#pyb.LCD.write"
+  },
+  "pyb.LED": {
+    "signature": "class pyb.LED(id)",
+    "description": "Create an LED object associated with the given LED:",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.LED.html#pyb.LED"
+  },
+  "pyb.LED.intensity": {
+    "signature": "LED.intensity([value])",
+    "description": "Get or set the LED intensity. Intensity ranges between 0 (off) and 255 (full on). If no argument is given, return the LED intensity. If an argument is given, set the LED intensity and return None.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.LED.html#pyb.LED.intensity"
+  },
+  "pyb.LED.off": {
+    "signature": "LED.off()",
+    "description": "Turn the LED off.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.LED.html#pyb.LED.off"
+  },
+  "pyb.LED.on": {
+    "signature": "LED.on()",
+    "description": "Turn the LED on, to maximum intensity.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.LED.html#pyb.LED.on"
+  },
+  "pyb.LED.toggle": {
+    "signature": "LED.toggle()",
+    "description": "Toggle the LED between on (maximum intensity) and off. If the LED is at non-zero intensity then it is considered “on” and toggle will turn it off.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.LED.html#pyb.LED.toggle"
+  },
+  "pyb.Pin": {
+    "signature": "class pyb.Pin(id, ...)",
+    "description": "Create a new Pin object associated with the id. If additional arguments are given, they are used to initialise the pin. See pin.init().",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Pin.html#pyb.Pin"
+  },
+  "pyb.Pin.debug": {
+    "signature": "classmethod Pin.debug([state])",
+    "description": "Get or set the debugging state (True or False for on or off).",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Pin.html#pyb.Pin.debug"
+  },
+  "pyb.Pin.dict": {
+    "signature": "classmethod Pin.dict([dict])",
+    "description": "Get or set the pin mapper dictionary.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Pin.html#pyb.Pin.dict"
+  },
+  "pyb.Pin.mapper": {
+    "signature": "classmethod Pin.mapper([fun])",
+    "description": "Get or set the pin mapper function.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Pin.html#pyb.Pin.mapper"
+  },
+  "pyb.Pin.init": {
+    "signature": "Pin.init(mode, pull=Pin.PULL_NONE, *, value=None, alt=-1)",
+    "description": "Initialise the pin:",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Pin.html#pyb.Pin.init"
+  },
+  "pyb.Pin.value": {
+    "signature": "Pin.value([value])",
+    "description": "Get or set the digital logic level of the pin:",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Pin.html#pyb.Pin.value"
+  },
+  "pyb.Pin.__str__": {
+    "signature": "Pin.__str__()",
+    "description": "Return a string describing the pin object.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Pin.html#pyb.Pin.__str__"
+  },
+  "pyb.Pin.af": {
+    "signature": "Pin.af()",
+    "description": "Returns the currently configured alternate-function of the pin. The integer returned will match one of the allowed constants for the af argument to the init function.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Pin.html#pyb.Pin.af"
+  },
+  "pyb.Pin.af_list": {
+    "signature": "Pin.af_list()",
+    "description": "Returns an array of alternate functions available for this pin.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Pin.html#pyb.Pin.af_list"
+  },
+  "pyb.Pin.gpio": {
+    "signature": "Pin.gpio()",
+    "description": "Returns the base address of the GPIO block associated with this pin.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Pin.html#pyb.Pin.gpio"
+  },
+  "pyb.Pin.mode": {
+    "signature": "Pin.mode()",
+    "description": "Returns the currently configured mode of the pin. The integer returned will match one of the allowed constants for the mode argument to the init function.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Pin.html#pyb.Pin.mode"
+  },
+  "pyb.Pin.name": {
+    "signature": "Pin.name()",
+    "description": "Get the pin name.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Pin.html#pyb.Pin.name"
+  },
+  "pyb.Pin.names": {
+    "signature": "Pin.names()",
+    "description": "Returns the cpu and board names for this pin.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Pin.html#pyb.Pin.names"
+  },
+  "pyb.Pin.pin": {
+    "signature": "Pin.pin()",
+    "description": "Get the pin number.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Pin.html#pyb.Pin.pin"
+  },
+  "pyb.Pin.port": {
+    "signature": "Pin.port()",
+    "description": "Get the pin port.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Pin.html#pyb.Pin.port"
+  },
+  "pyb.Pin.pull": {
+    "signature": "Pin.pull()",
+    "description": "Returns the currently configured pull of the pin. The integer returned will match one of the allowed constants for the pull argument to the init function.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Pin.html#pyb.Pin.pull"
+  },
+  "pyb.Pin.ALT": {
+    "signature": "Pin.ALT",
+    "description": "initialise the pin to alternate-function mode for input or output",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Pin.html#pyb.Pin.ALT"
+  },
+  "pyb.Pin.AF_OD": {
+    "signature": "Pin.AF_OD",
+    "description": "initialise the pin to alternate-function mode with an open-drain drive",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Pin.html#pyb.Pin.AF_OD"
+  },
+  "pyb.Pin.AF_PP": {
+    "signature": "Pin.AF_PP",
+    "description": "initialise the pin to alternate-function mode with a push-pull drive",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Pin.html#pyb.Pin.AF_PP"
+  },
+  "pyb.Pin.ANALOG": {
+    "signature": "Pin.ANALOG",
+    "description": "initialise the pin to analog mode",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Pin.html#pyb.Pin.ANALOG"
+  },
+  "pyb.Pin.IN": {
+    "signature": "Pin.IN",
+    "description": "initialise the pin to input mode",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Pin.html#pyb.Pin.IN"
+  },
+  "pyb.Pin.OUT_OD": {
+    "signature": "Pin.OUT_OD",
+    "description": "initialise the pin to output mode with an open-drain drive",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Pin.html#pyb.Pin.OUT_OD"
+  },
+  "pyb.Pin.OUT_PP": {
+    "signature": "Pin.OUT_PP",
+    "description": "initialise the pin to output mode with a push-pull drive",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Pin.html#pyb.Pin.OUT_PP"
+  },
+  "pyb.Pin.PULL_DOWN": {
+    "signature": "Pin.PULL_DOWN",
+    "description": "enable the pull-down resistor on the pin",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Pin.html#pyb.Pin.PULL_DOWN"
+  },
+  "pyb.Pin.PULL_NONE": {
+    "signature": "Pin.PULL_NONE",
+    "description": "don’t enable any pull up or down resistors on the pin",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Pin.html#pyb.Pin.PULL_NONE"
+  },
+  "pyb.Pin.PULL_UP": {
+    "signature": "Pin.PULL_UP",
+    "description": "enable the pull-up resistor on the pin",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Pin.html#pyb.Pin.PULL_UP"
+  },
+  "pyb.pinaf.__str__": {
+    "signature": "pinaf.__str__()",
+    "description": "Return a string describing the alternate function.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Pin.html#pyb.pinaf.__str__"
+  },
+  "pyb.pinaf.index": {
+    "signature": "pinaf.index()",
+    "description": "Return the alternate function index.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Pin.html#pyb.pinaf.index"
+  },
+  "pyb.pinaf.name": {
+    "signature": "pinaf.name()",
+    "description": "Return the name of the alternate function.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Pin.html#pyb.pinaf.name"
+  },
+  "pyb.pinaf.reg": {
+    "signature": "pinaf.reg()",
+    "description": "Return the base register associated with the peripheral assigned to this alternate function. For example, if the alternate function were TIM2_CH3 this would return stm.TIM2",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Pin.html#pyb.pinaf.reg"
+  },
+  "pyb.RTC": {
+    "signature": "class pyb.RTC",
+    "description": "Create an RTC object.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.RTC.html#pyb.RTC"
+  },
+  "pyb.RTC.datetime": {
+    "signature": "RTC.datetime([datetimetuple])",
+    "description": "Get or set the date and time of the RTC.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.RTC.html#pyb.RTC.datetime"
+  },
+  "pyb.RTC.wakeup": {
+    "signature": "RTC.wakeup(timeout, callback=None)",
+    "description": "Set the RTC wakeup timer to trigger repeatedly at every timeout milliseconds. This trigger can wake the pyboard from both the sleep states: pyb.stop() and pyb.standby().",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.RTC.html#pyb.RTC.wakeup"
+  },
+  "pyb.RTC.info": {
+    "signature": "RTC.info()",
+    "description": "Get information about the startup time and reset source.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.RTC.html#pyb.RTC.info"
+  },
+  "pyb.RTC.calibration": {
+    "signature": "RTC.calibration(cal)",
+    "description": "Get or set RTC calibration.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.RTC.html#pyb.RTC.calibration"
+  },
+  "pyb.Servo": {
+    "signature": "class pyb.Servo(id)",
+    "description": "Create a servo object. id is 1-4, and corresponds to pins X1 through X4.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Servo.html#pyb.Servo"
+  },
+  "pyb.Servo.angle": {
+    "signature": "Servo.angle([angle, time=0])",
+    "description": "If no arguments are given, this function returns the current angle.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Servo.html#pyb.Servo.angle"
+  },
+  "pyb.Servo.speed": {
+    "signature": "Servo.speed([speed, time=0])",
+    "description": "If no arguments are given, this function returns the current speed.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Servo.html#pyb.Servo.speed"
+  },
+  "pyb.Servo.pulse_width": {
+    "signature": "Servo.pulse_width([value])",
+    "description": "If no arguments are given, this function returns the current raw pulse-width value.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Servo.html#pyb.Servo.pulse_width"
+  },
+  "pyb.Servo.calibration": {
+    "signature": "Servo.calibration([pulse_min, pulse_max, pulse_centre[, pulse_angle_90, pulse_speed_100]])",
+    "description": "If no arguments are given, this function returns the current calibration data, as a 5-tuple.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Servo.html#pyb.Servo.calibration"
+  },
+  "pyb.SPI": {
+    "signature": "class pyb.SPI(bus, ...)",
+    "description": "Construct an SPI object on the given bus. bus can be 1 or 2, or ‘X’ or ‘Y’. With no additional parameters, the SPI object is created but not initialised (it has the settings from the last initialisation of the bus, if any). If extra arguments are given, the bus is initialised. See init for parameters of initialisation.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.SPI.html#pyb.SPI"
+  },
+  "pyb.SPI.deinit": {
+    "signature": "SPI.deinit()",
+    "description": "Turn off the SPI bus.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.SPI.html#pyb.SPI.deinit"
+  },
+  "pyb.SPI.init": {
+    "signature": "SPI.init(mode, baudrate=328125, *, prescaler=-1, polarity=1, phase=0, bits=8, firstbit=SPI.MSB, ti=False, crc=None)",
+    "description": "Initialise the SPI bus with the given parameters:",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.SPI.html#pyb.SPI.init"
+  },
+  "pyb.SPI.recv": {
+    "signature": "SPI.recv(recv, *, timeout=5000)",
+    "description": "Receive data on the bus:",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.SPI.html#pyb.SPI.recv"
+  },
+  "pyb.SPI.send": {
+    "signature": "SPI.send(send, *, timeout=5000)",
+    "description": "Send data on the bus:",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.SPI.html#pyb.SPI.send"
+  },
+  "pyb.SPI.send_recv": {
+    "signature": "SPI.send_recv(send, recv=None, *, timeout=5000)",
+    "description": "Send and receive data on the bus at the same time:",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.SPI.html#pyb.SPI.send_recv"
+  },
+  "pyb.SPI.CONTROLLER": {
+    "signature": "SPI.CONTROLLER",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.SPI.html#pyb.SPI.CONTROLLER"
+  },
+  "pyb.SPI.PERIPHERAL": {
+    "signature": "SPI.PERIPHERAL",
+    "description": "for initialising the SPI bus to controller or peripheral mode",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.SPI.html#pyb.SPI.PERIPHERAL"
+  },
+  "pyb.SPI.LSB": {
+    "signature": "SPI.LSB",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.SPI.html#pyb.SPI.LSB"
+  },
+  "pyb.SPI.MSB": {
+    "signature": "SPI.MSB",
+    "description": "set the first bit to be the least or most significant bit",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.SPI.html#pyb.SPI.MSB"
+  },
+  "pyb.Switch": {
+    "signature": "class pyb.Switch",
+    "description": "Create and return a switch object.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Switch.html#pyb.Switch"
+  },
+  "pyb.Switch.__call__": {
+    "signature": "Switch.__call__()",
+    "description": "Call switch object directly to get its state: True if pressed down, False otherwise.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Switch.html#pyb.Switch.__call__"
+  },
+  "pyb.Switch.value": {
+    "signature": "Switch.value()",
+    "description": "Get the switch state. Returns True if pressed down, otherwise False.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Switch.html#pyb.Switch.value"
+  },
+  "pyb.Switch.callback": {
+    "signature": "Switch.callback(fun)",
+    "description": "Register the given function to be called when the switch is pressed down. If fun is None, then it disables the callback.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Switch.html#pyb.Switch.callback"
+  },
+  "pyb.Timer": {
+    "signature": "class pyb.Timer(id, ...)",
+    "description": "Construct a new timer object of the given id. If additional arguments are given, then the timer is initialised by init(...). id can be 1 to 14.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Timer.html#pyb.Timer"
+  },
+  "pyb.Timer.init": {
+    "signature": "Timer.init(*, freq, prescaler, period, mode=Timer.UP, div=1, callback=None, deadtime=0, brk=Timer.BRK_OFF, hard=True)",
+    "description": "Initialise the timer. Initialisation must be either by frequency (in Hz) or by prescaler and period:",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Timer.html#pyb.Timer.init"
+  },
+  "pyb.Timer.deinit": {
+    "signature": "Timer.deinit()",
+    "description": "Deinitialises the timer.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Timer.html#pyb.Timer.deinit"
+  },
+  "pyb.Timer.callback": {
+    "signature": "Timer.callback(fun)",
+    "description": "Set the function to be called when the timer triggers. fun is passed 1 argument, the timer object. If fun is None then the callback will be disabled.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Timer.html#pyb.Timer.callback"
+  },
+  "pyb.Timer.channel": {
+    "signature": "Timer.channel(channel, mode, ...)",
+    "description": "If only a channel number is passed, then a previously initialized channel object is returned (or None if there is no previous channel).",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Timer.html#pyb.Timer.channel"
+  },
+  "pyb.Timer.counter": {
+    "signature": "Timer.counter([value])",
+    "description": "Get or set the timer counter.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Timer.html#pyb.Timer.counter"
+  },
+  "pyb.Timer.freq": {
+    "signature": "Timer.freq([value])",
+    "description": "Get or set the frequency for the timer (changes prescaler and period if set).",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Timer.html#pyb.Timer.freq"
+  },
+  "pyb.Timer.period": {
+    "signature": "Timer.period([value])",
+    "description": "Get or set the period of the timer.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Timer.html#pyb.Timer.period"
+  },
+  "pyb.Timer.prescaler": {
+    "signature": "Timer.prescaler([value])",
+    "description": "Get or set the prescaler for the timer.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Timer.html#pyb.Timer.prescaler"
+  },
+  "pyb.Timer.source_freq": {
+    "signature": "Timer.source_freq()",
+    "description": "Get the frequency of the source of the timer.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Timer.html#pyb.Timer.source_freq"
+  },
+  "pyb.timerchannel.callback": {
+    "signature": "timerchannel.callback(fun)",
+    "description": "Set the function to be called when the timer channel triggers. fun is passed 1 argument, the timer object. If fun is None then the callback will be disabled.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Timer.html#pyb.timerchannel.callback"
+  },
+  "pyb.timerchannel.capture": {
+    "signature": "timerchannel.capture([value])",
+    "description": "Get or set the capture value associated with a channel. capture, compare, and pulse_width are all aliases for the same function. capture is the logical name to use when the channel is in input capture mode.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Timer.html#pyb.timerchannel.capture"
+  },
+  "pyb.timerchannel.compare": {
+    "signature": "timerchannel.compare([value])",
+    "description": "Get or set the compare value associated with a channel. capture, compare, and pulse_width are all aliases for the same function. compare is the logical name to use when the channel is in output compare mode.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Timer.html#pyb.timerchannel.compare"
+  },
+  "pyb.timerchannel.pulse_width": {
+    "signature": "timerchannel.pulse_width([value])",
+    "description": "Get or set the pulse width value associated with a channel. capture, compare, and pulse_width are all aliases for the same function. pulse_width is the logical name to use when the channel is in PWM mode.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Timer.html#pyb.timerchannel.pulse_width"
+  },
+  "pyb.timerchannel.pulse_width_percent": {
+    "signature": "timerchannel.pulse_width_percent([value])",
+    "description": "Get or set the pulse width percentage associated with a channel. The value is a number between 0 and 100 and sets the percentage of the timer period for which the pulse is active. The value can be an integer or floating-point number for more accuracy. For example, a value of 25 gives a duty cycle of 25%.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Timer.html#pyb.timerchannel.pulse_width_percent"
+  },
+  "pyb.Timer.UP": {
+    "signature": "Timer.UP",
+    "description": "Configures the timer to count Up, Down, or from 0 to ARR and then back down to 0.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Timer.html#pyb.Timer.UP"
+  },
+  "pyb.Timer.BRK_OFF": {
+    "signature": "Timer.BRK_OFF",
+    "description": "Configures the break mode when passed to the brk keyword argument.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.Timer.html#pyb.Timer.BRK_OFF"
+  },
+  "pyb.UART": {
+    "signature": "class pyb.UART(bus, ...)",
+    "description": "Construct a UART object on the given bus. For Pyboard bus can be 1-4, 6, ‘XA’, ‘XB’, ‘YA’, or ‘YB’. For Pyboard Lite bus can be 1, 2, 6, ‘XB’, or ‘YA’. For Pyboard D bus can be 1-4, ‘XA’, ‘YA’ or ‘YB’. With no additional parameters, the UART object is created but not initialised (it has the settings from the last initialisation of the bus, if any). If extra arguments are given, the bus is initialised. See init for parameters of initialisation.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.UART.html#pyb.UART"
+  },
+  "pyb.UART.init": {
+    "signature": "UART.init(baudrate, bits=8, parity=None, stop=1, *, timeout=0, flow=0, timeout_char=0, read_buf_len=64)",
+    "description": "Initialise the UART bus with the given parameters:",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.UART.html#pyb.UART.init"
+  },
+  "pyb.UART.deinit": {
+    "signature": "UART.deinit()",
+    "description": "Turn off the UART bus.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.UART.html#pyb.UART.deinit"
+  },
+  "pyb.UART.any": {
+    "signature": "UART.any()",
+    "description": "Returns the number of bytes waiting (may be 0).",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.UART.html#pyb.UART.any"
+  },
+  "pyb.UART.read": {
+    "signature": "UART.read([nbytes])",
+    "description": "Read characters. If nbytes is specified then read at most that many bytes. If nbytes are available in the buffer, returns immediately, otherwise returns when sufficient characters arrive or the timeout elapses.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.UART.html#pyb.UART.read"
+  },
+  "pyb.UART.readchar": {
+    "signature": "UART.readchar()",
+    "description": "Receive a single character on the bus.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.UART.html#pyb.UART.readchar"
+  },
+  "pyb.UART.readinto": {
+    "signature": "UART.readinto(buf[, nbytes])",
+    "description": "Read bytes into the buf. If nbytes is specified then read at most that many bytes. Otherwise, read at most len(buf) bytes.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.UART.html#pyb.UART.readinto"
+  },
+  "pyb.UART.readline": {
+    "signature": "UART.readline()",
+    "description": "Read a line, ending in a newline character. If such a line exists, return is immediate. If the timeout elapses, all available data is returned regardless of whether a newline exists.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.UART.html#pyb.UART.readline"
+  },
+  "pyb.UART.write": {
+    "signature": "UART.write(buf)",
+    "description": "Write the buffer of bytes to the bus. If characters are 7 or 8 bits wide then each byte is one character. If characters are 9 bits wide then two bytes are used for each character (little endian), and buf must contain an even number of bytes.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.UART.html#pyb.UART.write"
+  },
+  "pyb.UART.writechar": {
+    "signature": "UART.writechar(char)",
+    "description": "Write a single character on the bus. char is an integer to write. Return value: None. See note below if CTS flow control is used.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.UART.html#pyb.UART.writechar"
+  },
+  "pyb.UART.sendbreak": {
+    "signature": "UART.sendbreak()",
+    "description": "Send a break condition on the bus. This drives the bus low for a duration of 13 bits. Return value: None.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.UART.html#pyb.UART.sendbreak"
+  },
+  "pyb.UART.RTS": {
+    "signature": "UART.RTS",
+    "description": "to select the flow control type.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.UART.html#pyb.UART.RTS"
+  },
+  "pyb.USB_HID": {
+    "signature": "class pyb.USB_HID",
+    "description": "Create a new USB_HID object.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.USB_HID.html#pyb.USB_HID"
+  },
+  "pyb.USB_HID.recv": {
+    "signature": "USB_HID.recv(data, *, timeout=5000)",
+    "description": "Receive data on the bus:",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.USB_HID.html#pyb.USB_HID.recv"
+  },
+  "pyb.USB_HID.send": {
+    "signature": "USB_HID.send(data)",
+    "description": "Send data over the USB HID interface:",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.USB_HID.html#pyb.USB_HID.send"
+  },
+  "pyb.USB_VCP": {
+    "signature": "class pyb.USB_VCP(id=0)",
+    "description": "Create a new USB_VCP object. The id argument specifies which USB VCP port to use.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.USB_VCP.html#pyb.USB_VCP"
+  },
+  "pyb.USB_VCP.init": {
+    "signature": "USB_VCP.init(*, flow=-1)",
+    "description": "Configure the USB VCP port. If the flow argument is not -1 then the value sets the flow control, which can be a bitwise-or of USB_VCP.RTS and USB_VCP.CTS. RTS is used to control read behaviour and CTS, to control write behaviour.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.USB_VCP.html#pyb.USB_VCP.init"
+  },
+  "pyb.USB_VCP.setinterrupt": {
+    "signature": "USB_VCP.setinterrupt(chr)",
+    "description": "Set the character which interrupts running Python code. This is set to 3 (CTRL-C) by default, and when a CTRL-C character is received over the USB VCP port, a KeyboardInterrupt exception is raised.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.USB_VCP.html#pyb.USB_VCP.setinterrupt"
+  },
+  "pyb.USB_VCP.isconnected": {
+    "signature": "USB_VCP.isconnected()",
+    "description": "Return True if USB is connected as a serial device, else False.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.USB_VCP.html#pyb.USB_VCP.isconnected"
+  },
+  "pyb.USB_VCP.any": {
+    "signature": "USB_VCP.any()",
+    "description": "Return True if any characters waiting, else False.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.USB_VCP.html#pyb.USB_VCP.any"
+  },
+  "pyb.USB_VCP.close": {
+    "signature": "USB_VCP.close()",
+    "description": "This method does nothing. It exists so the USB_VCP object can act as a file.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.USB_VCP.html#pyb.USB_VCP.close"
+  },
+  "pyb.USB_VCP.read": {
+    "signature": "USB_VCP.read([nbytes])",
+    "description": "Read at most nbytes from the serial device and return them as a bytes object. If nbytes is not specified then the method reads all available bytes from the serial device. USB_VCP stream implicitly works in non-blocking mode, so if no pending data available, this method will return immediately with None value.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.USB_VCP.html#pyb.USB_VCP.read"
+  },
+  "pyb.USB_VCP.readinto": {
+    "signature": "USB_VCP.readinto(buf[, maxlen])",
+    "description": "Read bytes from the serial device and store them into buf, which should be a buffer-like object. At most len(buf) bytes are read. If maxlen is given and then at most min(maxlen, len(buf)) bytes are read.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.USB_VCP.html#pyb.USB_VCP.readinto"
+  },
+  "pyb.USB_VCP.readline": {
+    "signature": "USB_VCP.readline()",
+    "description": "Read a whole line from the serial device.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.USB_VCP.html#pyb.USB_VCP.readline"
+  },
+  "pyb.USB_VCP.readlines": {
+    "signature": "USB_VCP.readlines()",
+    "description": "Read as much data as possible from the serial device, breaking it into lines.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.USB_VCP.html#pyb.USB_VCP.readlines"
+  },
+  "pyb.USB_VCP.write": {
+    "signature": "USB_VCP.write(buf)",
+    "description": "Write the bytes from buf to the serial device.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.USB_VCP.html#pyb.USB_VCP.write"
+  },
+  "pyb.USB_VCP.recv": {
+    "signature": "USB_VCP.recv(data, *, timeout=5000)",
+    "description": "Receive data on the bus:",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.USB_VCP.html#pyb.USB_VCP.recv"
+  },
+  "pyb.USB_VCP.send": {
+    "signature": "USB_VCP.send(data, *, timeout=5000)",
+    "description": "Send data over the USB VCP:",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.USB_VCP.html#pyb.USB_VCP.send"
+  },
+  "pyb.USB_VCP.irq": {
+    "signature": "USB_VCP.irq(handler=None, trigger=IRQ_RX, hard=False)",
+    "description": "Register handler to be called whenever an event specified by trigger occurs. The handler function must take exactly one argument, which will be the USB VCP object. Pass in None to disable the callback.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.USB_VCP.html#pyb.USB_VCP.irq"
+  },
+  "pyb.USB_VCP.RTS": {
+    "signature": "USB_VCP.RTS",
+    "description": "to select the flow control type.",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.USB_VCP.html#pyb.USB_VCP.RTS"
+  },
+  "pyb.USB_VCP.IRQ_RX": {
+    "signature": "USB_VCP.IRQ_RX",
+    "description": "IRQ trigger values for USB_VCP.irq().",
+    "url": "https://docs.micropython.org/en/latest/library/pyb.USB_VCP.html#pyb.USB_VCP.IRQ_RX"
+  }
+}

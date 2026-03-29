@@ -1,0 +1,207 @@
+{
+  "rp2.asm_pio": {
+    "signature": "rp2.asm_pio(*, out_init=None, set_init=None, sideset_init=None, side_pindir=False, in_shiftdir=PIO.SHIFT_LEFT, out_shiftdir=PIO.SHIFT_LEFT, autopush=False, autopull=False, push_thresh=32, pull_thresh=32, fifo_join=PIO.JOIN_NONE)",
+    "description": "Assemble a PIO program.",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.html#rp2.asm_pio"
+  },
+  "rp2.asm_pio_encode": {
+    "signature": "rp2.asm_pio_encode(instr, sideset_count, sideset_opt=False)",
+    "description": "Assemble a single PIO instruction. You usually want to use asm_pio() instead.",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.html#rp2.asm_pio_encode"
+  },
+  "rp2.bootsel_button": {
+    "signature": "rp2.bootsel_button()",
+    "description": "Temporarily turns the QSPI_SS pin into an input and reads its value, returning 1 for low and 0 for high. On a typical RP2040 board with a BOOTSEL button, a return value of 1 indicates that the button is pressed.",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.html#rp2.bootsel_button"
+  },
+  "rp2.PIOASMError": {
+    "signature": "class rp2.PIOASMError",
+    "description": "This exception is raised from asm_pio() or asm_pio_encode() if there is an error assembling a PIO program.",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.html#rp2.PIOASMError"
+  },
+  "rp2.DMA": {
+    "signature": "class rp2.DMA",
+    "description": "Claim one of the DMA controller channels for exclusive use.",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.DMA.html#rp2.DMA"
+  },
+  "rp2.DMA.config": {
+    "signature": "DMA.config(read=None, write=None, count=None, ctrl=None, trigger=False)",
+    "description": "Configure the DMA registers for the channel and optionally start the transfer. Parameters are:",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.DMA.html#rp2.DMA.config"
+  },
+  "rp2.DMA.irq": {
+    "signature": "DMA.irq(handler=None, hard=False)",
+    "description": "Returns the IRQ object for this DMA channel and optionally configures it.",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.DMA.html#rp2.DMA.irq"
+  },
+  "rp2.DMA.close": {
+    "signature": "DMA.close()",
+    "description": "Release the claim on the underlying DMA channel and free the interrupt handler. The DMA object can not be used after this operation.",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.DMA.html#rp2.DMA.close"
+  },
+  "rp2.DMA.pack_ctrl": {
+    "signature": "DMA.pack_ctrl(default=None, **kwargs)",
+    "description": "Pack the values provided in the keyword arguments into the named fields of a new control register value. Any field that is not provided will be set to a default value. The default will either be taken from the provided default value, or if that is not given, a default suitable for the current channel; setting this to the current value of the DMA.ctrl attribute provides an easy way to override a subset of the fields.",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.DMA.html#rp2.DMA.pack_ctrl"
+  },
+  "rp2.DMA.unpack_ctrl": {
+    "signature": "DMA.unpack_ctrl(value)",
+    "description": "Unpack a value for a DMA channel control register into a dictionary with key/value pairs for each of the fields in the control register. value is the ctrl register value to unpack.",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.DMA.html#rp2.DMA.unpack_ctrl"
+  },
+  "rp2.DMA.active": {
+    "signature": "DMA.active([value])",
+    "description": "Gets or sets whether the DMA channel is currently running.",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.DMA.html#rp2.DMA.active"
+  },
+  "rp2.DMA.read": {
+    "signature": "DMA.read",
+    "description": "This attribute reflects the address from which the next bus transfer will read. It may be written with either an integer or an object that supports the buffer protocol and doing so has immediate effect.",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.DMA.html#rp2.DMA.read"
+  },
+  "rp2.DMA.write": {
+    "signature": "DMA.write",
+    "description": "This attribute reflects the address to which the next bus transfer will write. It may be written with either an integer or an object that supports the buffer protocol and doing so has immediate effect.",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.DMA.html#rp2.DMA.write"
+  },
+  "rp2.DMA.count": {
+    "signature": "DMA.count",
+    "description": "Reading this attribute will return the number of remaining bus transfers in the current transfer sequence. Writing this attribute sets the total number of transfers to be the next transfer sequence.",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.DMA.html#rp2.DMA.count"
+  },
+  "rp2.DMA.ctrl": {
+    "signature": "DMA.ctrl",
+    "description": "This attribute reflects DMA channel control register. It is typically written with an integer packed using the DMA.pack_ctrl() method. The returned register value can be unpacked using the DMA.unpack_ctrl() method.",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.DMA.html#rp2.DMA.ctrl"
+  },
+  "rp2.DMA.channel": {
+    "signature": "DMA.channel",
+    "description": "The channel number of the DMA channel. This can be passed in the chain_to argument of DMA.pack_ctrl() on another channel to allow DMA chaining.",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.DMA.html#rp2.DMA.channel"
+  },
+  "rp2.DMA.registers": {
+    "signature": "DMA.registers",
+    "description": "This attribute is an array-like object that allows direct access to the DMA channel’s registers. The index is by word, rather than by byte, so the register indices are the register address offsets divided by 4. See the RP2040 data sheet for register details.",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.DMA.html#rp2.DMA.registers"
+  },
+  "rp2.Flash": {
+    "signature": "class rp2.Flash",
+    "description": "Gets the singleton object for accessing the SPI flash memory.",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.Flash.html#rp2.Flash"
+  },
+  "rp2.Flash.readblocks": {
+    "signature": "Flash.readblocks(block_num, buf)",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.Flash.html#rp2.Flash.readblocks"
+  },
+  "rp2.Flash.writeblocks": {
+    "signature": "Flash.writeblocks(block_num, buf)",
+    "description": "",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.Flash.html#rp2.Flash.writeblocks"
+  },
+  "rp2.Flash.ioctl": {
+    "signature": "Flash.ioctl(cmd, arg)",
+    "description": "These methods implement the simple and extended block protocol defined by vfs.AbstractBlockDev.",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.Flash.html#rp2.Flash.ioctl"
+  },
+  "rp2.PIO": {
+    "signature": "class rp2.PIO(id)",
+    "description": "Gets the PIO instance numbered id. The RP2040 has two PIO instances, numbered 0 and 1.",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.PIO.html#rp2.PIO"
+  },
+  "rp2.PIO.gpio_base": {
+    "signature": "PIO.gpio_base([base])",
+    "description": "Query and optionally set the current GPIO base for this PIO instance.",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.PIO.html#rp2.PIO.gpio_base"
+  },
+  "rp2.PIO.add_program": {
+    "signature": "PIO.add_program(program)",
+    "description": "Add the program to the instruction memory of this PIO instance.",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.PIO.html#rp2.PIO.add_program"
+  },
+  "rp2.PIO.remove_program": {
+    "signature": "PIO.remove_program([program])",
+    "description": "Remove program from the instruction memory of this PIO instance.",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.PIO.html#rp2.PIO.remove_program"
+  },
+  "rp2.PIO.state_machine": {
+    "signature": "PIO.state_machine(id[, program, ...])",
+    "description": "Gets the state machine numbered id. On the RP2040, each PIO instance has four state machines, numbered 0 to 3.",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.PIO.html#rp2.PIO.state_machine"
+  },
+  "rp2.PIO.irq": {
+    "signature": "PIO.irq(handler=None, trigger=IRQ_SM0 | IRQ_SM1 | IRQ_SM2 | IRQ_SM3, hard=False)",
+    "description": "Returns the IRQ object for this PIO instance.",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.PIO.html#rp2.PIO.irq"
+  },
+  "rp2.PIO.IN_LOW": {
+    "signature": "PIO.IN_LOW",
+    "description": "These constants are used for the out_init, set_init, and sideset_init arguments to asm_pio.",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.PIO.html#rp2.PIO.IN_LOW"
+  },
+  "rp2.PIO.SHIFT_LEFT": {
+    "signature": "PIO.SHIFT_LEFT",
+    "description": "These constants are used for the in_shiftdir and out_shiftdir arguments to asm_pio or StateMachine.init.",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.PIO.html#rp2.PIO.SHIFT_LEFT"
+  },
+  "rp2.PIO.JOIN_NONE": {
+    "signature": "PIO.JOIN_NONE",
+    "description": "These constants are used for the fifo_join argument to asm_pio.",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.PIO.html#rp2.PIO.JOIN_NONE"
+  },
+  "rp2.PIO.IRQ_SM0": {
+    "signature": "PIO.IRQ_SM0",
+    "description": "These constants are used for the trigger argument to PIO.irq.",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.PIO.html#rp2.PIO.IRQ_SM0"
+  },
+  "rp2.StateMachine": {
+    "signature": "class rp2.StateMachine(id[, program, ...])",
+    "description": "Get the state machine numbered id. The RP2040 has two identical PIO instances, each with 4 state machines: so there are 8 state machines in total, numbered 0 to 7.",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.StateMachine.html#rp2.StateMachine"
+  },
+  "rp2.StateMachine.init": {
+    "signature": "StateMachine.init(program, freq=-1, *, in_base=None, out_base=None, set_base=None, jmp_pin=None, sideset_base=None, in_shiftdir=None, out_shiftdir=None, push_thresh=None, pull_thresh=None)",
+    "description": "Configure the state machine instance to run the given program.",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.StateMachine.html#rp2.StateMachine.init"
+  },
+  "rp2.StateMachine.active": {
+    "signature": "StateMachine.active([value])",
+    "description": "Gets or sets whether the state machine is currently running.",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.StateMachine.html#rp2.StateMachine.active"
+  },
+  "rp2.StateMachine.restart": {
+    "signature": "StateMachine.restart()",
+    "description": "Restarts the state machine and jumps to the beginning of the program.",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.StateMachine.html#rp2.StateMachine.restart"
+  },
+  "rp2.StateMachine.exec": {
+    "signature": "StateMachine.exec(instr)",
+    "description": "Execute a single PIO instruction.",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.StateMachine.html#rp2.StateMachine.exec"
+  },
+  "rp2.StateMachine.get": {
+    "signature": "StateMachine.get(buf=None, shift=0)",
+    "description": "Pull a word from the state machine’s RX FIFO.",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.StateMachine.html#rp2.StateMachine.get"
+  },
+  "rp2.StateMachine.put": {
+    "signature": "StateMachine.put(value, shift=0)",
+    "description": "Push words onto the state machine’s TX FIFO.",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.StateMachine.html#rp2.StateMachine.put"
+  },
+  "rp2.StateMachine.rx_fifo": {
+    "signature": "StateMachine.rx_fifo()",
+    "description": "Returns the number of words in the state machine’s RX FIFO. A value of 0 indicates the FIFO is empty.",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.StateMachine.html#rp2.StateMachine.rx_fifo"
+  },
+  "rp2.StateMachine.tx_fifo": {
+    "signature": "StateMachine.tx_fifo()",
+    "description": "Returns the number of words in the state machine’s TX FIFO. A value of 0 indicates the FIFO is empty.",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.StateMachine.html#rp2.StateMachine.tx_fifo"
+  },
+  "rp2.StateMachine.irq": {
+    "signature": "StateMachine.irq(handler=None, trigger=0 | 1, hard=False)",
+    "description": "Returns the IRQ object for the given StateMachine.",
+    "url": "https://docs.micropython.org/en/latest/library/rp2.StateMachine.html#rp2.StateMachine.irq"
+  }
+}
