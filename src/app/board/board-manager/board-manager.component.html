@@ -1,0 +1,98 @@
+<h2 mat-dialog-title>Board Manager</h2>
+
+<mat-dialog-content>
+  <!-- Board Info -->
+  @if (boardInfo(); as info) {
+  <section class="bm-section">
+    <div class="bm-section-title">Board Info</div>
+    <dl class="bm-info-grid">
+      <dt>Platform</dt><dd>{{ info.platform }}</dd>
+      <dt>Board</dt><dd>{{ info.boardId }}</dd>
+      <dt>CPU</dt><dd>{{ info.cpuFreqMhz }} MHz</dd>
+      <dt>Memory</dt>
+      <dd class="bm-mem-cell">
+        <div class="bm-mem-bar" role="progressbar"
+          [attr.aria-valuenow]="memUsedPercent()"
+          aria-valuemin="0" aria-valuemax="100"
+          [attr.aria-label]="'Memory: ' + info.memAllocKb + ' KB used of ' + memTotal() + ' KB'">
+          <div class="bm-mem-fill" [style.width.%]="memUsedPercent()"></div>
+        </div>
+        <span class="bm-mem-label">{{ info.memAllocKb }} / {{ memTotal() }} KB</span>
+      </dd>
+    </dl>
+  </section>
+  }
+
+  <mat-divider />
+
+  <!-- File Manager -->
+  <section class="bm-section">
+    <div class="bm-file-header">
+      <div class="bm-section-title">Files</div>
+      <div class="bm-file-actions">
+        @if (isProjectOpen()) {
+        <button mat-stroked-button (click)="syncProject()" [disabled]="!!actionInProgress()"
+          matTooltip="Upload all project files to board"
+          aria-label="Sync project to board">
+          <mat-icon>sync</mat-icon>
+          Sync "{{ activeProjectName() }}"
+        </button>
+        }
+        <button mat-icon-button (click)="uploadFromEditor('')" [disabled]="!!actionInProgress()"
+          matTooltip="Upload a local file to board" aria-label="Upload file to board">
+          <mat-icon>upload_file</mat-icon>
+        </button>
+        <button mat-icon-button (click)="refreshFiles()" [disabled]="loadingFiles() || !!actionInProgress()"
+          matTooltip="Refresh file list" aria-label="Refresh file list">
+          <mat-icon>refresh</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    @if (actionInProgress(); as msg) {
+    <div class="bm-status" role="status">
+      <mat-spinner diameter="16" />
+      <span>{{ msg }}</span>
+    </div>
+    }
+
+    @if (fileError(); as err) {
+    <div class="bm-error" role="alert">{{ err }}</div>
+    }
+
+    @if (loadingFiles()) {
+    <div class="bm-loading" aria-label="Loading files">
+      <mat-spinner diameter="32" />
+    </div>
+    } @else if (files().length === 0) {
+    <p class="bm-empty">No files found.</p>
+    } @else {
+    <ul class="bm-file-list" aria-label="Board files">
+      @for (file of files(); track file.name) {
+      <li class="bm-file-row">
+        <mat-icon class="bm-file-icon" aria-hidden="true">
+          {{ file.isDir ? 'folder' : 'insert_drive_file' }}
+        </mat-icon>
+        <span class="bm-file-name">{{ file.name }}</span>
+        @if (!file.isDir) {
+        <span class="bm-file-size">{{ file.size }} B</span>
+        <button mat-icon-button (click)="downloadFile(file)" [disabled]="!!actionInProgress()"
+          [matTooltip]="'Download ' + file.name" [attr.aria-label]="'Download ' + file.name">
+          <mat-icon>download</mat-icon>
+        </button>
+        <button mat-icon-button (click)="deleteFile(file)" [disabled]="!!actionInProgress()"
+          [matTooltip]="'Delete ' + file.name" [attr.aria-label]="'Delete ' + file.name"
+          class="bm-delete-btn">
+          <mat-icon>delete_outline</mat-icon>
+        </button>
+        }
+      </li>
+      }
+    </ul>
+    }
+  </section>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Close</button>
+</mat-dialog-actions>

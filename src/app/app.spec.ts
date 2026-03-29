@@ -86,6 +86,7 @@ class FakeReplService {
 class FakeBoardService {
   readonly isConnected = signal(false);
   readonly portLabel = signal<string | null>(null);
+  readonly boardInfo = signal<null>(null);
   readonly downloadFile = vi.fn(async () => 'print("From Pico")\n');
   readonly uploadFile = vi.fn(async () => {});
   readonly clearFile = vi.fn(async () => {});
@@ -335,7 +336,7 @@ describe('App', () => {
     clickSpy.mockRestore();
   });
 
-  it('should show a success message after downloading from Pico', async () => {
+  it('should show a success message after downloading from board', async () => {
     projectService.activeFileName.set('main.py');
 
     const fixture = TestBed.createComponent(App);
@@ -357,7 +358,7 @@ describe('App', () => {
 
     expect(boardService.downloadFile).toHaveBeenCalledWith('main.py');
     expect(component.outputLines()).toEqual([
-      { text: 'Downloaded main.py from Pico.', isError: false },
+      { text: 'Downloaded main.py from board.', isError: false },
     ]);
     expect(component.activePanelId()).toBe('output');
   });

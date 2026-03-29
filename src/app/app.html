@@ -129,7 +129,7 @@
       @if (board.isConnected()) {
       <mat-divider />
       <div class="sidenav-section">
-        <div class="sidenav-section-label">Pico</div>
+        <div class="sidenav-section-label">Board</div>
         <button mat-button class="sidenav-action" (click)="uploadToBoard()">
           <mat-icon>upload</mat-icon>
           Upload {{ activeFileName() }}
@@ -209,11 +209,29 @@
           }
 
           @if (hasWebSerial) {
-          <button mat-icon-button (click)="connectBoard()" [class.board-connected]="board.isConnected()"
-            [matTooltip]="board.isConnected() ? ('Connected: ' + board.portLabel()) : 'Connect Pico'"
-            [attr.aria-label]="board.isConnected() ? 'Disconnect Pico' : 'Connect Pico'">
+          <button mat-icon-button [matMenuTriggerFor]="boardMenu"
+            [class.board-connected]="board.isConnected()"
+            [matTooltip]="board.isConnected() ? ('Connected: ' + board.portLabel()) : 'Connect board'"
+            [attr.aria-label]="board.isConnected() ? 'Board menu (connected)' : 'Connect board'">
             <mat-icon>developer_board</mat-icon>
           </button>
+          <mat-menu #boardMenu="matMenu">
+            @if (!board.isConnected()) {
+            <button mat-menu-item (click)="connectBoard()">
+              <mat-icon>usb</mat-icon>
+              Connect board
+            </button>
+            } @else {
+            <button mat-menu-item (click)="openBoardManager()">
+              <mat-icon>developer_board</mat-icon>
+              Board Manager…
+            </button>
+            <button mat-menu-item (click)="connectBoard()">
+              <mat-icon>link_off</mat-icon>
+              Disconnect
+            </button>
+            }
+          </mat-menu>
           }
 
           <mat-button-toggle-group class="layout-toggle" [value]="layout()" (change)="setLayout($event.value)"

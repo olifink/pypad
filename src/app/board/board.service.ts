@@ -1,6 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import type { OutputLine, InstallResult } from '../runner/runner.service';
+import type { BoardFile, BoardInfo } from './board-info';
 
 /** Web Serial API — not yet in TypeScript's lib.dom.d.ts */
 declare global {
@@ -37,6 +38,7 @@ declare global {
 export class BoardService {
   readonly isConnected = signal(false);
   readonly portLabel = signal<string | null>(null);
+  readonly boardInfo = signal<BoardInfo | null>(null);
 
   private _port: SerialPort | null = null;
   private _reader: ReadableStreamDefaultReader<Uint8Array> | null = null;
@@ -50,9 +52,7 @@ export class BoardService {
    * a known idle state (Ctrl+C × 2 to interrupt, Ctrl+B for normal REPL).
    */
   async connect(): Promise<void> {
-    const port = await navigator.serial.requestPort({
-      filters: [{ usbVendorId: 0x2e8a }], // Raspberry Pi VID
-    });
+    const port = await navigator.serial.requestPort();
     await port.open({ baudRate: 115200 });
     this._port = port;
     this._writer = port.writable!.getWriter();
@@ -62,16 +62,20 @@ export class BoardService {
 
     this.isConnected.set(true);
     const info = port.getInfo();
-    this.portLabel.set(info.usbProductId ? `USB (${info.usbProductId})` : 'Pico');
+    this.portLabel.set(info.usbProductId ? `USB (0x${info.usbProductId.toString(16)})` : 'Board');
 
     port.addEventListener('disconnect', () => void this.disconnect());
     this._startReadLoop();
+
+    // Fire-and-forget probe; failure is silent.
+    void this.probe();
   }
 
   /** Closes the serial port and resets all state. */
   async disconnect(): Promise<void> {
     this.isConnected.set(false);
     this.portLabel.set(null);
+    this.boardInfo.set(null);
     this._rxHandler = null;
     // Cancel the reader first — port.close() throws if the readable stream is locked.
     try { await this._reader?.cancel(); } catch { /* ignore */ }
@@ -184,6 +188,115 @@ export class BoardService {
     const errors: string[] = [];
     await new Promise<void>((resolve, reject) => {
       this.run(`open(${JSON.stringify(filename)},'w').close()`).subscribe({
+        next: (l) => { if (l.isError) errors.push(l.text); },
+        error: reject,
+        complete: () => errors.length ? reject(new Error(errors.join('\n'))) : resolve(),
+      });
+    });
+  }
+
+  /**
+   * Runs a discovery script on the board to capture platform info and memory
+   * stats. Updates the `boardInfo` signal on success; silently ignores errors.
+   */
+  async probe(): Promise<void> {
+    const script = [
+      `import sys, gc, json`,
+      `try:`,
+      `  import machine`,
+      `  _freq = machine.freq() // 1_000_000`,
+      `except: _freq = 0`,
+      `try:`,
+      `  _bid = sys.implementation._machine`,
+      `except: _bid = sys.platform`,
+      `gc.collect()`,
+      `_mods = [m for m in dir(__import__('builtins')) if not m.startswith('_')]`,
+      `try:`,
+      `  import uos as _os`,
+      `except:`,
+      `  import os as _os`,
+      `try:`,
+      `  _mods = list(sys.modules.keys())`,
+      `  help_str = []`,
+      `  exec("import io as _io; _buf=_io.StringIO(); help(_io); _io=None", {})`,
+      `except: pass`,
+      `print(json.dumps({"platform":sys.platform,"boardId":_bid,"cpuFreqMhz":_freq,"memFreeKb":gc.mem_free()//1024,"memAllocKb":gc.mem_alloc()//1024}))`,
+    ].join('\n');
+
+    try {
+      let output = '';
+      const errors: string[] = [];
+      await new Promise<void>((resolve, reject) => {
+        this.run(script).subscribe({
+          next: (l) => { if (l.isError) errors.push(l.text); else output += l.text; },
+          error: reject,
+          complete: () => errors.length ? reject(new Error(errors.join('\n'))) : resolve(),
+        });
+      });
+      const raw = JSON.parse(output.trim()) as {
+        platform: string; boardId: string; cpuFreqMhz: number;
+        memFreeKb: number; memAllocKb: number;
+      };
+      this.boardInfo.set({
+        platform: raw.platform,
+        boardId: raw.boardId,
+        cpuFreqMhz: raw.cpuFreqMhz,
+        memFreeKb: raw.memFreeKb,
+        memAllocKb: raw.memAllocKb,
+        modules: [],
+      });
+      // Update port label to use the board's own identifier.
+      this.portLabel.set(raw.boardId || raw.platform);
+    } catch {
+      // Probe failure is non-fatal; boardInfo stays null.
+    }
+  }
+
+  /**
+   * Lists files/directories at `path` on the board's filesystem.
+   * Returns an array of `BoardFile` objects sorted: dirs first, then files.
+   */
+  async listFiles(path = '/'): Promise<BoardFile[]> {
+    const script = [
+      `try:`,
+      `  import uos as _os`,
+      `except:`,
+      `  import os as _os`,
+      `import json`,
+      `_r=[]`,
+      `for _e in _os.ilistdir(${JSON.stringify(path)}):`,
+      `  _r.append({"name":_e[0],"isDir":_e[1]==0x4000,"size":_e[3] if len(_e)>3 else 0})`,
+      `print(json.dumps(_r))`,
+    ].join('\n');
+
+    let output = '';
+    const errors: string[] = [];
+    await new Promise<void>((resolve, reject) => {
+      this.run(script).subscribe({
+        next: (l) => { if (l.isError) errors.push(l.text); else output += l.text; },
+        error: reject,
+        complete: () => errors.length ? reject(new Error(errors.join('\n'))) : resolve(),
+      });
+    });
+
+    const raw = JSON.parse(output.trim()) as Array<{ name: string; isDir: boolean; size: number }>;
+    return raw
+      .map((e) => ({ name: e.name, size: e.size, isDir: e.isDir }))
+      .sort((a, b) => Number(b.isDir) - Number(a.isDir) || a.name.localeCompare(b.name));
+  }
+
+  /** Removes a file at `path` from the board's filesystem. */
+  async deleteFile(path: string): Promise<void> {
+    const script = [
+      `try:`,
+      `  import uos as _os`,
+      `except:`,
+      `  import os as _os`,
+      `_os.remove(${JSON.stringify(path)})`,
+    ].join('\n');
+    const errors: string[] = [];
+    await new Promise<void>((resolve, reject) => {
+      this.run(script).subscribe({
         next: (l) => { if (l.isError) errors.push(l.text); },
         error: reject,
         complete: () => errors.length ? reject(new Error(errors.join('\n'))) : resolve(),

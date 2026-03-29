@@ -46,9 +46,11 @@ import { NewFileDialogComponent } from './new-file-dialog/new-file-dialog';
 import { AiPromptDialogComponent } from './ai-prompt-dialog/ai-prompt-dialog';
 import type { AiPromptDialogData } from './ai-prompt-dialog/ai-prompt-dialog';
 import { BoardService } from './board/board.service';
+import { BoardManagerComponent } from './board/board-manager/board-manager.component';
 import { ProjectService } from './projects/project.service';
 import { TextPromptDialogComponent } from './text-prompt-dialog/text-prompt-dialog';
 import type { TextPromptDialogData } from './text-prompt-dialog/text-prompt-dialog';
+import { DocumentationService } from './docs/docs.service';
 
 const DEFAULT_CODE = `# Welcome to PyPad!
 print("Hello, PyPad!")
@@ -113,6 +115,7 @@ export class App {
   protected readonly aiService = inject(AiService);
   protected readonly board = inject(BoardService);
   protected readonly projects = inject(ProjectService);
+  private readonly docs = inject(DocumentationService);
   protected readonly hasWebSerial = 'serial' in navigator;
   private readonly _vk = inject(VirtualKeyboardService);
 
@@ -164,6 +167,12 @@ export class App {
         // Open the Packages dialog so the user sees installation progress.
         this.openPackages();
       }
+    });
+
+    // Switch documentation context when the board reports its platform.
+    effect(() => {
+      const info = this.board.boardInfo();
+      if (info?.platform) void this.docs.setPlatform(info.platform);
     });
   }
 
@@ -691,7 +700,7 @@ export class App {
     try {
       await this.board.uploadFile(fileName, this.currentCode());
       this.board.softReset();
-      this.outputLines.set([{ text: `Uploaded ${fileName} to Pico.`, isError: false }]);
+      this.outputLines.set([{ text: `Uploaded ${fileName} to board.`, isError: false }]);
     } catch (e) {
       this.outputLines.set([{ text: String(e), isError: true }]);
     }
@@ -703,7 +712,7 @@ export class App {
       .open(ConfirmDialogComponent, {
         data: {
           title: `Download ${this.activeFileName()}`,
-          message: `Your current editor content will be replaced with ${this.activeFileName()} from the Pico.`,
+          message: `Your current editor content will be replaced with ${this.activeFileName()} from the board.`,
           confirmLabel: 'Download',
         } satisfies ConfirmDialogData,
         width: '480px',
@@ -716,7 +725,7 @@ export class App {
           const content = await this.board.downloadFile(fileName);
           this.editorRef().setContent(content);
           this.currentCode.set(content);
-          this.outputLines.set([{ text: `Downloaded ${fileName} from Pico.`, isError: false }]);
+          this.outputLines.set([{ text: `Downloaded ${fileName} from board.`, isError: false }]);
           this.activePanelId.set('output');
           if (this.layout() === 'editor') this.setLayout('both');
         } catch (e) {
@@ -736,7 +745,7 @@ export class App {
     try {
       await this.board.clearFile(fileName);
       this.board.softReset();
-      this.outputLines.set([{ text: `Cleared ${fileName} on Pico.`, isError: false }]);
+      this.outputLines.set([{ text: `Cleared ${fileName} on board.`, isError: false }]);
     } catch (e) {
       this.outputLines.set([{ text: String(e), isError: true }]);
     }
@@ -748,6 +757,10 @@ export class App {
     } else {
       await this.board.connect();
     }
+  }
+
+  protected openBoardManager(): void {
+    this.dialog.open(BoardManagerComponent, { width: '560px', maxHeight: '80vh' });
   }
 
   protected onDividerPointerDown(e: PointerEvent): void {
