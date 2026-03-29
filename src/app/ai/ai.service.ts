@@ -31,7 +31,7 @@ ONLY return the Python code itself, no explanations, no markdown code blocks, no
 If you cannot fulfill the request, return an error message starting with # ERROR:`;
 
     try {
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-preview:generateContent?key=${apiKey}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -59,11 +59,11 @@ If you cannot fulfill the request, return an error message starting with # ERROR
 
       const data = await response.json();
       let code = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-      
+
       // Clean up common AI responses (markdown blocks)
       code = code.replace(/^```python\n/, '').replace(/\n```$/, '');
       code = code.trim();
-      
+
       return code;
     } catch (err) {
       console.error('Gemini API Error:', err);
