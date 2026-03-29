@@ -43,8 +43,18 @@ export class BoardService {
   private _port: SerialPort | null = null;
   private _reader: ReadableStreamDefaultReader<Uint8Array> | null = null;
   private _writer: WritableStreamDefaultWriter<Uint8Array> | null = null;
-  /** Single read loop dispatches incoming bytes to this handler. */
+  /**
+   * The handler currently receiving raw bytes from the read loop.
+   * Raw REPL operations temporarily replace it with their own handler.
+   */
   private _rxHandler: ((data: Uint8Array) => void) | null = null;
+  /**
+   * The handler ReplService wants active. Updated via `setReplHandler()` at
+   * any time, including during raw REPL operations. Raw ops always restore
+   * `_rxHandler` to this value when they finish, so updates are never lost.
+   */
+  private _replHandler: ((data: Uint8Array) => void) | null = null;
+  private _rawModeActive = false;
   private readonly _decoder = new TextDecoder();
 
   /**
@@ -77,6 +87,8 @@ export class BoardService {
     this.portLabel.set(null);
     this.boardInfo.set(null);
     this._rxHandler = null;
+    this._replHandler = null;
+    this._rawModeActive = false;
     // Cancel the reader first — port.close() throws if the readable stream is locked.
     try { await this._reader?.cancel(); } catch { /* ignore */ }
     this._reader = null;
@@ -93,10 +105,11 @@ export class BoardService {
   run(code: string): Observable<OutputLine> {
     const subject = new Subject<OutputLine>();
     void (async () => {
-      // Save the active handler (e.g. the REPL terminal handler) so it can be
-      // restored after raw-REPL operations finish. Without this, every Run /
-      // Upload / Download wipes _rxHandler and the REPL goes silent.
-      const savedHandler = this._rxHandler;
+      // Guard so that setReplHandler() calls that arrive while we're in raw
+      // REPL mode (e.g. from Angular effects) update _replHandler but do NOT
+      // overwrite _rxHandler mid-operation. _rxHandler is always restored to
+      // _replHandler when the operation ends.
+      this._rawModeActive = true;
       try {
         await this._enterRaw();
         await this._execRaw(code, subject);
@@ -104,7 +117,8 @@ export class BoardService {
       } catch (e) {
         subject.next({ text: String(e), isError: true });
       } finally {
-        this._rxHandler = savedHandler;
+        this._rawModeActive = false;
+        this._rxHandler = this._replHandler;
         subject.complete();
       }
     })();
@@ -200,27 +214,21 @@ export class BoardService {
    * stats. Updates the `boardInfo` signal on success; silently ignores errors.
    */
   async probe(): Promise<void> {
+    // Minimal script: no help(), no exec(), no extra stdout. Uses 1000000
+    // instead of 1_000_000 for maximum MicroPython version compatibility.
     const script = [
-      `import sys, gc, json`,
+      `import sys,gc,json`,
       `try:`,
-      `  import machine`,
-      `  _freq = machine.freq() // 1_000_000`,
-      `except: _freq = 0`,
-      `try:`,
-      `  _bid = sys.implementation._machine`,
-      `except: _bid = sys.platform`,
-      `gc.collect()`,
-      `_mods = [m for m in dir(__import__('builtins')) if not m.startswith('_')]`,
-      `try:`,
-      `  import uos as _os`,
+      ` import machine`,
+      ` _f=machine.freq()//1000000`,
       `except:`,
-      `  import os as _os`,
+      ` _f=0`,
       `try:`,
-      `  _mods = list(sys.modules.keys())`,
-      `  help_str = []`,
-      `  exec("import io as _io; _buf=_io.StringIO(); help(_io); _io=None", {})`,
-      `except: pass`,
-      `print(json.dumps({"platform":sys.platform,"boardId":_bid,"cpuFreqMhz":_freq,"memFreeKb":gc.mem_free()//1024,"memAllocKb":gc.mem_alloc()//1024}))`,
+      ` _b=sys.implementation._machine`,
+      `except:`,
+      ` _b=sys.platform`,
+      `gc.collect()`,
+      `print(json.dumps({"platform":sys.platform,"boardId":_b,"cpuFreqMhz":_f,"memFreeKb":gc.mem_free()//1024,"memAllocKb":gc.mem_alloc()//1024}))`,
     ].join('\n');
 
     try {
@@ -322,9 +330,14 @@ export class BoardService {
   /**
    * Registers a handler that receives raw bytes from the board. Used by
    * ReplService to pipe board output to xterm.js in normal REPL mode.
+   * Always updates the intended REPL handler; if a raw REPL operation is in
+   * progress the change takes effect when that operation completes.
    */
   setReplHandler(handler: ((data: Uint8Array) => void) | null): void {
-    this._rxHandler = handler;
+    this._replHandler = handler;
+    if (!this._rawModeActive) {
+      this._rxHandler = handler;
+    }
   }
 
   /** Sends raw bytes to the board (used by ReplService for keystrokes). */

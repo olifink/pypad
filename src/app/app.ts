@@ -172,7 +172,7 @@ export class App {
     // Switch documentation context when the board reports its platform.
     effect(() => {
       const info = this.board.boardInfo();
-      if (info?.platform) void this.docs.setPlatform(info.platform);
+      void this.docs.setPlatform(info?.platform ?? null);
     });
   }
 

@@ -12,10 +12,11 @@ export class DocumentationService {
   private readonly doc = inject(DOCUMENT);
   private entries: Record<string, DocEntry> = { ...KEYWORD_DOCS };
   private baseEntries: Record<string, DocEntry> = {};
+  private readonly _loadPromise: Promise<void>;
   readonly isLoaded = signal(false);
 
   constructor() {
-    void this._load();
+    this._loadPromise = this._load();
   }
 
   private async _load(): Promise<void> {
@@ -30,10 +31,16 @@ export class DocumentationService {
   /**
    * Tries to load a platform-specific docs overlay from
    * `assets/docs-<platform>.json` and merges its entries on top of the base
-   * docs. Silently ignores 404s and other fetch errors.
+   * docs. Pass `null` to reset back to base docs (e.g. on disconnect).
+   * Silently ignores 404s and other fetch errors.
    */
-  async setPlatform(platform: string): Promise<void> {
-    if (!platform) return;
+  async setPlatform(platform: string | null): Promise<void> {
+    // Always wait for the base docs to be ready before merging.
+    await this._loadPromise;
+    if (!platform) {
+      this.entries = this.baseEntries;
+      return;
+    }
     const url = new URL(`assets/docs-${platform}.json`, this.doc.baseURI).href;
     try {
       const res = await fetch(url);
