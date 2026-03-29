@@ -79,10 +79,10 @@ A Project is a collection of files stored in an IndexDB using [lightning-fs](htt
 
 ### Phase 8: MicroPython Board Manager
 
-* [ ] **Auto-Discovery Service:** On Serial connection, run a "Probe" script that captures Board ID, CPU freq, Memory stats, and `help('modules')`.
-* [ ] **Board-Specific Docs:** Automatically switch the `docs.json` context based on the detected `sys.platform`.
 * [ ] **Board Button:** Make the "Connect Pico" button a "Connect board" a menu to have connect, disconnect and a board manager entry
 * [ ] **Board Manager:** A overlay window/view/dialog that shows details about the board and provides basic file manager capabilities: list files on the board, delete, upload, download and sync project (if project is active)
+* [ ] **Auto-Discovery Service:** On Serial connection, run a "Probe" script that captures Board ID, CPU freq, Memory stats, and `help('modules')`. (see `board_prober.py` as a starting point)
+* [ ] **Board-Specific Docs:** Automatically switch the `docs.json` context based on the detected `sys.platform`.
 
 
 ### Phase 9: Basic PyScript Web Development
