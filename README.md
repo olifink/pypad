@@ -64,7 +64,7 @@ To provide a zero-install, offline-capable Python editor that feels like a nativ
 * [x] **Hardware Run:** When a board is connected, the Run button executes code on the real MicroPython interpreter via the raw REPL protocol (`Ctrl+A` / code + `\x04` / read stdout+stderr / `Ctrl+B`). Output streams line-by-line to the Output tab.
 * [x] **Hardware REPL:** The REPL tab auto-switches between WASM and board mode as the connection state changes. xterm.js is wired directly to the board's serial streams; the WASM interpreter is paused. Disconnecting restores the WASM REPL with a fresh interpreter.
 * [x] **Soft Reset:** The Clear Output button sends a MicroPython soft reset (`Ctrl+D`) to the board when connected, restarting the interpreter without dropping the USB connection.
-* [x] **File Operations (Pico section in settings):** When a board is connected a "Pico" section appears in the sidebar with three actions:
+* [x] **File Operations (Board section in sidebar):** When a board is connected a "Board" section appears in the sidebar with three actions:
   * **Upload as main.py** — writes the current editor content to `main.py` on the board's flash (base64-encoded for safety) then soft-resets the board.
   * **Download main.py** — reads `main.py` from the board's flash and loads it into the editor (with a confirmation dialog).
   * **Clear main.py** — truncates `main.py` to zero bytes then soft-resets the board.
@@ -77,12 +77,19 @@ A Project is a collection of files stored in an IndexDB using [lightning-fs](htt
 * [x] **Files:** Files need to be named. Files outside a project are treated as `main.py`. Files save automatically, asking for a name when none is given yet. Files and Projects can also be renamed. Initially, there is no need for directories.
 * [x] **Operations:** When a project is active, File and Pico operations reflect and work with the current fs file.
 
-### Phase 8: MicroPython Board Manager
+### Phase 8: MicroPython Board Manager ✅
 
-* [ ] **Board Button:** Make the "Connect Pico" button a "Connect board" a menu to have connect, disconnect and a board manager entry
-* [ ] **Board Manager:** A overlay window/view/dialog that shows details about the board and provides basic file manager capabilities: list files on the board, delete, upload, download and sync project (if project is active)
-* [ ] **Auto-Discovery Service:** On Serial connection, run a "Probe" script that captures Board ID, CPU freq, Memory stats, and `help('modules')`. (see `board_prober.py` as a starting point)
-* [ ] **Board-Specific Docs:** Automatically switch the `docs.json` context based on the detected `sys.platform`.
+* [x] **Board Button:** The board toolbar button is now a menu with Connect, Board Manager, and Disconnect entries. Works with any MicroPython board (no USB vendor ID filter).
+* [x] **Auto-Discovery Probe:** On connect, a lightweight probe script runs on the board via the raw REPL and captures `sys.platform`, board ID (`sys.implementation._machine`), CPU frequency, and memory stats (free / allocated KB). The result is stored in the `boardInfo` signal on `BoardService`.
+* [x] **Board Manager Dialog:** Overlay dialog showing the detected board info panel (platform, CPU freq, memory) and a file manager: lists all files on the board's filesystem, with actions to upload, download, delete, and sync the active project.
+* [x] **Board-Specific Docs:** On connect, `DocumentationService.setPlatform(sys.platform)` fetches and merges a `docs-<platform>.json` overlay on top of the base docs. On disconnect, docs reset to the base set. Run `npm run docs` to regenerate all doc files.
+
+  | Platform (`sys.platform`) | Overlay file | Modules covered |
+  |---|---|---|
+  | `rp2` | `docs-rp2.json` | `rp2` (StateMachine, PIO, DMA, Flash) |
+  | `esp32` | `docs-esp32.json` | `esp32`, `esp` |
+  | `esp8266` | `docs-esp8266.json` | `esp` |
+  | `stm32` / `pyboard` | `docs-stm32.json` / `docs-pyboard.json` | `stm`, `pyb` (full class hierarchy) |
 
 
 ### Phase 9: Basic PyScript Web Development
@@ -107,11 +114,12 @@ A Project is a collection of files stored in an IndexDB using [lightning-fs](htt
 | `ConsoleComponent` | `src/app/console/` | Scrollable monospace output panel; accepts `lines: string[]` input; auto-scrolls to bottom; clear button. |
 | `ReplComponent` | `src/app/repl/` | Hosts the xterm.js terminal for the interactive REPL tab; lazy-inits on first render; `ResizeObserver` keeps the terminal sized to its container. |
 | `DocumentationComponent` | `src/app/docs/` | Docs tab; debounces cursor position and looks up the symbol under the caret in `DocumentationService`; shows signature, description, and a deep-link to the official docs. |
-| `BoardService` | `src/app/board/` | Web Serial connection to a MicroPython board. Manages port open/close, a single background read loop, and raw REPL protocol (`_enterRaw` / `_execRaw` / `_exitRaw`). Exposes `run()`, `stop()`, `softReset()`, `uploadFile()`, `downloadFile()`, `clearFile()`, and `setReplHandler()` for xterm.js wiring. `isConnected` and `portLabel` signals drive the UI. |
+| `BoardService` | `src/app/board/` | Web Serial connection to any MicroPython board. Manages port open/close, a single background read loop, and raw REPL protocol (`_enterRaw` / `_execRaw` / `_exitRaw`). Exposes `run()`, `stop()`, `softReset()`, `uploadFile()`, `downloadFile()`, `clearFile()`, `listFiles()`, `deleteFile()`, and `setReplHandler()` for xterm.js wiring. `isConnected`, `portLabel`, and `boardInfo` signals drive the UI. On connect, `probe()` runs a discovery script and populates `boardInfo` with platform, board ID, CPU freq, and memory stats. |
 | `RunnerService` | `src/app/runner/` | `isReady` is a `computed()` signal — true when the WASM worker is initialised *or* a board is connected. `run()`, `stop()`, and `install()` delegate to `BoardService` when connected, otherwise to the WASM worker. |
 | `ReplService` | `src/app/repl/` | `startRepl(el, isDark)` wires xterm.js to the board (`setReplHandler` / `writeBytes`) or to the WASM interpreter (`io.stdout` + `replProcessChar`). An `effect()` re-wires automatically when `board.isConnected()` changes while the terminal is open, disposing the previous `onData` subscription before installing the new one. `resetRepl()` and `runInRepl()` branch for board vs WASM. |
 | `PackagesService` | `src/app/packages/` | Installs packages via `mip.install()` using `interpreter.runPython()`; tracks `installedPackages` signal; `reinstallAll()` re-installs all packages on a fresh interpreter after a REPL reset. |
-| `DocumentationService` | `src/app/docs/` | Loads `assets/docs.json` (scraped MicroPython + CPython builtins); merges with a static `KEYWORD_DOCS` map covering ~36 Python keywords; exposes `lookup(fqn)`. |
+| `BoardManagerComponent` | `src/app/board/board-manager/` | Dialog showing detected board info (platform, CPU freq, free/alloc memory) and a full file manager for the board's filesystem (list, upload, download, delete, sync project). |
+| `DocumentationService` | `src/app/docs/` | Loads `assets/docs.json` (scraped MicroPython + CPython builtins); merges with a static `KEYWORD_DOCS` map covering ~36 Python keywords; exposes `lookup(fqn)`. `setPlatform(platform)` fetches and overlays a `docs-<platform>.json` file for board-specific symbols (e.g. `rp2.StateMachine`); passing `null` resets to base docs. |
 | `EditorContextService` | `src/app/docs/` | Resolves the symbol or keyword at the current cursor position using the lezer syntax tree. |
 | `ShareService` | `src/app/share/` | `buildShareUrl(code, packages?)` compresses a versioned JSON payload `{ v:1, c:code, p?:packages[] }` with `lz-string` into a `?s=` query param; `getSharedCode()` decompresses it, with fallback for legacy plain-string URLs. |
 | `StorageService` | `src/app/storage/` | Debounced `save()` + immediate `flush()` to `localStorage` key `pypad_code`. |
